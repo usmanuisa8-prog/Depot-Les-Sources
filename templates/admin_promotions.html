@@ -1,0 +1,1683 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Promotions & Offres | Dépôt Les Sources{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* =========================================================
+       PROMOTIONS ADMIN
+       ========================================================= */
+
+    .promotions-shell {
+        min-height: 100vh;
+        background: var(--bg-color, #f5f7fa);
+        padding-top: var(--header-height, 70px);
+        box-sizing: border-box;
+    }
+
+    .promotions-main {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* ---------- Header ---------- */
+
+    .promo-page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .promo-title-wrap {
+        min-width: 0;
+    }
+
+    .promo-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: var(--primary-color, #2563eb);
+        margin-bottom: .45rem;
+    }
+
+    .promo-page-title {
+        margin: 0;
+        font-size: 2rem;
+        line-height: 1.15;
+        font-weight: 800;
+        color: var(--text-primary, #172033);
+    }
+
+    .promo-page-subtitle {
+        margin: .55rem 0 0;
+        color: var(--text-secondary, #667085);
+        font-size: .95rem;
+        max-width: 700px;
+    }
+
+    .promo-header-actions {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        flex-shrink: 0;
+    }
+
+    .promo-button {
+        border: 0;
+        border-radius: 10px;
+        padding: .72rem 1rem;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    .promo-button:hover {
+        transform: translateY(-1px);
+    }
+
+    .promo-button-primary {
+        color: #fff;
+        background: var(--primary-color, #2563eb);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, .18);
+    }
+
+    .promo-button-primary:hover {
+        background: var(--primary-hover, #1d4ed8);
+    }
+
+    .promo-button-secondary {
+        color: var(--text-primary, #344054);
+        background: #fff;
+        border: 1px solid var(--border-color, #e4e7ec);
+    }
+
+    /* ---------- KPI ---------- */
+
+    .promo-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .promo-kpi {
+        background: #fff;
+        border: 1px solid var(--border-color, #e4e7ec);
+        border-radius: 14px;
+        padding: 1.15rem;
+        display: flex;
+        align-items: center;
+        gap: .9rem;
+        box-shadow: 0 2px 8px rgba(16, 24, 40, .04);
+    }
+
+    .promo-kpi-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        font-weight: 800;
+        background: #eef4ff;
+        color: var(--primary-color, #2563eb);
+        flex-shrink: 0;
+    }
+
+    .promo-kpi:nth-child(2) .promo-kpi-icon {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .promo-kpi:nth-child(3) .promo-kpi-icon {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .promo-kpi:nth-child(4) .promo-kpi-icon {
+        background: #f5f3ff;
+        color: #6d28d9;
+    }
+
+    .promo-kpi-label {
+        font-size: .78rem;
+        color: var(--text-secondary, #667085);
+        margin-bottom: .2rem;
+    }
+
+    .promo-kpi-value {
+        font-size: 1.45rem;
+        font-weight: 800;
+        line-height: 1.1;
+        color: var(--text-primary, #172033);
+    }
+
+    /* ---------- Toolbar ---------- */
+
+    .promo-toolbar {
+        background: #fff;
+        border: 1px solid var(--border-color, #e4e7ec);
+        border-radius: 14px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        box-shadow: 0 2px 8px rgba(16, 24, 40, .04);
+    }
+
+    .promo-search-wrap {
+        position: relative;
+        flex: 1;
+        max-width: 520px;
+    }
+
+    .promo-search {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--border-color, #d0d5dd);
+        border-radius: 9px;
+        padding: .7rem .85rem .7rem 2.5rem;
+        font: inherit;
+        color: var(--text-primary, #172033);
+        background: #fff;
+        outline: none;
+    }
+
+    .promo-search:focus {
+        border-color: var(--primary-color, #2563eb);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+    }
+
+    .promo-search-icon {
+        position: absolute;
+        left: .85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #98a2b3;
+        pointer-events: none;
+    }
+
+    .promo-filter {
+        min-width: 180px;
+        border: 1px solid var(--border-color, #d0d5dd);
+        border-radius: 9px;
+        padding: .7rem .8rem;
+        background: #fff;
+        color: var(--text-primary, #344054);
+        font: inherit;
+        outline: none;
+    }
+
+    /* ---------- Main card ---------- */
+
+    .promo-list-card {
+        background: #fff;
+        border: 1px solid var(--border-color, #e4e7ec);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(16, 24, 40, .04);
+    }
+
+    .promo-list-header {
+        padding: 1.15rem 1.25rem;
+        border-bottom: 1px solid #eaecf0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .promo-list-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--text-primary, #172033);
+    }
+
+    .promo-list-count {
+        font-size: .8rem;
+        color: var(--text-secondary, #667085);
+    }
+
+    /* ---------- Table ---------- */
+
+    .promo-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .promo-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    .promo-table th {
+        padding: .75rem 1rem;
+        background: #f9fafb;
+        color: #667085;
+        font-size: .72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .045em;
+        text-align: left;
+        border-bottom: 1px solid #eaecf0;
+        white-space: nowrap;
+    }
+
+    .promo-table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f2f5;
+        color: #344054;
+        font-size: .86rem;
+    }
+
+    .promo-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .promo-table tbody tr {
+        transition: background .15s ease;
+    }
+
+    .promo-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .promo-name {
+        font-weight: 800;
+        color: #172033;
+        margin-bottom: .22rem;
+    }
+
+    .promo-description {
+        color: #667085;
+        font-size: .76rem;
+        max-width: 270px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .promo-discount {
+        display: inline-flex;
+        align-items: center;
+        padding: .35rem .6rem;
+        border-radius: 999px;
+        background: #eef4ff;
+        color: #1d4ed8;
+        font-weight: 800;
+        font-size: .78rem;
+        white-space: nowrap;
+    }
+
+    .promo-date {
+        white-space: nowrap;
+        color: #475467;
+    }
+
+    .promo-date strong {
+        color: #172033;
+        font-weight: 700;
+    }
+
+    .promo-articles-count {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        font-weight: 700;
+        color: #344054;
+    }
+
+    .promo-usage-main {
+        font-weight: 800;
+        color: #172033;
+    }
+
+    .promo-usage-sub {
+        font-size: .73rem;
+        color: #667085;
+        margin-top: .18rem;
+    }
+
+    .promo-savings {
+        font-weight: 800;
+        color: #027a48;
+        white-space: nowrap;
+    }
+
+    .promo-status {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        border-radius: 999px;
+        padding: .34rem .62rem;
+        font-size: .73rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .promo-status::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .promo-status-active {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .promo-status-scheduled {
+        background: #eff8ff;
+        color: #175cd3;
+    }
+
+    .promo-status-expired {
+        background: #f2f4f7;
+        color: #667085;
+    }
+
+    .promo-status-disabled {
+        background: #fef3f2;
+        color: #b42318;
+    }
+
+    .promo-actions {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        flex-wrap: wrap;
+    }
+
+    .promo-action-form {
+        margin: 0;
+    }
+
+    .promo-action {
+        border: 1px solid #d0d5dd;
+        background: #fff;
+        color: #344054;
+        border-radius: 8px;
+        padding: .48rem .62rem;
+        font: inherit;
+        font-size: .74rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .promo-action:hover {
+        background: #f9fafb;
+    }
+
+    .promo-action-danger {
+        color: #b42318;
+        border-color: #fecdca;
+        background: #fffafa;
+    }
+
+    .promo-history-link {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        color: var(--primary-color, #2563eb);
+        font-size: .78rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .promo-history-link:hover {
+        text-decoration: underline;
+    }
+
+    /* ---------- Expanded article row ---------- */
+
+    .promo-article-row td {
+        padding-top: 0;
+        background: #fbfcfe;
+    }
+
+    .promo-article-box {
+        margin: 0 0 .85rem;
+        padding: .85rem 1rem;
+        border: 1px solid #eaecf0;
+        border-radius: 10px;
+        background: #fff;
+    }
+
+    .promo-article-heading {
+        font-size: .72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #667085;
+        margin-bottom: .55rem;
+    }
+
+    .promo-article-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .45rem;
+    }
+
+    .promo-article-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .4rem .58rem;
+        border-radius: 7px;
+        background: #f2f4f7;
+        color: #344054;
+        font-size: .75rem;
+    }
+
+    .promo-article-chip strong {
+        color: #172033;
+    }
+
+    /* ---------- Empty state ---------- */
+
+    .promo-empty {
+        text-align: center;
+        padding: 4rem 1.5rem;
+    }
+
+    .promo-empty-icon {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 1rem;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef4ff;
+        color: var(--primary-color, #2563eb);
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    .promo-empty h3 {
+        margin: 0 0 .4rem;
+        color: #172033;
+        font-size: 1rem;
+    }
+
+    .promo-empty p {
+        margin: 0 auto 1.25rem;
+        max-width: 430px;
+        color: #667085;
+        font-size: .85rem;
+    }
+
+    /* ---------- Modal ---------- */
+
+    .promo-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgba(16, 24, 40, .52);
+    }
+
+    .promo-modal.is-open {
+        display: flex;
+    }
+
+    .promo-modal-panel {
+        width: min(760px, 100%);
+        max-height: min(900px, calc(100vh - 2rem));
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .22);
+    }
+
+    .promo-modal-header {
+        padding: 1.2rem 1.35rem;
+        border-bottom: 1px solid #eaecf0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .promo-modal-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #172033;
+    }
+
+    .promo-modal-subtitle {
+        margin: .3rem 0 0;
+        color: #667085;
+        font-size: .78rem;
+    }
+
+    .promo-close {
+        border: 0;
+        background: #f2f4f7;
+        color: #475467;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        line-height: 1;
+    }
+
+    .promo-modal-body {
+        padding: 1.35rem;
+    }
+
+    .promo-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .promo-field {
+        display: flex;
+        flex-direction: column;
+        gap: .4rem;
+    }
+
+    .promo-field-full {
+        grid-column: 1 / -1;
+    }
+
+    .promo-label {
+        font-size: .78rem;
+        font-weight: 800;
+        color: #344054;
+    }
+
+    .promo-input,
+    .promo-select,
+    .promo-textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d0d5dd;
+        border-radius: 9px;
+        padding: .72rem .8rem;
+        background: #fff;
+        color: #172033;
+        font: inherit;
+        outline: none;
+    }
+
+    .promo-input:focus,
+    .promo-select:focus,
+    .promo-textarea:focus {
+        border-color: var(--primary-color, #2563eb);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+    }
+
+    .promo-textarea {
+        min-height: 82px;
+        resize: vertical;
+    }
+
+    .promo-article-selection {
+        margin-top: 1.25rem;
+        border-top: 1px solid #eaecf0;
+        padding-top: 1.1rem;
+    }
+
+    .promo-selection-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: .75rem;
+    }
+
+    .promo-selection-title {
+        margin: 0;
+        font-size: .9rem;
+        font-weight: 800;
+        color: #172033;
+    }
+
+    .promo-selection-count {
+        font-size: .75rem;
+        color: var(--primary-color, #2563eb);
+        font-weight: 800;
+    }
+
+    .promo-article-search {
+        margin-bottom: .75rem;
+    }
+
+    .promo-article-options {
+        max-height: 260px;
+        overflow-y: auto;
+        border: 1px solid #eaecf0;
+        border-radius: 10px;
+    }
+
+    .promo-article-option {
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: .7rem .8rem;
+        border-bottom: 1px solid #f0f2f5;
+        cursor: pointer;
+        transition: background .15s ease;
+    }
+
+    .promo-article-option:last-child {
+        border-bottom: 0;
+    }
+
+    .promo-article-option:hover {
+        background: #f9fafb;
+    }
+
+    .promo-article-option input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary-color, #2563eb);
+        flex-shrink: 0;
+    }
+
+    .promo-article-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .promo-article-name {
+        font-weight: 700;
+        color: #344054;
+        font-size: .8rem;
+    }
+
+    .promo-article-meta {
+        margin-top: .15rem;
+        color: #667085;
+        font-size: .72rem;
+    }
+
+    .promo-article-price {
+        font-weight: 800;
+        color: #172033;
+        font-size: .78rem;
+        white-space: nowrap;
+    }
+
+    .promo-no-articles {
+        padding: 1.5rem;
+        text-align: center;
+        color: #667085;
+        font-size: .8rem;
+    }
+
+    .promo-modal-footer {
+        padding: 1rem 1.35rem;
+        border-top: 1px solid #eaecf0;
+        display: flex;
+        justify-content: flex-end;
+        gap: .65rem;
+    }
+
+    /* ---------- Responsive ---------- */
+
+    @media (max-width: 1200px) {
+        .promo-kpi-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .promotions-main {
+            padding: 1rem;
+        }
+
+        .promo-page-header {
+            flex-direction: column;
+        }
+
+        .promo-header-actions {
+            width: 100%;
+        }
+
+        .promo-header-actions .promo-button {
+            flex: 1;
+        }
+
+        .promo-page-title {
+            font-size: 1.55rem;
+        }
+
+        .promo-kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .promo-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .promo-search-wrap {
+            max-width: none;
+        }
+
+        .promo-filter {
+            width: 100%;
+        }
+
+        .promo-list-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .promo-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .promo-field-full {
+            grid-column: auto;
+        }
+
+        .promo-modal {
+            padding: .5rem;
+        }
+
+        .promo-modal-panel {
+            max-height: calc(100vh - 1rem);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .promo-header-actions {
+            flex-direction: column;
+        }
+
+        .promo-header-actions .promo-button {
+            width: 100%;
+        }
+
+        .promo-kpi {
+            padding: 1rem;
+        }
+
+        .promo-modal-body {
+            padding: 1rem;
+        }
+
+        .promo-modal-footer {
+            padding: .9rem 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main_class %}promotions-shell{% endblock %}
+
+{% block header %}
+    {% include 'header.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="promotions-main">
+
+    <!-- PAGE HEADER -->
+    <section class="promo-page-header">
+        <div class="promo-title-wrap">
+            <div class="promo-eyebrow">
+                <span>●</span>
+                Commercial
+            </div>
+
+            <h1 class="promo-page-title">Promotions & Offres</h1>
+
+            <p class="promo-page-subtitle">
+                Créez, activez et suivez vos offres commerciales sur les articles du dépôt.
+            </p>
+        </div>
+
+        <div class="promo-header-actions">
+            <a href="{{ url_for('dashboard') }}"
+               class="promo-button promo-button-secondary">
+                ← Tableau de bord
+            </a>
+
+            <button type="button"
+                    class="promo-button promo-button-primary"
+                    onclick="openPromotionModal()">
+                + Nouvelle promotion
+            </button>
+        </div>
+    </section>
+
+    <!-- KPI -->
+    <section class="promo-kpi-grid">
+
+        <div class="promo-kpi">
+            <div class="promo-kpi-icon">✓</div>
+            <div>
+                <div class="promo-kpi-label">Promotions actives</div>
+                <div class="promo-kpi-value" id="kpiActive">0</div>
+            </div>
+        </div>
+
+        <div class="promo-kpi">
+            <div class="promo-kpi-icon">◷</div>
+            <div>
+                <div class="promo-kpi-label">Programmées</div>
+                <div class="promo-kpi-value" id="kpiScheduled">0</div>
+            </div>
+        </div>
+
+        <div class="promo-kpi">
+            <div class="promo-kpi-icon">↘</div>
+            <div>
+                <div class="promo-kpi-label">Expirées</div>
+                <div class="promo-kpi-value" id="kpiExpired">0</div>
+            </div>
+        </div>
+
+        <div class="promo-kpi">
+            <div class="promo-kpi-icon">%</div>
+            <div>
+                <div class="promo-kpi-label">Économies clients</div>
+                <div class="promo-kpi-value" id="kpiSavings">0 FCFA</div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- TOOLBAR -->
+    <section class="promo-toolbar">
+
+        <div class="promo-search-wrap">
+            <span class="promo-search-icon">⌕</span>
+            <input
+                type="search"
+                id="promotionSearch"
+                class="promo-search"
+                placeholder="Rechercher une promotion..."
+                autocomplete="off">
+        </div>
+
+        <select id="promotionStatusFilter" class="promo-filter">
+            <option value="all">Tous les statuts</option>
+            <option value="active">Actives</option>
+            <option value="scheduled">Programmées</option>
+            <option value="expired">Expirées</option>
+            <option value="disabled">Désactivées</option>
+        </select>
+
+    </section>
+
+    <!-- PROMOTION LIST -->
+    <section class="promo-list-card">
+
+        <div class="promo-list-header">
+            <h2 class="promo-list-title">Toutes les promotions</h2>
+            <span class="promo-list-count" id="promotionListCount">
+                {{ promotions|length }} promotion(s)
+            </span>
+        </div>
+
+        {% if promotions %}
+
+        <div class="promo-table-wrap">
+            <table class="promo-table">
+                <thead>
+                    <tr>
+                        <th>Promotion</th>
+                        <th>Offre</th>
+                        <th>Période</th>
+                        <th>Articles</th>
+                        <th>Utilisation</th>
+                        <th>Économies</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="promotionTableBody">
+
+                {% for promotion in promotions %}
+
+                    <tr
+                        class="promotion-row"
+                        data-promotion-name="{{ promotion.promotionName|lower }}"
+                        data-start="{{ promotion.startDate }}"
+                        data-end="{{ promotion.endDate }}"
+                        data-active="{{ promotion.promotionActive }}"
+                        data-savings="{{ promotion.totalDiscount or 0 }}"
+                        data-status="">
+
+                        <td>
+                            <div class="promo-name">
+                                {{ promotion.promotionName }}
+                            </div>
+
+                            {% if promotion.promotionDescription %}
+                            <div class="promo-description"
+                                 title="{{ promotion.promotionDescription }}">
+                                {{ promotion.promotionDescription }}
+                            </div>
+                            {% else %}
+                            <div class="promo-description">
+                                Aucune description
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="promo-discount">
+                                {% if promotion.promotionType == 'percentage' %}
+                                    -{{ promotion.discountValue|round(2) }}%
+                                {% else %}
+                                    -{{ "{:,.0f}".format(promotion.discountValue).replace(",", " ") }} FCFA
+                                {% endif %}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="promo-date">
+                                <strong>{{ promotion.startDate }}</strong>
+                                <br>
+                                au {{ promotion.endDate }}
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="promo-articles-count">
+                                {{ promotion.articleCount or 0 }}
+                                article{% if (promotion.articleCount or 0) != 1 %}s{% endif %}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="promo-usage-main">
+                                {{ promotion.usageCount or 0 }} utilisation{% if (promotion.usageCount or 0) != 1 %}s{% endif %}
+                            </div>
+
+                            <div class="promo-usage-sub">
+                                {{ promotion.usageQuantity or 0 }} unité{% if (promotion.usageQuantity or 0) != 1 %}s{% endif %}
+                            </div>
+
+                            {% if promotion.lastUsedAt %}
+                            <div class="promo-usage-sub">
+                                Dernière : {{ promotion.lastUsedAt }}
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="promo-savings">
+                                {{ "{:,.0f}".format(promotion.totalDiscount or 0).replace(",", " ") }} FCFA
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="promo-status"></span>
+                        </td>
+
+                        <td>
+                            <div class="promo-actions">
+
+                                <form method="POST"
+                                      action="{{ url_for('toggle_promotion', promotion_id=promotion.promotionId) }}"
+                                      class="promo-action-form">
+
+                                    <button type="submit"
+                                            class="promo-action">
+                                        {% if promotion.promotionActive %}
+                                            Désactiver
+                                        {% else %}
+                                            Activer
+                                        {% endif %}
+                                    </button>
+                                </form>
+
+                                <form method="POST"
+                                      action="{{ url_for('delete_promotion', promotion_id=promotion.promotionId) }}"
+                                      class="promo-action-form"
+                                      onsubmit="return confirm('Supprimer cette promotion ? Cette action est irréversible si elle n’a aucun historique d’utilisation.');">
+
+                                    <button type="submit"
+                                            class="promo-action promo-action-danger">
+                                        Supprimer
+                                    </button>
+                                </form>
+
+                                <a href="{{ url_for('admin_promotion_history') }}"
+                                   class="promo-history-link">
+                                    Historique
+                                </a>
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+                    {% set linked_articles = promotion_articles.get(promotion.promotionId, []) %}
+
+                    {% if linked_articles %}
+                    <tr class="promo-article-row promotion-row-details"
+                        data-parent="{{ promotion.promotionId }}">
+                        <td colspan="8">
+
+                            <div class="promo-article-box">
+
+                                <div class="promo-article-heading">
+                                    Articles concernés
+                                </div>
+
+                                <div class="promo-article-list">
+
+                                    {% for article in linked_articles %}
+                                    <span class="promo-article-chip">
+                                        <strong>{{ article.productName }}</strong>
+
+                                        {% if article.articleVolume %}
+                                            {{ article.articleVolume }}
+                                        {% endif %}
+
+                                        {% if article.articlePackage %}
+                                            · {{ article.articlePackage }}
+                                        {% endif %}
+                                    </span>
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        <div id="promotionEmptyFilter" class="promo-empty" style="display:none;">
+            <div class="promo-empty-icon">⌕</div>
+            <h3>Aucune promotion trouvée</h3>
+            <p>
+                Aucune promotion ne correspond à votre recherche ou au filtre sélectionné.
+            </p>
+        </div>
+
+        {% else %}
+
+        <div class="promo-empty">
+            <div class="promo-empty-icon">%</div>
+            <h3>Aucune promotion</h3>
+            <p>
+                Commencez par créer une promotion pour mettre en avant vos produits.
+            </p>
+
+            <button type="button"
+                    class="promo-button promo-button-primary"
+                    onclick="openPromotionModal()">
+                + Créer la première promotion
+            </button>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+<!-- =========================================================
+     CREATE PROMOTION MODAL
+     ========================================================= -->
+
+<div id="promotionModal"
+     class="promo-modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="promotionModalTitle">
+
+    <div class="promo-modal-panel">
+
+        <div class="promo-modal-header">
+
+            <div>
+                <h2 id="promotionModalTitle" class="promo-modal-title">
+                    Nouvelle promotion
+                </h2>
+
+                <p class="promo-modal-subtitle">
+                    Configurez l'offre et sélectionnez les articles concernés.
+                </p>
+            </div>
+
+            <button type="button"
+                    class="promo-close"
+                    onclick="closePromotionModal()"
+                    aria-label="Fermer">
+                ×
+            </button>
+
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('create_promotion') }}"
+              id="promotionCreateForm">
+
+            <div class="promo-modal-body">
+
+                <div class="promo-form-grid">
+
+                    <div class="promo-field promo-field-full">
+                        <label class="promo-label" for="promotionName">
+                            Nom de la promotion *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="promotionName"
+                            name="promotionName"
+                            class="promo-input"
+                            placeholder="Ex. Offre rentrée -10%"
+                            required>
+                    </div>
+
+                    <div class="promo-field">
+                        <label class="promo-label" for="promotionType">
+                            Type d'offre *
+                        </label>
+
+                        <select
+                            id="promotionType"
+                            name="promotionType"
+                            class="promo-select"
+                            required>
+
+                            <option value="percentage">
+                                Pourcentage (%)
+                            </option>
+
+                            <option value="fixed">
+                                Réduction fixe (FCFA)
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <div class="promo-field">
+                        <label class="promo-label" for="discountValue">
+                            Valeur de la réduction *
+                        </label>
+
+                        <input
+                            type="number"
+                            id="discountValue"
+                            name="discountValue"
+                            class="promo-input"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="10"
+                            required>
+                    </div>
+
+                    <div class="promo-field">
+                        <label class="promo-label" for="startDate">
+                            Date de début *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="startDate"
+                            name="startDate"
+                            class="promo-input"
+                            required>
+                    </div>
+
+                    <div class="promo-field">
+                        <label class="promo-label" for="endDate">
+                            Date de fin *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="endDate"
+                            name="endDate"
+                            class="promo-input"
+                            required>
+                    </div>
+
+                    <div class="promo-field promo-field-full">
+                        <label class="promo-label" for="promotionDescription">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="promotionDescription"
+                            name="promotionDescription"
+                            class="promo-textarea"
+                            placeholder="Décrivez brièvement l'offre..."></textarea>
+                    </div>
+
+                </div>
+
+                <div class="promo-article-selection">
+
+                    <div class="promo-selection-head">
+                        <h3 class="promo-selection-title">
+                            Articles concernés *
+                        </h3>
+
+                        <span class="promo-selection-count"
+                              id="selectedArticleCount">
+                            0 sélectionné
+                        </span>
+                    </div>
+
+                    <div class="promo-article-search">
+                        <input
+                            type="search"
+                            id="articleSearch"
+                            class="promo-input"
+                            placeholder="Rechercher un produit ou une référence..."
+                            autocomplete="off">
+                    </div>
+
+                    <div class="promo-article-options"
+                         id="articleOptions">
+
+                        {% if articles %}
+
+                            {% for article in articles %}
+
+                            <label class="promo-article-option"
+                                   data-article-search="{{ article.productName|lower }} {{ article.articleVolume|lower if article.articleVolume else '' }} {{ article.articlePackage|lower if article.articlePackage else '' }}">
+
+                                <input
+                                    type="checkbox"
+                                    name="articleIds"
+                                    value="{{ article.articleId }}"
+                                    class="article-checkbox">
+
+                                <div class="promo-article-info">
+
+                                    <div class="promo-article-name">
+                                        {{ article.productName }}
+                                    </div>
+
+                                    <div class="promo-article-meta">
+
+                                        {% if article.articleVolume %}
+                                            {{ article.articleVolume }}
+                                        {% endif %}
+
+                                        {% if article.articlePackage %}
+                                            · {{ article.articlePackage }}
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="promo-article-price">
+                                    {{ "{:,.0f}".format(article.articlePrice or 0).replace(",", " ") }} FCFA
+                                </div>
+
+                            </label>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <div class="promo-no-articles">
+                                Aucun article actif disponible.
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="promo-modal-footer">
+
+                <button type="button"
+                        class="promo-button promo-button-secondary"
+                        onclick="closePromotionModal()">
+                    Annuler
+                </button>
+
+                <button type="submit"
+                        class="promo-button promo-button-primary">
+                    Créer la promotion
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    "use strict";
+
+    const modal = document.getElementById("promotionModal");
+    const searchInput = document.getElementById("promotionSearch");
+    const statusFilter = document.getElementById("promotionStatusFilter");
+    const rows = Array.from(document.querySelectorAll(".promotion-row[data-promotion-name]"));
+    const countElement = document.getElementById("promotionListCount");
+    const emptyFilter = document.getElementById("promotionEmptyFilter");
+
+    function parseDate(value) {
+        if (!value) {
+            return null;
+        }
+
+        const normalized = String(value).trim().replace(" ", "T");
+        const date = new Date(normalized);
+
+        if (!Number.isNaN(date.getTime())) {
+            return date;
+        }
+
+        const fallback = new Date(String(value).trim());
+        return Number.isNaN(fallback.getTime()) ? null : fallback;
+    }
+
+    function classifyPromotion(row) {
+        const active = row.dataset.active === "1";
+        const start = parseDate(row.dataset.start);
+        const end = parseDate(row.dataset.end);
+        const now = new Date();
+
+        let status = "disabled";
+        let label = "Désactivée";
+
+        if (!active) {
+            status = "disabled";
+            label = "Désactivée";
+        } else if (end && now > end) {
+            status = "expired";
+            label = "Expirée";
+        } else if (start && now < start) {
+            status = "scheduled";
+            label = "Programmée";
+        } else {
+            status = "active";
+            label = "Active";
+        }
+
+        row.dataset.status = status;
+
+        const badge = row.querySelector(".promo-status");
+
+        if (badge) {
+            badge.textContent = label;
+            badge.className = "promo-status promo-status-" + status;
+        }
+
+        return status;
+    }
+
+    function updateKPIs() {
+        let active = 0;
+        let scheduled = 0;
+        let expired = 0;
+        let savings = 0;
+
+        rows.forEach(function (row) {
+            const status = classifyPromotion(row);
+
+            if (status === "active") {
+                active++;
+            } else if (status === "scheduled") {
+                scheduled++;
+            } else if (status === "expired") {
+                expired++;
+            }
+
+            const value = Number(row.dataset.savings || 0);
+
+            if (!Number.isNaN(value)) {
+                savings += value;
+            }
+        });
+
+        const activeElement = document.getElementById("kpiActive");
+        const scheduledElement = document.getElementById("kpiScheduled");
+        const expiredElement = document.getElementById("kpiExpired");
+        const savingsElement = document.getElementById("kpiSavings");
+
+        if (activeElement) {
+            activeElement.textContent = active;
+        }
+
+        if (scheduledElement) {
+            scheduledElement.textContent = scheduled;
+        }
+
+        if (expiredElement) {
+            expiredElement.textContent = expired;
+        }
+
+        if (savingsElement) {
+            savingsElement.textContent =
+                new Intl.NumberFormat("fr-FR").format(Math.round(savings)) + " FCFA";
+        }
+    }
+
+    function filterPromotions() {
+        const query = (searchInput ? searchInput.value : "").trim().toLowerCase();
+        const selectedStatus = statusFilter ? statusFilter.value : "all";
+
+        let visible = 0;
+
+        rows.forEach(function (row) {
+            const name = row.dataset.promotionName || "";
+            const status = row.dataset.status || classifyPromotion(row);
+
+            const matchesSearch =
+                !query ||
+                name.includes(query);
+
+            const matchesStatus =
+                selectedStatus === "all" ||
+                status === selectedStatus;
+
+            const show = matchesSearch && matchesStatus;
+
+            row.style.display = show ? "" : "none";
+
+            const parentId = row.querySelector("form[action*='/toggle']");
+
+            if (parentId) {
+                const articleRow = row.nextElementSibling;
+
+                if (
+                    articleRow &&
+                    articleRow.classList.contains("promo-article-row")
+                ) {
+                    articleRow.style.display = show ? "" : "none";
+                }
+            }
+
+            if (show) {
+                visible++;
+            }
+        });
+
+        if (countElement) {
+            countElement.textContent =
+                visible + " promotion" + (visible !== 1 ? "s" : "");
+        }
+
+        if (emptyFilter) {
+            emptyFilter.style.display =
+                rows.length > 0 && visible === 0 ? "block" : "none";
+        }
+    }
+
+    window.openPromotionModal = function () {
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        const nameInput = document.getElementById("promotionName");
+
+        if (nameInput) {
+            setTimeout(function () {
+                nameInput.focus();
+            }, 100);
+        }
+    };
+
+    window.closePromotionModal = function () {
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.remove("is-open");
+        document.body.style.overflow = "";
+    };
+
+    if (modal) {
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                window.closePromotionModal();
+            }
+        });
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal && modal.classList.contains("is-open")) {
+            window.closePromotionModal();
+        }
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener("input", filterPromotions);
+    }
+
+    if (statusFilter) {
+        statusFilter.addEventListener("change", filterPromotions);
+    }
+
+    /* ---------- Article search ---------- */
+
+    const articleSearch = document.getElementById("articleSearch");
+    const articleOptions = document.querySelectorAll(".promo-article-option");
+    const articleCheckboxes = document.querySelectorAll(".article-checkbox");
+    const selectedArticleCount = document.getElementById("selectedArticleCount");
+
+    function updateSelectedArticleCount() {
+        if (!selectedArticleCount) {
+            return;
+        }
+
+        const count = Array.from(articleCheckboxes).filter(function (checkbox) {
+            return checkbox.checked;
+        }).length;
+
+        selectedArticleCount.textContent =
+            count + " sélectionné" + (count !== 1 ? "s" : "");
+    }
+
+    if (articleSearch) {
+        articleSearch.addEventListener("input", function () {
+            const query = articleSearch.value.trim().toLowerCase();
+
+            articleOptions.forEach(function (option) {
+                const searchable = option.dataset.articleSearch || "";
+                option.style.display =
+                    !query || searchable.includes(query) ? "" : "none";
+            });
+        });
+    }
+
+    articleCheckboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", updateSelectedArticleCount);
+    });
+
+    /* ---------- Form validation ---------- */
+
+    const promotionForm = document.getElementById("promotionCreateForm");
+
+    if (promotionForm) {
+        promotionForm.addEventListener("submit", function (event) {
+            const selected = Array.from(
+                document.querySelectorAll(".article-checkbox:checked")
+            );
+
+            if (selected.length === 0) {
+                event.preventDefault();
+                alert("Veuillez sélectionner au moins un article.");
+                return;
+            }
+
+            const type = document.getElementById("promotionType");
+            const value = document.getElementById("discountValue");
+
+            if (
+                type &&
+                value &&
+                type.value === "percentage" &&
+                Number(value.value) > 100
+            ) {
+                event.preventDefault();
+                alert("Une réduction en pourcentage ne peut pas dépasser 100 %.");
+                return;
+            }
+
+            const start = document.getElementById("startDate");
+            const end = document.getElementById("endDate");
+
+            if (start && end && start.value && end.value && end.value < start.value) {
+                event.preventDefault();
+                alert("La date de fin doit être postérieure ou égale à la date de début.");
+            }
+        });
+    }
+
+    /* ---------- Initialisation ---------- */
+
+    updateKPIs();
+    filterPromotions();
+    updateSelectedArticleCount();
+
+})();
+</script>
+{% endblock %}

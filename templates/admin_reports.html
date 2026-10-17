@@ -1,0 +1,1582 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Rapports & Analyses{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ============================================================
+   REPORTS PAGE
+   ============================================================ */
+
+.reports-shell {
+    margin-left: var(--sidebar-width, 260px);
+    padding: calc(var(--header-height, 70px) + 1.5rem) 2rem 3rem;
+    min-height: 100vh;
+    background: #f5f7fb;
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.reports-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.reports-header-left {
+    min-width: 0;
+}
+
+.reports-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .35rem;
+    color: #64748b;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.reports-eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2563eb;
+}
+
+.reports-header h1 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 750;
+    letter-spacing: -.03em;
+}
+
+.reports-header p {
+    margin: .45rem 0 0;
+    color: #64748b;
+    font-size: .92rem;
+}
+
+.reports-header-actions {
+    display: flex;
+    gap: .65rem;
+    flex-shrink: 0;
+}
+
+.report-header-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    min-height: 42px;
+    padding: 0 .9rem;
+    border: 1px solid #dbe2ea;
+    border-radius: 10px;
+    background: #fff;
+    color: #334155;
+    font-size: .82rem;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .18s ease;
+}
+
+.report-header-button:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.report-header-button.primary {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #fff;
+}
+
+.report-header-button.primary:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+/* ============================================================
+   FILTER BAR
+   ============================================================ */
+
+.report-filter {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: .8rem;
+    padding: 1rem;
+    margin-bottom: 1.35rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .025);
+}
+
+.report-filter-title {
+    width: 100%;
+    margin-bottom: -.2rem;
+    color: #0f172a;
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.report-filter label {
+    display: flex;
+    flex-direction: column;
+    gap: .38rem;
+    color: #64748b;
+    font-size: .74rem;
+    font-weight: 700;
+}
+
+.report-filter input {
+    width: 165px;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 0 .75rem;
+    border: 1px solid #d7dee8;
+    border-radius: 9px;
+    outline: none;
+    background: #fff;
+    color: #1e293b;
+    font-family: inherit;
+    font-size: .82rem;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.report-filter input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .10);
+}
+
+.report-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.report-filter button,
+.report-filter a {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 .9rem;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: .8rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.report-filter button {
+    border: 1px solid #2563eb;
+    background: #2563eb;
+    color: #fff;
+}
+
+.report-filter button:hover {
+    background: #1d4ed8;
+}
+
+.report-filter a {
+    border: 1px solid #dbe2ea;
+    background: #f8fafc;
+    color: #475569;
+}
+
+.report-filter a:hover {
+    background: #f1f5f9;
+}
+
+/* ============================================================
+   KPI CARDS
+   ============================================================ */
+
+.report-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.report-kpi {
+    position: relative;
+    min-height: 126px;
+    padding: 1.15rem 1.2rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .025);
+}
+
+.report-kpi::after {
+    content: "";
+    position: absolute;
+    right: -25px;
+    bottom: -35px;
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, .045);
+}
+
+.report-kpi-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: .7rem;
+}
+
+.report-kpi-label {
+    color: #64748b;
+    font-size: .76rem;
+    font-weight: 650;
+}
+
+.report-kpi-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: .95rem;
+    font-weight: 800;
+}
+
+.report-kpi-value {
+    display: block;
+    margin-top: .65rem;
+    color: #0f172a;
+    font-size: 1.45rem;
+    line-height: 1.15;
+    font-weight: 750;
+    letter-spacing: -.025em;
+}
+
+.report-kpi-sub {
+    display: block;
+    margin-top: .4rem;
+    color: #94a3b8;
+    font-size: .7rem;
+}
+
+/* ============================================================
+   MAIN GRID
+   ============================================================ */
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+}
+
+.report-card {
+    min-width: 0;
+    padding: 1.2rem;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .025);
+    overflow: hidden;
+}
+
+.report-card.full {
+    grid-column: 1 / -1;
+}
+
+.report-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.report-card-title {
+    min-width: 0;
+}
+
+.report-card h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: .98rem;
+    line-height: 1.3;
+    font-weight: 750;
+}
+
+.report-card-subtitle {
+    margin-top: .3rem;
+    color: #94a3b8;
+    font-size: .72rem;
+}
+
+.report-card-badge {
+    flex-shrink: 0;
+    padding: .32rem .55rem;
+    border-radius: 7px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: .68rem;
+    font-weight: 700;
+}
+
+/* ============================================================
+   SALES CHART
+   ============================================================ */
+
+.sales-chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 330px;
+}
+
+.sales-chart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+
+.report-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.report-table {
+    width: 100%;
+    min-width: 500px;
+    border-collapse: collapse;
+}
+
+.report-table th {
+    padding: .65rem .55rem;
+    border-bottom: 1px solid #e8edf3;
+    color: #94a3b8;
+    font-size: .66rem;
+    font-weight: 750;
+    letter-spacing: .045em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.report-table td {
+    padding: .78rem .55rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    font-size: .78rem;
+    white-space: nowrap;
+}
+
+.report-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.report-table tbody tr {
+    transition: background .15s ease;
+}
+
+.report-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.report-number {
+    text-align: right !important;
+}
+
+.report-product {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+}
+
+.report-rank {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 7px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: .68rem;
+    font-weight: 750;
+}
+
+.report-product-name {
+    color: #1e293b;
+    font-weight: 650;
+}
+
+.report-secondary {
+    color: #94a3b8;
+    font-size: .7rem;
+}
+
+.report-amount {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.report-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 130px;
+    color: #94a3b8;
+    font-size: .8rem;
+    text-align: center;
+}
+
+/* ============================================================
+   PAYMENT / STATUS
+   ============================================================ */
+
+.report-method-row,
+.report-status-row {
+    margin-bottom: 1rem;
+}
+
+.report-method-row:last-child,
+.report-status-row:last-child {
+    margin-bottom: 0;
+}
+
+.report-method-top,
+.report-status-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: .4rem;
+}
+
+.report-method-name,
+.report-status-name {
+    color: #334155;
+    font-size: .77rem;
+    font-weight: 650;
+}
+
+.report-method-value,
+.report-status-value {
+    color: #64748b;
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+.report-progress {
+    width: 100%;
+    height: 7px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #eef2f7;
+}
+
+.report-progress-bar {
+    height: 100%;
+    min-width: 4px;
+    border-radius: inherit;
+    background: #3b82f6;
+}
+
+/* ============================================================
+   MINI METRICS
+   ============================================================ */
+
+.report-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .7rem;
+}
+
+.report-mini {
+    padding: .9rem;
+    border: 1px solid #edf1f5;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.report-mini-label {
+    display: block;
+    margin-bottom: .35rem;
+    color: #94a3b8;
+    font-size: .68rem;
+    font-weight: 650;
+}
+
+.report-mini-value {
+    display: block;
+    color: #0f172a;
+    font-size: 1.12rem;
+    font-weight: 750;
+}
+
+/* ============================================================
+   PURCHASE SUMMARY
+   ============================================================ */
+
+.purchase-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .7rem;
+}
+
+.purchase-stat {
+    padding: .85rem;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.purchase-stat-label {
+    display: block;
+    margin-bottom: .3rem;
+    color: #94a3b8;
+    font-size: .66rem;
+    font-weight: 650;
+}
+
+.purchase-stat-value {
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 750;
+}
+
+/* ============================================================
+   STATUS PILLS
+   ============================================================ */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: .28rem .55rem;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: .65rem;
+    font-weight: 700;
+}
+
+.status-pill.delivered {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-pill.pending {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.status-pill.delivery {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1200px) {
+    .reports-shell {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .report-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .purchase-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 950px) {
+    .reports-shell {
+        margin-left: 0;
+    }
+
+    .report-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-card.full {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 700px) {
+    .reports-shell {
+        padding: calc(var(--header-height, 70px) + 1rem) 1rem 2rem;
+    }
+
+    .reports-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .reports-header-actions {
+        width: 100%;
+    }
+
+    .report-header-button {
+        flex: 1;
+    }
+
+    .report-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .report-filter {
+        align-items: stretch;
+    }
+
+    .report-filter input {
+        width: 100%;
+    }
+
+    .report-filter label {
+        width: 100%;
+    }
+
+    .report-filter-actions {
+        width: 100%;
+    }
+
+    .report-filter-actions button,
+    .report-filter-actions a {
+        flex: 1;
+    }
+
+    .report-mini-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .purchase-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .sales-chart-wrapper {
+        height: 270px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reports-shell">
+
+    <!-- ========================================================
+         HEADER
+         ======================================================== -->
+
+    <header class="reports-header">
+
+        <div class="reports-header-left">
+
+            <div class="reports-eyebrow">
+                Tableau de bord analytique
+            </div>
+
+            <h1>Rapports & Analyses</h1>
+
+            <p>
+                Suivez les performances commerciales, les clients,
+                les stocks et les approvisionnements.
+            </p>
+
+        </div>
+
+        <div class="reports-header-actions">
+
+            <button
+                type="button"
+                class="report-header-button"
+                onclick="window.print()"
+            >
+                Imprimer
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ========================================================
+         FILTERS
+         ======================================================== -->
+
+    <form
+        class="report-filter"
+        method="get"
+        action="{{ url_for('admin_reports') }}"
+    >
+
+        <div class="report-filter-title">
+            Période d'analyse
+        </div>
+
+        <label>
+            Date de début
+            <input
+                type="date"
+                name="start_date"
+                value="{{ start_date }}"
+            >
+        </label>
+
+        <label>
+            Date de fin
+            <input
+                type="date"
+                name="end_date"
+                value="{{ end_date }}"
+            >
+        </label>
+
+        <div class="report-filter-actions">
+
+            <button type="submit">
+                Appliquer
+            </button>
+
+            {% if start_date or end_date %}
+                <a href="{{ url_for('admin_reports') }}">
+                    Réinitialiser
+                </a>
+            {% endif %}
+
+        </div>
+
+    </form>
+
+
+    <!-- ========================================================
+         KPI
+         ======================================================== -->
+
+    <section class="report-kpis">
+
+        <article class="report-kpi">
+
+            <div class="report-kpi-top">
+
+                <span class="report-kpi-label">
+                    Chiffre d'affaires
+                </span>
+
+                <span class="report-kpi-icon">
+                    CA
+                </span>
+
+            </div>
+
+            <strong class="report-kpi-value">
+                {{ "{:,.0f}".format(sales_summary.totalRevenue or 0).replace(",", " ") }}
+                FCFA
+            </strong>
+
+            <span class="report-kpi-sub">
+                Commandes livrées
+            </span>
+
+        </article>
+
+
+        <article class="report-kpi">
+
+            <div class="report-kpi-top">
+
+                <span class="report-kpi-label">
+                    Commandes livrées
+                </span>
+
+                <span class="report-kpi-icon">
+                    CMD
+                </span>
+
+            </div>
+
+            <strong class="report-kpi-value">
+                {{ sales_summary.totalOrders or 0 }}
+            </strong>
+
+            <span class="report-kpi-sub">
+                Ventes finalisées
+            </span>
+
+        </article>
+
+
+        <article class="report-kpi">
+
+            <div class="report-kpi-top">
+
+                <span class="report-kpi-label">
+                    Panier moyen
+                </span>
+
+                <span class="report-kpi-icon">
+                    AVG
+                </span>
+
+            </div>
+
+            <strong class="report-kpi-value">
+                {{ "{:,.0f}".format(sales_summary.averageOrder or 0).replace(",", " ") }}
+                FCFA
+            </strong>
+
+            <span class="report-kpi-sub">
+                Valeur moyenne par commande
+            </span>
+
+        </article>
+
+
+        <article class="report-kpi">
+
+            <div class="report-kpi-top">
+
+                <span class="report-kpi-label">
+                    Total commandes
+                </span>
+
+                <span class="report-kpi-icon">
+                    #
+                </span>
+
+            </div>
+
+            <strong class="report-kpi-value">
+                {{ all_order_summary.totalOrders or 0 }}
+            </strong>
+
+            <span class="report-kpi-sub">
+                Toutes commandes confondues
+            </span>
+
+        </article>
+
+    </section>
+
+
+    <!-- ========================================================
+         REPORT GRID
+         ======================================================== -->
+
+    <div class="report-grid">
+
+
+        <!-- ====================================================
+             SALES EVOLUTION
+             ==================================================== -->
+
+        <section class="report-card full">
+
+            <div class="report-card-header">
+
+                <div class="report-card-title">
+
+                    <h2>Évolution des ventes</h2>
+
+                    <div class="report-card-subtitle">
+                        Chiffre d'affaires des commandes livrées
+                    </div>
+
+                </div>
+
+                <span class="report-card-badge">
+                    CA / Période
+                </span>
+
+            </div>
+
+            {% if sales_evolution %}
+
+                <div class="sales-chart-wrapper">
+                    <canvas
+                        id="reportsSalesChart"
+                        class="sales-chart"
+                    ></canvas>
+                </div>
+
+            {% else %}
+
+                <div class="report-empty">
+                    Aucune vente livrée pour cette période.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- ====================================================
+             TOP PRODUCTS
+             ==================================================== -->
+
+        <section class="report-card">
+
+            <div class="report-card-header">
+
+                <div class="report-card-title">
+
+                    <h2>Produits les plus vendus</h2>
+
+                    <div class="report-card-subtitle">
+                        Performance par article
+                    </div>
+
+                </div>
+
+                <span class="report-card-badge">
+                    Top 10
+                </span>
+
+            </div>
+
+            {% if top_products %}
+
+                <div class="report-table-wrapper">
+
+                    <table class="report-table">
+
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Volume</th>
+                                <th class="report-number">Qté</th>
+                                <th class="report-number">CA</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for product in top_products %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="report-product">
+
+                                        <span class="report-rank">
+                                            {{ loop.index }}
+                                        </span>
+
+                                        <span>
+                                            <span class="report-product-name">
+                                                {{ product.productName or "Produit inconnu" }}
+                                            </span>
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                                <td class="report-secondary">
+                                    {{ product.articleVolume or "-" }}
+                                </td>
+
+                                <td class="report-number">
+                                    {{ product.quantity or 0 }}
+                                </td>
+
+                                <td class="report-number report-amount">
+                                    {{ "{:,.0f}".format(product.revenue or 0).replace(",", " ") }}
+                                    FCFA
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="report-empty">
+                    Aucune donnée disponible.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- ====================================================
+             TOP CLIENTS
+             ==================================================== -->
+
+        <section class="report-card">
+
+            <div class="report-card-header">
+
+                <div class="report-card-title">
+
+                    <h2>Meilleurs clients</h2>
+
+                    <div class="report-card-subtitle">
+                        Clients ayant généré le plus de chiffre d'affaires
+                    </div>
+
+                </div>
+
+                <span class="report-card-badge">
+                    Top 10
+                </span>
+
+            </div>
+
+            {% if top_clients %}
+
+                <div class="report-table-wrapper">
+
+                    <table class="report-table">
+
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th class="report-number">Commandes</th>
+                                <th class="report-number">CA</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for client in top_clients %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="report-product">
+
+                                        <span class="report-rank">
+                                            {{ loop.index }}
+                                        </span>
+
+                                        <span class="report-product-name">
+                                            {{ client.userName or "" }}
+                                            {{ client.userSurname or "" }}
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                                <td class="report-number">
+                                    {{ client.orderCount or 0 }}
+                                </td>
+
+                                <td class="report-number report-amount">
+                                    {{ "{:,.0f}".format(client.revenue or 0).replace(",", " ") }}
+                                    FCFA
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="report-empty">
+                    Aucun client avec des ventes livrées.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- ====================================================
+             PAYMENT METHODS
+             ==================================================== -->
+
+        <section class="report-card">
+
+            <div class="report-card-header">
+
+                <div class="report-card-title">
+
+                    <h2>Moyens de paiement</h2>
+
+                    <div class="report-card-subtitle">
+                        Répartition des ventes par mode de paiement
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% if payment_methods %}
+
+                {% set payment_total = payment_methods | sum(attribute='revenue') %}
+
+                {% for payment in payment_methods %}
+
+                    {% set percentage = ((payment.revenue or 0) / payment_total * 100) if payment_total else 0 %}
+
+                    <div class="report-method-row">
+
+                        <div class="report-method-top">
+
+                            <span class="report-method-name">
+                                {{ payment.method or "Non renseigné" }}
+                            </span>
+
+                            <span class="report-method-value">
+                                {{ "{:,.0f}".format(payment.revenue or 0).replace(",", " ") }}
+                                FCFA
+                                ·
+                                {{ payment.orderCount or 0 }} commande{% if (payment.orderCount or 0) != 1 %}s{% endif %}
+                            </span>
+
+                        </div>
+
+                        <div class="report-progress">
+
+                            <div
+                                class="report-progress-bar"
+                                style="width: {{ percentage|round(1) }}%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="report-empty">
+                    Aucune donnée disponible.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- ====================================================
+             ORDER STATUSES
+             ==================================================== -->
+
+        <section class="report-card">
+
+            <div class="report-card-header">
+
+                <div class="report-card-title">
+
+                    <h2>Statuts des commandes</h2>
+
+                    <div class="report-card-subtitle">
+                        Vue globale du cycle des commandes
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% if order_statuses %}
+
+                {% set order_total = order_statuses | sum(attribute='orderCount') %}
+
+                {% for status in order_statuses %}
+
+                    {% set percentage = ((status.orderCount or 0) / order_total * 100) if order_total else 0 %}
+
+                    <div class="report-status-row">
+
+                        <div class="report-status-top">
+
+                            <span>
+
+                                {% if status.status == "livree" %}
+                                    <span class="status-pill delivered">
+                                        Livrée
+                                    </span>
+
+                                {% elif status.status == "en_livraison" %}
+                                    <span class="status-pill delivery">
+                                        En livraison
+                                    </span>
+
+                                {% elif status.status == "en_attente" %}
+                                    <span class="status-pill pending">
+                                        En attente
+                                    </span>
+
+                                {% else %}
+                                    <span class="status-pill">
+                                        {{ status.status }}
+                                    </span>
+                                {% endif %}
+
+                            </span>
+
+                            <span class="report-status-value">
+                                {{ status.orderCount or 0 }}
+                                commande{% if (status.orderCount or 0) != 1 %}s{% endif %}
+                                ·
+                                {{ "{:,.0f}".format(status.total or 0).replace(",", " ") }}
+                                FCFA
+                            </span>
+
+                        </div>
+
+                        <div class="report-progress">
+
+                            <div
+                                class="report-progress-bar"
+                                style="width: {{ percentage|round(1) }}%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="report-empty">
+                    Aucun statut de commande disponible.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- ====================================================
+             STOCK
+             ==================================================== -->
+
+        <section class="report-card">
+
+            <div class="report-card-header">
+
+                <div class="report-card-title">
+
+                    <h2>Stock & mouvements</h2>
+
+                    <div class="report-card-subtitle">
+                        Activité enregistrée dans le journal de stock
+                    </div>
+
+                </div>
+
+                <span class="report-card-badge">
+                    Stock
+                </span>
+
+            </div>
+
+            <div class="report-mini-grid">
+
+                <div class="report-mini">
+
+                    <span class="report-mini-label">
+                        Mouvements
+                    </span>
+
+                    <strong class="report-mini-value">
+                        {{ stock_summary.movementCount or 0 }}
+                    </strong>
+
+                </div>
+
+                <div class="report-mini">
+
+                    <span class="report-mini-label">
+                        Entrées
+                    </span>
+
+                    <strong class="report-mini-value">
+                        {{ stock_summary.totalIn or 0 }}
+                    </strong>
+
+                </div>
+
+                <div class="report-mini">
+
+                    <span class="report-mini-label">
+                        Sorties
+                    </span>
+
+                    <strong class="report-mini-value">
+                        {{ stock_summary.totalOut or 0 }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================================
+             PURCHASE ORDERS
+             ==================================================== -->
+
+        <section class="report-card">
+
+            <div class="report-card-header">
+
+                <div class="report-card-title">
+
+                    <h2>Approvisionnements</h2>
+
+                    <div class="report-card-subtitle">
+                        État des commandes fournisseurs
+                    </div>
+
+                </div>
+
+                <span class="report-card-badge">
+                    Achats
+                </span>
+
+            </div>
+
+            <div class="purchase-summary">
+
+                <div class="purchase-stat">
+
+                    <span class="purchase-stat-label">
+                        Total
+                    </span>
+
+                    <strong class="purchase-stat-value">
+                        {{ purchase_summary.totalPurchaseOrders or 0 }}
+                    </strong>
+
+                </div>
+
+                <div class="purchase-stat">
+
+                    <span class="purchase-stat-label">
+                        Brouillons
+                    </span>
+
+                    <strong class="purchase-stat-value">
+                        {{ purchase_summary.draftOrders or 0 }}
+                    </strong>
+
+                </div>
+
+                <div class="purchase-stat">
+
+                    <span class="purchase-stat-label">
+                        Soumises
+                    </span>
+
+                    <strong class="purchase-stat-value">
+                        {{ purchase_summary.submittedOrders or 0 }}
+                    </strong>
+
+                </div>
+
+                <div class="purchase-stat">
+
+                    <span class="purchase-stat-label">
+                        Reçues
+                    </span>
+
+                    <strong class="purchase-stat-value">
+                        {{ purchase_summary.receivedOrders or 0 }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const canvas = document.getElementById("reportsSalesChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const labels = [
+        {% for row in sales_evolution %}
+            "{{ row.saleDate }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const data = [
+        {% for row in sales_evolution %}
+            {{ row.total or 0 }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    new Chart(canvas, {
+
+        type: "line",
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: "Chiffre d'affaires",
+
+                data: data,
+
+                tension: 0.38,
+
+                fill: true,
+
+                borderWidth: 2,
+
+                pointRadius: 3,
+
+                pointHoverRadius: 6
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+                intersect: false,
+                mode: "index"
+            },
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function (context) {
+
+                            const value = context.parsed.y || 0;
+
+                            return (
+                                new Intl.NumberFormat("fr-FR").format(value)
+                                + " FCFA"
+                            );
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+                        display: false
+                    },
+
+                    ticks: {
+                        color: "#94a3b8",
+                        font: {
+                            size: 11
+                        }
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "rgba(148, 163, 184, .12)"
+                    },
+
+                    ticks: {
+
+                        color: "#94a3b8",
+
+                        font: {
+                            size: 11
+                        },
+
+                        callback: function (value) {
+
+                            return new Intl.NumberFormat("fr-FR", {
+                                notation: "compact",
+                                maximumFractionDigits: 1
+                            }).format(value);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+});
+</script>
+
+{% endblock %}

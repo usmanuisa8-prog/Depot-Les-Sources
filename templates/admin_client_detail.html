@@ -1,0 +1,2262 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+/* ============================================================
+   ADMIN CLIENT DETAIL - PROFESSIONAL ERP DESIGN
+   ============================================================ */
+
+.client-profile-page {
+    width: 100%;
+    max-width: 1540px;
+    margin: 0 auto;
+    padding: 104px 34px 48px;
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.client-profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.client-profile-header-left {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    min-width: 0;
+}
+
+.client-profile-back {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(100, 116, 139, 0.20);
+    border-radius: 11px;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.client-profile-back:hover {
+    transform: translateX(-2px);
+    background: rgba(100, 116, 139, 0.07);
+}
+
+.client-profile-avatar {
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.22);
+}
+
+.client-profile-title-wrap {
+    min-width: 0;
+}
+
+.client-profile-title {
+    margin: 0;
+    font-size: 27px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+}
+
+.client-profile-subtitle {
+    margin: 6px 0 0;
+    font-size: 13px;
+    opacity: 0.68;
+}
+
+.client-profile-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.client-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid rgba(100, 116, 139, 0.18);
+}
+
+.client-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.client-status-active {
+    color: #15803d;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.client-status-inactive {
+    color: #64748b;
+    background: #f8fafc;
+}
+
+/* ============================================================
+   KPI CARDS
+   ============================================================ */
+
+.client-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.client-kpi-card {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid rgba(100, 116, 139, 0.16);
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 7px 24px rgba(15, 23, 42, 0.055);
+}
+
+.client-kpi-card::after {
+    content: "";
+    position: absolute;
+    right: -24px;
+    bottom: -34px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.045);
+}
+
+.client-kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.client-kpi-icon {
+    width: 37px;
+    height: 37px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.client-kpi-label {
+    margin-top: 13px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.64;
+}
+
+.client-kpi-value {
+    margin-top: 4px;
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.client-kpi-meta {
+    margin-top: 5px;
+    font-size: 11px;
+    opacity: 0.56;
+}
+
+/* ============================================================
+   MAIN WORKSPACE
+   ============================================================ */
+
+.client-profile-grid {
+    display: grid;
+    grid-template-columns: minmax(315px, 0.82fr) minmax(0, 1.75fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.client-profile-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.client-profile-card {
+    overflow: hidden;
+    border: 1px solid rgba(100, 116, 139, 0.16);
+    border-radius: 17px;
+    background: #ffffff;
+    box-shadow: 0 7px 24px rgba(15, 23, 42, 0.055);
+}
+
+.client-profile-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 17px 19px;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.12);
+}
+
+.client-profile-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.client-profile-card-icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #f1f5f9;
+    font-size: 11px;
+    font-weight: 800;
+    color: #334155;
+}
+
+.client-profile-card-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.client-profile-card-subtitle {
+    margin: 3px 0 0;
+    font-size: 11px;
+    opacity: 0.58;
+}
+
+.client-profile-card-body {
+    padding: 19px;
+}
+
+/* ============================================================
+   CLIENT INFORMATION
+   ============================================================ */
+
+.client-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.client-info-row {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.10);
+}
+
+.client-info-row:first-child {
+    padding-top: 0;
+}
+
+.client-info-row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.client-info-label {
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.54;
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+}
+
+.client-info-value {
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.client-info-muted {
+    font-weight: 500;
+    opacity: 0.52;
+}
+
+/* ============================================================
+   INVOICE / NOTIFICATIONS
+   ============================================================ */
+
+.client-profile-invoice-card {
+    border-color: rgba(37, 99, 235, 0.17);
+}
+
+.client-profile-invoice-card .client-profile-card-header {
+    background: linear-gradient(
+        180deg,
+        rgba(239, 246, 255, 0.86),
+        rgba(255, 255, 255, 0.96)
+    );
+}
+
+.invoice-current-channel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px;
+    margin-bottom: 14px;
+    border: 1px solid #dbeafe;
+    border-radius: 13px;
+    background: #eff6ff;
+}
+
+.invoice-current-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: #1d4ed8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.invoice-current-value {
+    margin-top: 4px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #172554;
+}
+
+.invoice-current-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.invoice-current-badge::before {
+    content: "?";
+    font-size: 11px;
+}
+
+.invoice-channel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.invoice-channel-option {
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid rgba(100, 116, 139, 0.14);
+    border-radius: 13px;
+    background: #ffffff;
+}
+
+/* ---------------------------------------------------------
+   Functional invoice delivery channels
+   Preserve the existing card appearance while using
+   accessible button controls.
+   --------------------------------------------------------- */
+
+.invoice-channel-option {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    color: inherit;
+    background: inherit;
+    padding: inherit;
+    margin: 0;
+}
+
+.invoice-channel-option:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.28);
+    outline-offset: 3px;
+}
+
+.invoice-channel-option:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.invoice-channel-option.is-saving {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+/* Feedback displayed after saving the preference. */
+
+/* ---------------------------------------------------------
+   Client-level invoice actions
+   --------------------------------------------------------- */
+
+.client-invoice-actions {
+    margin-top: 16px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(100, 116, 139, 0.10);
+}
+
+.client-invoice-actions-header {
+    margin-bottom: 10px;
+}
+
+.client-invoice-actions-title {
+    font-size: 12px;
+    font-weight: 850;
+}
+
+.client-invoice-actions-subtitle {
+    margin-top: 3px;
+    font-size: 10px;
+    line-height: 1.45;
+    opacity: 0.58;
+}
+
+.client-invoice-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.client-invoice-action {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 13px;
+    border: 1px solid rgba(100, 116, 139, 0.14);
+    border-radius: 13px;
+    background: #ffffff;
+    color: inherit;
+    text-decoration: none;
+    transition:
+        border-color 0.16s ease,
+        background 0.16s ease,
+        transform 0.16s ease,
+        box-shadow 0.16s ease;
+}
+
+.client-invoice-action:hover {
+    border-color: rgba(59, 130, 246, 0.32);
+    background: #f8fbff;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
+}
+
+.client-invoice-action:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.25);
+    outline-offset: 3px;
+}
+
+.client-invoice-action-icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #f1f5f9;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.client-invoice-action-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.client-invoice-action-title {
+    font-size: 11px;
+    font-weight: 850;
+}
+
+.client-invoice-action-description {
+    margin-top: 3px;
+    font-size: 10px;
+    line-height: 1.4;
+    opacity: 0.58;
+}
+
+.client-invoice-action-download
+.client-invoice-action-icon {
+    background: #f1f5f9;
+}
+
+@media (max-width: 470px) {
+    .client-invoice-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.invoice-channel-feedback {
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.invoice-channel-feedback.success {
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.invoice-channel-feedback.error {
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+
+.invoice-channel-option.active {
+    border-color: #93c5fd;
+    background: #f8fbff;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+}
+
+.invoice-channel-top {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.invoice-channel-icon {
+    width: 31px;
+    height: 31px;
+    flex: 0 0 31px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.invoice-channel-option.active .invoice-channel-icon {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.invoice-channel-name {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.invoice-channel-detail {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    opacity: 0.64;
+}
+
+.invoice-info-box {
+    margin-top: 13px;
+    padding: 11px 12px;
+    border-radius: 11px;
+    background: #f8fafc;
+    border: 1px solid rgba(100, 116, 139, 0.10);
+    font-size: 11px;
+    line-height: 1.55;
+    opacity: 0.76;
+}
+
+.invoice-history-note {
+    margin-top: 11px;
+    font-size: 10px;
+    line-height: 1.45;
+    opacity: 0.55;
+}
+
+/* ============================================================
+   LOYALTY
+   ============================================================ */
+
+.loyalty-balance {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 15px;
+    border-radius: 13px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+}
+
+.loyalty-balance-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #92400e;
+}
+
+.loyalty-balance-value {
+    margin-top: 4px;
+    font-size: 25px;
+    font-weight: 900;
+    color: #78350f;
+}
+
+.loyalty-balance-unit {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.client-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+}
+
+.client-mini-table th {
+    padding: 8px 6px;
+    text-align: left;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.48;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.12);
+}
+
+.client-mini-table td {
+    padding: 9px 6px;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.08);
+}
+
+.client-mini-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.client-empty {
+    padding: 18px 4px 3px;
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.52;
+}
+
+/* ============================================================
+   CREDIT
+   ============================================================ */
+
+.credit-finance-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.credit-finance-box {
+    padding: 13px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid rgba(100, 116, 139, 0.11);
+}
+
+.credit-finance-label {
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.54;
+}
+
+.credit-finance-value {
+    margin-top: 5px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.credit-status {
+    display: inline-flex;
+    margin-top: 13px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    background: #f1f5f9;
+}
+
+/* ============================================================
+   ORDERS
+   ============================================================ */
+
+.orders-summary {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.orders-summary-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #f8fafc;
+    border: 1px solid rgba(100, 116, 139, 0.12);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.client-orders-wrapper {
+    overflow-x: auto;
+}
+
+.client-orders-table {
+    width: 100%;
+    min-width: 790px;
+    border-collapse: collapse;
+}
+
+.client-orders-table th {
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    opacity: 0.50;
+    background: #f8fafc;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.13);
+}
+
+.client-orders-table td {
+    padding: 12px;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.09);
+    vertical-align: middle;
+}
+
+.client-orders-table tbody tr:hover {
+    background: rgba(248, 250, 252, 0.75);
+}
+
+.client-orders-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.order-number {
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.order-date {
+    margin-top: 3px;
+    font-size: 10px;
+    opacity: 0.52;
+}
+
+.order-amount {
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.order-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+    background: #f1f5f9;
+}
+
+.order-status-delivered {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.order-status-pending {
+    color: #92400e;
+    background: #fef3c7;
+}
+
+.order-status-delivery {
+    color: #1d4ed8;
+    background: #dbeafe;
+}
+
+.order-status-cancelled {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.order-payment {
+    font-size: 10px;
+    opacity: 0.66;
+}
+
+.invoice-cell {
+    min-width: 175px;
+}
+
+.invoice-number {
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.invoice-status-line {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.invoice-status-badge {
+    display: inline-flex;
+    padding: 4px 7px;
+    border-radius: 999px;
+    font-size: 8px;
+    font-weight: 800;
+    background: #f1f5f9;
+}
+
+.invoice-status-sent {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.invoice-status-failed {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.invoice-status-generated {
+    color: #1d4ed8;
+    background: #dbeafe;
+}
+
+.invoice-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    flex-wrap: wrap;
+}
+
+.invoice-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 27px;
+    padding: 5px 8px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 800;
+    border: 1px solid rgba(37, 99, 235, 0.17);
+    background: #eff6ff;
+    color: #1d4ed8;
+    transition: 0.18s ease;
+}
+
+.invoice-action:hover {
+    background: #dbeafe;
+}
+
+.invoice-not-generated {
+    font-size: 10px;
+    opacity: 0.45;
+}
+
+/* ============================================================
+   CREDIT PAYMENTS
+   ============================================================ */
+
+.payment-method {
+    display: inline-flex;
+    padding: 4px 7px;
+    border-radius: 6px;
+    background: #f1f5f9;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.payment-amount {
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1180px) {
+    .client-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .client-profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .client-profile-page {
+        padding: 92px 16px 34px;
+    }
+
+    .client-profile-header {
+        align-items: flex-start;
+    }
+
+    .client-profile-header-right {
+        justify-content: flex-start;
+    }
+
+    .client-profile-title {
+        font-size: 22px;
+    }
+
+    .client-profile-avatar {
+        width: 54px;
+        height: 54px;
+        flex-basis: 54px;
+        border-radius: 14px;
+        font-size: 18px;
+    }
+
+    .client-profile-back {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .client-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .client-profile-card-body {
+        padding: 15px;
+    }
+
+    .client-profile-card-header {
+        padding: 15px;
+    }
+
+    .client-info-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    .invoice-channel-grid,
+    .credit-finance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .invoice-current-channel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 470px) {
+    .client-profile-header-left {
+        gap: 10px;
+    }
+
+    .client-profile-subtitle {
+        font-size: 11px;
+    }
+
+    .client-profile-header {
+        flex-direction: column;
+    }
+
+    .client-profile-header-right {
+        width: 100%;
+    }
+}
+</style>
+
+
+<div class="client-profile-page">
+
+    <!-- ======================================================
+         CLIENT HEADER
+         ====================================================== -->
+
+    <div class="client-profile-header">
+
+        <div class="client-profile-header-left">
+
+            <a
+                href="{{ url_for('admin_clients') }}"
+                class="client-profile-back"
+                title="Retour aux clients"
+            >
+                &larr;
+            </a>
+
+            <div class="client-profile-avatar">
+                {{ ((client.userName or '')[:1] ~ (client.userSurname or '')[:1])|upper }}
+            </div>
+
+            <div class="client-profile-title-wrap">
+
+                <h1 class="client-profile-title">
+                    {{ client.userName or '' }} {{ client.userSurname or '' }}
+                </h1>
+
+                <p class="client-profile-subtitle">
+                    Profil client &middot; ID #{{ client.userId }}
+                    {% if order_stats.lastOrderDate %}
+                        &middot; Dernière commande : {{ order_stats.lastOrderDate }}
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="client-profile-header-right">
+
+            {% if client.userActive %}
+                <span class="client-status client-status-active">
+                    <span class="client-status-dot"></span>
+                    Compte actif
+                </span>
+            {% else %}
+                <span class="client-status client-status-inactive">
+                    <span class="client-status-dot"></span>
+                    Compte inactif
+                </span>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         KPI
+         ====================================================== -->
+
+    <div class="client-kpi-grid">
+
+        <div class="client-kpi-card">
+
+            <div class="client-kpi-top">
+                <div class="client-kpi-icon">CMD</div>
+            </div>
+
+            <div class="client-kpi-label">Commandes</div>
+
+            <div class="client-kpi-value">
+                {{ order_stats.orderCount or 0 }}
+            </div>
+
+            <div class="client-kpi-meta">
+                Historique total
+            </div>
+
+        </div>
+
+
+        <div class="client-kpi-card">
+
+            <div class="client-kpi-top">
+                <div class="client-kpi-icon">OK</div>
+            </div>
+
+            <div class="client-kpi-label">Commandes livrées</div>
+
+            <div class="client-kpi-value">
+                {{ order_stats.deliveredOrderCount or 0 }}
+            </div>
+
+            <div class="client-kpi-meta">
+                Commandes finalisées
+            </div>
+
+        </div>
+
+
+        <div class="client-kpi-card">
+
+            <div class="client-kpi-top">
+                <div class="client-kpi-icon">CA</div>
+            </div>
+
+            <div class="client-kpi-label">Chiffre client</div>
+
+            <div class="client-kpi-value">
+                {{ "{:,.0f}".format(order_stats.totalSpent or 0).replace(",", " ") }} FCFA
+            </div>
+
+            <div class="client-kpi-meta">
+                Valeur cumulée des commandes
+            </div>
+
+        </div>
+
+
+        <div class="client-kpi-card">
+
+            <div class="client-kpi-top">
+                <div class="client-kpi-icon">ART</div>
+            </div>
+
+            <div class="client-kpi-label">Articles achetés</div>
+
+            <div class="client-kpi-value">
+                {{ item_stats.totalItemsPurchased or 0 }}
+            </div>
+
+            <div class="client-kpi-meta">
+                Quantités cumulées
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         MAIN GRID
+         ====================================================== -->
+
+    <div class="client-profile-grid">
+
+
+        <!-- ==================================================
+             LEFT COLUMN
+             ================================================== -->
+
+        <div class="client-profile-column">
+
+
+            <!-- CLIENT INFORMATION -->
+
+            <section class="client-profile-card">
+
+                <div class="client-profile-card-header">
+
+                    <div class="client-profile-card-heading">
+
+                        <div class="client-profile-card-icon">INF</div>
+
+                        <div>
+                            <h2 class="client-profile-card-title">
+                                Informations client
+                            </h2>
+
+                            <p class="client-profile-card-subtitle">
+                                Coordonnées et informations de contact
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="client-profile-card-body">
+
+                    <div class="client-info-list">
+
+                        <div class="client-info-row">
+                            <div class="client-info-label">Nom</div>
+                            <div class="client-info-value">
+                                {{ client.userName or 'Non renseigné' }}
+                            </div>
+                        </div>
+
+                        <div class="client-info-row">
+                            <div class="client-info-label">Prénom</div>
+                            <div class="client-info-value">
+                                {{ client.userSurname or 'Non renseigné' }}
+                            </div>
+                        </div>
+
+                        <div class="client-info-row">
+                            <div class="client-info-label">Email</div>
+                            <div class="client-info-value">
+                                {% if client.userMail %}
+                                    {{ client.userMail }}
+                                {% else %}
+                                    <span class="client-info-muted">
+                                        Adresse email non renseignée
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="client-info-row">
+                            <div class="client-info-label">Téléphone</div>
+                            <div class="client-info-value">
+                                {% if client.userPhone %}
+                                    {{ client.userPhone }}
+                                {% else %}
+                                    <span class="client-info-muted">
+                                        Numéro non renseigné
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="client-info-row">
+                            <div class="client-info-label">Adresse</div>
+                            <div class="client-info-value">
+                                {% if client.userAddress %}
+                                    {{ client.userAddress }}
+                                {% else %}
+                                    <span class="client-info-muted">
+                                        Adresse non renseignée
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- INVOICE / NOTIFICATIONS -->
+
+            <section
+                class="client-profile-card client-profile-invoice-card"
+                data-client-id="{{ client.userId }}"
+            >
+
+                <div class="client-profile-card-header">
+
+                    <div class="client-profile-card-heading">
+
+                        <div class="client-profile-card-icon">INV</div>
+
+                        <div>
+                            <h2 class="client-profile-card-title">
+                                Facturation &amp; notifications
+                            </h2>
+
+                            <p class="client-profile-card-subtitle">
+                                Préférence de réception des factures
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="client-profile-card-body">
+
+                    <div class="invoice-current-channel">
+
+                        <div>
+                            <div class="invoice-current-label">
+                                Préférence active
+                            </div>
+
+                            <div class="invoice-current-value">
+
+                                {% if client.invoiceDeliveryMethod == 'whatsapp' %}
+                                    WhatsApp
+                                {% else %}
+                                    Email
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                        <span class="invoice-current-badge">
+                            Configurée
+                        </span>
+
+                    </div>
+
+
+                    <div class="invoice-channel-grid">
+
+                        <button
+                            type="button"
+                            class="invoice-channel-option {% if client.invoiceDeliveryMethod != 'whatsapp' %}active{% endif %}"
+                            data-invoice-delivery="email"
+                            aria-pressed="{% if client.invoiceDeliveryMethod != 'whatsapp' %}true{% else %}false{% endif %}"
+                        >
+
+                            <div class="invoice-channel-top">
+
+                                <div class="invoice-channel-icon">@</div>
+
+                                <div class="invoice-channel-name">
+                                    Email
+                                </div>
+
+                            </div>
+
+                            <div class="invoice-channel-detail">
+
+                                {% if client.userMail %}
+                                    {{ client.userMail }}
+                                {% else %}
+                                    Adresse email non renseign?e
+                                {% endif %}
+
+                            </div>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="invoice-channel-option {% if client.invoiceDeliveryMethod == 'whatsapp' %}active{% endif %}"
+                            data-invoice-delivery="whatsapp"
+                            aria-pressed="{% if client.invoiceDeliveryMethod == 'whatsapp' %}true{% else %}false{% endif %}"
+                        >
+
+                            <div class="invoice-channel-top">
+
+                                <div class="invoice-channel-icon">WA</div>
+
+                                <div class="invoice-channel-name">
+                                    WhatsApp
+                                </div>
+
+                            </div>
+
+                            <div class="invoice-channel-detail">
+
+                                {% if client.userPhone %}
+                                    {{ client.userPhone }}
+                                {% else %}
+                                    Num?ro WhatsApp non renseign?
+                                {% endif %}
+
+                            </div>
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="invoice-channel-feedback"
+                        id="invoiceChannelFeedback"
+                        role="status"
+                        aria-live="polite"
+                        hidden
+                    ></div>
+
+
+                    <div class="client-invoice-actions">
+
+                        <div class="client-invoice-actions-header">
+                            <div>
+                                <div class="client-invoice-actions-title">
+                                    Facture
+                                </div>
+
+                                <div class="client-invoice-actions-subtitle">
+                                    Acc?der ? la derni?re facture du client
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="client-invoice-actions-grid">
+
+                            <a
+                                href="{{ url_for('admin_client_latest_invoice', user_id=client.userId) }}"
+                                class="client-invoice-action client-invoice-action-view"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <span class="client-invoice-action-icon">
+                                    PDF
+                                </span>
+
+                                <span class="client-invoice-action-content">
+                                    <span class="client-invoice-action-title">
+                                        Voir la facture
+                                    </span>
+
+                                    <span class="client-invoice-action-description">
+                                        Ouvrir la derni?re facture
+                                    </span>
+                                </span>
+                            </a>
+
+
+                            <a
+                                href="{{ url_for('admin_client_latest_invoice_download', user_id=client.userId) }}"
+                                class="client-invoice-action client-invoice-action-download"
+                            >
+                                <span class="client-invoice-action-icon">
+                                    ?
+                                </span>
+
+                                <span class="client-invoice-action-content">
+                                    <span class="client-invoice-action-title">
+                                        T?l?charger la facture
+                                    </span>
+
+                                    <span class="client-invoice-action-description">
+                                        T?l?charger le PDF
+                                    </span>
+                                </span>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="invoice-info-box">
+                        Cette préférence appartient au client et s'applique
+                        aux futures factures. Elle n'est pas une option de commande.
+                    </div>
+
+                    <div class="invoice-history-note">
+                        Les factures déjà générées conservent leur
+                        canal de livraison historique.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LOYALTY -->
+
+            <section class="client-profile-card">
+
+                <div class="client-profile-card-header">
+
+                    <div class="client-profile-card-heading">
+
+                        <div class="client-profile-card-icon">LOY</div>
+
+                        <div>
+                            <h2 class="client-profile-card-title">
+                                Fidélité
+                            </h2>
+
+                            <p class="client-profile-card-subtitle">
+                                Solde et historique des points
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="client-profile-card-body">
+
+                    {% if loyalty_account %}
+
+                        <div class="loyalty-balance">
+
+                            <div>
+                                <div class="loyalty-balance-label">
+                                    Solde actuel
+                                </div>
+
+                                <div class="loyalty-balance-value">
+                                    {{ loyalty_account.points_balance or 0 }}
+                                    <span class="loyalty-balance-unit">pts</span>
+                                </div>
+                            </div>
+
+                            <div class="client-status-dot"></div>
+
+                        </div>
+
+
+                        {% if loyalty_transactions %}
+
+                            <table class="client-mini-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Points</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    {% for transaction in loyalty_transactions[:5] %}
+
+                                        <tr>
+                                            <td>{{ transaction.created_at }}</td>
+
+                                            <td>
+                                                {{ transaction.type }}
+                                            </td>
+
+                                            <td>
+                                                <strong>
+                                                    {{ transaction.points }}
+                                                </strong>
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        {% else %}
+
+                            <div class="client-empty">
+                                Aucune transaction de fidélité enregistrée.
+                            </div>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <div class="client-empty">
+                            Programme de fidélité non activé pour ce client.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- CREDIT -->
+
+            <section class="client-profile-card">
+
+                <div class="client-profile-card-header">
+
+                    <div class="client-profile-card-heading">
+
+                        <div class="client-profile-card-icon">CRD</div>
+
+                        <div>
+                            <h2 class="client-profile-card-title">
+                                Crédit client
+                            </h2>
+
+                            <p class="client-profile-card-subtitle">
+                                Situation du compte professionnel
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="client-profile-card-body">
+
+                    {% if credit_account %}
+
+                        <div class="credit-finance-grid">
+
+                            <div class="credit-finance-box">
+
+                                <div class="credit-finance-label">
+                                    Limite de crédit
+                                </div>
+
+                                <div class="credit-finance-value">
+                                    {{ "{:,.0f}".format(credit_account.credit_limit or 0).replace(",", " ") }}
+                                    FCFA
+                                </div>
+
+                            </div>
+
+
+                            <div class="credit-finance-box">
+
+                                <div class="credit-finance-label">
+                                    Solde / à recouvrer
+                                </div>
+
+                                <div class="credit-finance-value">
+                                    {{ "{:,.0f}".format(credit_account.balance or 0).replace(",", " ") }}
+                                    FCFA
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="credit-status">
+                            Statut : {{ credit_account.status or 'Non renseigné' }}
+                        </span>
+
+
+                        {% if credit_transactions %}
+
+                            <table class="client-mini-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Montant</th>
+                                        <th>Échéance</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    {% for transaction in credit_transactions[:5] %}
+
+                                        <tr>
+
+                                            <td>
+                                                {{ transaction.createdAt }}
+                                            </td>
+
+                                            <td>
+                                                {{ transaction.transactionType }}
+                                            </td>
+
+                                            <td>
+                                                {{ "{:,.0f}".format(transaction.amount or 0).replace(",", " ") }}
+                                                FCFA
+                                            </td>
+
+                                            <td>
+                                                {{ transaction.dueDate or '-' }}
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        {% else %}
+
+                            <div class="client-empty">
+                                Aucune transaction de crédit enregistrée.
+                            </div>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <div class="client-empty">
+                            Aucun compte de crédit configuré pour ce client.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             RIGHT COLUMN
+             ================================================== -->
+
+        <div class="client-profile-column">
+
+
+            <!-- ORDERS -->
+
+            <section class="client-profile-card">
+
+                <div class="client-profile-card-header">
+
+                    <div class="client-profile-card-heading">
+
+                        <div class="client-profile-card-icon">CMD</div>
+
+                        <div>
+                            <h2 class="client-profile-card-title">
+                                Historique des commandes
+                            </h2>
+
+                            <p class="client-profile-card-subtitle">
+                                Activité commerciale du client
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="orders-summary">
+
+                        <span class="orders-summary-pill">
+                            {{ order_stats.orderCount or 0 }} commandes
+                        </span>
+
+                        <span class="orders-summary-pill">
+                            {{ order_stats.deliveredOrderCount or 0 }} livrées
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="client-profile-card-body" style="padding:0;">
+
+                    {% if recent_orders %}
+
+                        <div class="client-orders-wrapper">
+
+                            <table class="client-orders-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Commande</th>
+                                        <th>Statut</th>
+                                        <th>Articles</th>
+                                        <th>Paiement</th>
+                                        <th>Total</th>
+                                        
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for order in recent_orders %}
+
+                                        <tr>
+
+                                            <td>
+
+                                                <div class="order-number">
+                                                    {{ order.cmdNum }}
+                                                </div>
+
+                                                <div class="order-date">
+                                                    {{ order.cmdDate }}
+                                                </div>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {% if order.cmdStatut == 'livree' %}
+
+                                                    <span class="order-status order-status-delivered">
+                                                        Livrée
+                                                    </span>
+
+                                                {% elif order.cmdStatut == 'en_livraison' %}
+
+                                                    <span class="order-status order-status-delivery">
+                                                        En livraison
+                                                    </span>
+
+                                                {% elif order.cmdStatut in ['annulee', 'annulée'] %}
+
+                                                    <span class="order-status order-status-cancelled">
+                                                        Annulée
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="order-status order-status-pending">
+                                                        {{ order.cmdStatut }}
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <td>
+                                                {{ order.totalQuantity or 0 }}
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="order-payment">
+                                                    {{ order.cmdPayementMethod or '-' }}
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="order-amount">
+                                                    {{ "{:,.0f}".format(order.cmdTotal or 0).replace(",", " ") }}
+                                                    FCFA
+                                                </span>
+
+                                            </td>
+
+
+                                            <!--
+                                                IMPORTANT:
+                                                This column is only for the invoice record/actions.
+                                                Email / WhatsApp delivery preference is NOT configured here.
+                                            -->
+
+                                            
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="client-empty" style="padding:40px 20px;">
+                            Aucune commande enregistrée pour ce client.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- CREDIT PAYMENTS -->
+
+            <section class="client-profile-card">
+
+                <div class="client-profile-card-header">
+
+                    <div class="client-profile-card-heading">
+
+                        <div class="client-profile-card-icon">PAY</div>
+
+                        <div>
+                            <h2 class="client-profile-card-title">
+                                Paiements de crédit
+                            </h2>
+
+                            <p class="client-profile-card-subtitle">
+                                Historique des remboursements
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="client-profile-card-body" style="padding:0;">
+
+                    {% if credit_payments %}
+
+                        <div class="client-orders-wrapper">
+
+                            <table class="client-orders-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Montant</th>
+                                        <th>Méthode</th>
+                                        <th>Référence</th>
+                                        <th>Notes</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for payment in credit_payments %}
+
+                                        <tr>
+
+                                            <td>
+                                                {{ payment.paymentDate or payment.createdAt or '-' }}
+                                            </td>
+
+                                            <td>
+                                                <span class="payment-amount">
+                                                    {{ "{:,.0f}".format(payment.amount or 0).replace(",", " ") }}
+                                                    FCFA
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <span class="payment-method">
+                                                    {{ payment.paymentMethod or '-' }}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                {{ payment.reference or '-' }}
+                                            </td>
+
+                                            <td>
+                                                {{ payment.notes or '-' }}
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="client-empty" style="padding:35px 20px;">
+                            Aucun paiement de crédit enregistré.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script id="adminInvoiceDeliveryScript">
+document.addEventListener("DOMContentLoaded", function () {
+
+    const invoiceCard = document.querySelector(
+        ".client-profile-invoice-card"
+    );
+
+    if (!invoiceCard) {
+        return;
+    }
+
+    const clientId = invoiceCard.dataset.clientId;
+
+    const channelButtons = invoiceCard.querySelectorAll(
+        "[data-invoice-delivery]"
+    );
+
+    const currentValue = invoiceCard.querySelector(
+        ".invoice-current-value"
+    );
+
+    const feedback = invoiceCard.querySelector(
+        "#invoiceChannelFeedback"
+    );
+
+    if (!clientId || !channelButtons.length || !currentValue) {
+        return;
+    }
+
+    function showFeedback(message, type) {
+
+        if (!feedback) {
+            return;
+        }
+
+        feedback.hidden = false;
+        feedback.textContent = message;
+
+        feedback.classList.remove(
+            "success",
+            "error"
+        );
+
+        feedback.classList.add(type);
+    }
+
+    function clearFeedback() {
+
+        if (!feedback) {
+            return;
+        }
+
+        feedback.hidden = true;
+        feedback.textContent = "";
+
+        feedback.classList.remove(
+            "success",
+            "error"
+        );
+    }
+
+    function setActiveChannel(method) {
+
+        channelButtons.forEach(function (button) {
+
+            const isActive =
+                button.dataset.invoiceDelivery === method;
+
+            button.classList.toggle(
+                "active",
+                isActive
+            );
+
+            button.setAttribute(
+                "aria-pressed",
+                isActive ? "true" : "false"
+            );
+
+        });
+
+        currentValue.textContent =
+            method === "whatsapp"
+                ? "WhatsApp"
+                : "Email";
+    }
+
+    async function saveDeliveryPreference(
+        button,
+        method
+    ) {
+
+        clearFeedback();
+
+        const previousButton =
+            invoiceCard.querySelector(
+                ".invoice-channel-option.active"
+            );
+
+        const previousMethod =
+            previousButton
+                ? previousButton.dataset.invoiceDelivery
+                : "email";
+
+        channelButtons.forEach(function (item) {
+            item.disabled = true;
+        });
+
+        button.classList.add("is-saving");
+
+        try {
+
+            const response = await fetch(
+                `/admin/clients/${clientId}/invoice-delivery`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        delivery_method: method
+                    })
+                }
+            );
+
+            const result =
+                await response.json().catch(
+                    function () {
+                        return {};
+                    }
+                );
+
+            if (!response.ok || !result.success) {
+
+                throw new Error(
+                    result.message ||
+                    "Unable to update invoice delivery preference."
+                );
+            }
+
+            setActiveChannel(method);
+
+            if (method === "whatsapp") {
+
+                const whatsappInvoice =
+                    result.whatsappInvoice;
+
+                if (!whatsappInvoice) {
+
+                    showFeedback(
+                        "La facture consolid?e n'a pas pu ?tre pr?par?e pour WhatsApp.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+                const invoiceNumber =
+                    whatsappInvoice.invoiceNumber ||
+                    "Facture client";
+
+                const commandCount =
+                    Number(
+                        whatsappInvoice.commandCount || 0
+                    );
+
+                const subtotal =
+                    Number(
+                        whatsappInvoice.subtotal || 0
+                    );
+
+                const deliveryFee =
+                    Number(
+                        whatsappInvoice.deliveryFee || 0
+                    );
+
+                const total =
+                    Number(
+                        whatsappInvoice.total || 0
+                    );
+
+                const clientName =
+                    whatsappInvoice.clientName ||
+                    "Client";
+
+                const formatXaf =
+                    function (value) {
+                        return new Intl.NumberFormat(
+                            "fr-FR"
+                        ).format(value) + " FCFA";
+                    };
+
+                const message =
+                    `Bonjour ${clientName},\n\n` +
+                    `Voici le r?sum? de votre facture :\n\n` +
+                    `Facture : ${invoiceNumber}\n` +
+                    `Commandes : ${commandCount}\n` +
+                    `Produits : ${formatXaf(subtotal)}\n` +
+                    `Livraison : ${formatXaf(deliveryFee)}\n` +
+                    `Total : ${formatXaf(total)}\n\n` +
+                    `Merci pour votre confiance.`;
+
+                const whatsappUrl =
+                    result.whatsappUrl +
+                    "?text=" +
+                    encodeURIComponent(message);
+
+                window.open(
+                    whatsappUrl,
+                    "_blank",
+                    "noopener,noreferrer"
+                );
+
+                showFeedback(
+                    "WhatsApp a ?t? ouvert avec le r?sum? de la facture pr?par?. Appuyez sur Envoyer dans WhatsApp.",
+                    "success"
+                );
+
+            } else {
+
+                showFeedback(
+                    "Pr?f?rence Email enregistr?e pour les futures factures.",
+                    "success"
+                );
+            }
+
+        } catch (error) {
+
+            setActiveChannel(previousMethod);
+
+            showFeedback(
+                error.message ||
+                "Impossible de modifier la pr?f?rence.",
+                "error"
+            );
+
+        } finally {
+
+            channelButtons.forEach(function (item) {
+                item.disabled = false;
+            });
+
+            button.classList.remove("is-saving");
+        }
+    }
+
+    channelButtons.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const method =
+                    button.dataset.invoiceDelivery;
+
+                if (
+                    method !== "email" &&
+                    method !== "whatsapp"
+                ) {
+                    return;
+                }
+
+                saveDeliveryPreference(
+                    button,
+                    method
+                );
+            }
+        );
+
+    });
+
+});
+</script>
+
+{% endblock %}

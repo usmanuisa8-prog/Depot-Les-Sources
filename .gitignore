@@ -1,0 +1,70 @@
+﻿# Environment files and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*
+secrets*
+config.local.*
+
+# Databases and database backups
+*.db
+*.sqlite
+*.sqlite3
+*.db-*
+*.sqlite-*
+*.bak
+*.backup
+
+# Python generated files and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated invoices and private customer documents
+generated_invoices/
+invoice_storage/
+
+# Logs, temporary files, and office lock files
+*.log
+*.tmp
+*.temp
+~$*
+
+# Test and coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Historical source snapshots and patch backups
+*.before*
+*.backup*
+*.phase*_backup*
+app.phase*_*.py
+app.py.phase*_*.py
+app.before_*
+app.py.before_*
+app.py.backup*
+app.py.phase*
+app.py.*backup*
+invoice_service.before_*
+
+# Temporary root artifacts created during development
+/$null
+/'
+/en_preparation
+/livree
+/python
+/10000

@@ -1,0 +1,2131 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Gestion des commandes - Depot Les Sources
+{% endblock %}
+
+{% block content %}
+
+<div class="commandes-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <header class="commandes-header">
+
+        <div class="commandes-header-content">
+
+            <div class="commandes-header-icon">
+                <span>?</span>
+            </div>
+
+            <div>
+                <div class="commandes-eyebrow">
+                    OPERATIONS
+                </div>
+
+                <h1>Gestion des commandes</h1>
+
+                <p>
+                    Suivez les commandes, gérez les livraisons et coordonnez les livreurs.
+                </p>
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="commandes-back-button"
+        >
+            <span>?</span>
+            Tableau de bord
+        </a>
+
+    </header>
+
+
+    <!-- =====================================================
+         ADMIN NOTIFICATIONS
+    ====================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="commandes-flash-area">
+
+                {% for category, message in messages %}
+
+                    <div class="commandes-flash commandes-flash-{{ category }}">
+                        <div class="commandes-flash-icon">
+                            {% if category == 'error' %}
+                                !
+                            {% elif category == 'warning' %}
+                                !
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </div>
+
+                        <div class="commandes-flash-content">
+                            <strong>
+                                {% if category == 'error' %}
+                                    Action impossible
+                                {% elif category == 'warning' %}
+                                    Attention
+                                {% else %}
+                                    Op?ration r?ussie
+                                {% endif %}
+                            </strong>
+
+                            <p>{{ message }}</p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="commandes-flash-close"
+                            onclick="this.parentElement.remove()"
+                            aria-label="Fermer"
+                        >
+                            ?
+                        </button>
+                    </div>
+
+                {% endfor %}
+
+            </section>
+        {% endif %}
+    {% endwith %}
+
+
+    <!-- =====================================================
+         KPI SUMMARY
+    ====================================================== -->
+
+    {% set pending_count = orders|selectattr("cmdStatut", "equalto", "en_attente")|list|length %}
+    {% set preparation_count = orders|selectattr("cmdStatut", "equalto", "en_preparation")|list|length %}
+    {% set delivery_count = orders|selectattr("cmdStatut", "equalto", "en_livraison")|list|length %}
+    {% set delivered_count = orders|selectattr("cmdStatut", "equalto", "livree")|list|length %}
+
+    <section class="commandes-kpi-grid">
+
+        <div class="commandes-kpi-card">
+
+            <div class="kpi-icon kpi-icon-total">
+                #
+            </div>
+
+            <div class="kpi-content">
+                <span class="kpi-label">Total commandes</span>
+                <strong class="kpi-value">{{ orders|length }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="commandes-kpi-card">
+
+            <div class="kpi-icon kpi-icon-pending">
+                !
+            </div>
+
+            <div class="kpi-content">
+                <span class="kpi-label">En attente</span>
+                <strong class="kpi-value">{{ pending_count }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="commandes-kpi-card">
+
+            <div class="kpi-icon kpi-icon-delivery">
+                ?
+            </div>
+
+            <div class="kpi-content">
+                <span class="kpi-label">En livraison</span>
+                <strong class="kpi-value">{{ delivery_count }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="commandes-kpi-card">
+
+            <div class="kpi-icon kpi-icon-completed">
+                ?
+            </div>
+
+            <div class="kpi-content">
+                <span class="kpi-label">Livrées</span>
+                <strong class="kpi-value">{{ delivered_count }}</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DELIVERY PERFORMANCE
+    ====================================================== -->
+
+    <section class="commandes-panel delivery-performance-panel">
+
+        <div class="panel-header">
+
+            <div>
+                <div class="panel-eyebrow">
+                    LOGISTICS
+                </div>
+
+                <h2>Performance des livraisons</h2>
+
+                <p>
+                    Temps moyens de livraison par zone.
+                </p>
+            </div>
+
+            <div class="panel-count">
+                {{ delivery_zone_statistics|length }} zone(s)
+            </div>
+
+        </div>
+
+
+        {% if delivery_zone_statistics %}
+
+        <div class="performance-grid">
+
+            {% for stats in delivery_zone_statistics %}
+
+            <div class="performance-card">
+
+                <div class="performance-card-top">
+
+                    <div class="zone-marker">
+                        {{ loop.index }}
+                    </div>
+
+                    <div>
+                        <strong>{{ stats["zone_name"] }}</strong>
+
+                        <span>
+                            {{ stats["delivery_count"] }}
+                            completed delivery{% if stats["delivery_count"] != 1 %}ies{% endif %}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="performance-metrics">
+
+                    <div>
+                        <span>Préparation</span>
+
+                        <strong>
+                            {% if stats["average_preparation_seconds"] is not none %}
+                                {{ stats["average_preparation_seconds"]|int // 60 }}m
+                                {{ stats["average_preparation_seconds"]|int % 60 }}s
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Livraison</span>
+
+                        <strong>
+                            {% if stats["average_delivery_seconds"] is not none %}
+                                {{ stats["average_delivery_seconds"]|int // 60 }}m
+                                {{ stats["average_delivery_seconds"]|int % 60 }}s
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Total</span>
+
+                        <strong>
+                            {% if stats["average_total_seconds"] is not none %}
+                                {{ stats["average_total_seconds"]|int // 60 }}m
+                                {{ stats["average_total_seconds"]|int % 60 }}s
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Estimé</span>
+
+                        <strong>
+                            {% if stats["average_estimated_minutes"] is not none %}
+                                {{ stats["average_estimated_minutes"]|int }} min
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="commandes-empty-small">
+            <div class="empty-icon">?</div>
+            <strong>Aucune statistique disponible</strong>
+            <span>
+                Les statistiques apparaîtront aprés les livraisons termin?es.
+            </span>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- =====================================================
+         ORDERS PANEL
+    ====================================================== -->
+
+    <section class="commandes-panel">
+
+        <div class="panel-header commandes-panel-header">
+
+            <div>
+                <div class="panel-eyebrow">
+                    ORDER OPERATIONS
+                </div>
+
+                <h2>Commandes clients</h2>
+
+                <p>
+                    Consultez les commandes et gérez leur cycle de livraison.
+                </p>
+            </div>
+
+            <div class="commandes-header-count">
+                <strong>{{ orders|length }}</strong>
+                <span>commandes</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FILTER BAR
+        ================================================== -->
+
+        <div class="commandes-toolbar">
+
+            <div class="commandes-search">
+
+                <span class="search-icon">?</span>
+
+                <input
+                    type="search"
+                    id="orderSearch"
+                    placeholder="Rechercher une commande, un client ou un e-mail..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="commandes-filter">
+
+                <select id="statusFilter">
+
+                    <option value="all">
+                        Tous les statuts
+                    </option>
+
+                    <option value="en_attente">
+                        En attente
+                    </option>
+
+                    <option value="en_preparation">
+                        En préparation
+                    </option>
+
+                    <option value="en_livraison">
+                        En livraison
+                    </option>
+
+                    <option value="livree">
+                        Livrées
+                    </option>
+
+                    <option value="annulee">
+                        Annulées
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        {% if orders %}
+
+        <div class="commandes-table-wrapper">
+
+            <table class="professional-commandes-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Order</th>
+
+                        <th>Client</th>
+
+                        <th>Détails</th>
+
+                        <th>Livraison</th>
+
+                        <th>Livraison Driver</th>
+
+                        <th>Statut</th>
+
+                        <th>Délais</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="commandesTableBody">
+
+                    {% for order in orders %}
+
+                    <tr
+                        class="order-row"
+                        data-status="{{ order['cmdStatut'] }}"
+                        data-search="{{ (
+                            order['cmdNum'] ~ ' ' ~
+                            order['userName'] ~ ' ' ~
+                            (order['userSurname'] or '') ~ ' ' ~
+                            order['userMail']
+                        )|lower }}"
+                    >
+
+                        <!-- =================================
+                             ORDER
+                        ================================== -->
+
+                        <td>
+
+                            <div class="order-identity">
+
+                                <strong>
+                                    {{ order["cmdNum"] }}
+                                </strong>
+
+                                <span>
+                                    {{ order["cmdDate"] }}
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- =================================
+                             CUSTOMER
+                        ================================== -->
+
+                        <td>
+
+                            <div class="customer-identity">
+
+                                <div class="customer-avatar">
+                                    {{ order["userName"][0]|upper if order["userName"] else "C" }}
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ order["userName"] }}
+                                        {{ order["userSurname"] or "" }}
+                                    </strong>
+
+                                    <span>
+                                        {{ order["userMail"] }}
+                                    </span>
+
+                                    {% if order["userPhone"] %}
+
+                                    <span>
+                                        {{ order["userPhone"] }}
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- =================================
+                             ORDER DETAILS
+                        ================================== -->
+
+                        <td>
+
+                            <div class="order-financials">
+
+                                <div>
+
+                                    <span>Produits</span>
+
+                                    <strong>
+                                        {% if order["deliveryFee"] is not none %}
+                                            {{
+                                                "{:,.0f}".format(
+                                                    order["cmdTotal"] -
+                                                    order["deliveryFee"]
+                                                )
+                                            }}
+                                        {% else %}
+                                            {{
+                                                "{:,.0f}".format(
+                                                    order["cmdTotal"]
+                                                )
+                                            }}
+                                        {% endif %}
+                                        XAF
+                                    </strong>
+
+                                </div>
+
+
+                                {% if order["deliveryFee"] is not none %}
+
+                                <div>
+
+                                    <span>Livraison</span>
+
+                                    <strong>
+                                        {{
+                                            "{:,.0f}".format(
+                                                order["deliveryFee"]
+                                            )
+                                        }}
+                                        XAF
+                                    </strong>
+
+                                </div>
+
+                                {% endif %}
+
+
+                                <div class="order-grand-total">
+
+                                    <span>Total</span>
+
+                                    <strong>
+                                        {{
+                                            "{:,.0f}".format(
+                                                order["cmdTotal"]
+                                            )
+                                        }}
+                                        XAF
+                                    </strong>
+
+                                </div>
+
+                                <span class="payment-method">
+                                    {{ order["cmdPayementMethod"] or "Paiement non spécifié" }}
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- =================================
+                             DELIVERY
+                        ================================== -->
+
+                        <td>
+
+                            <div class="delivery-info">
+
+                                {% if order["zoneName"] %}
+
+                                <div class="delivery-zone-name">
+                                    <span class="mini-icon">?</span>
+                                    {{ order["zoneName"] }}
+                                </div>
+
+                                {% if order["estimatedMinutes"] %}
+
+                                <span class="delivery-estimate">
+                                    Estimé {{ order["estimatedMinutes"] }} min
+                                </span>
+
+                                {% endif %}
+
+                                {% else %}
+
+                                <span class="muted-text">
+                                    Aucune zone
+                                </span>
+
+                                {% endif %}
+
+
+                                {% if order["cmdLivAddress"] %}
+
+                                <div class="delivery-address">
+                                    {{ order["cmdLivAddress"] }}
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- =================================
+                             LIVREUR
+                        ================================== -->
+
+                        <td>
+
+                            <div class="delivery-driver-cell">
+
+                                {% if order["cmdLivreurId"] %}
+
+                                <div class="delivery-driver-assigned">
+
+                                    <div class="delivery-driver-avatar">
+                                        {{ order["livreurName"][0]|upper if order["livreurName"] else "L" }}
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ order["livreurName"] }}
+                                            {{ order["livreurSurname"] or "" }}
+                                        </strong>
+
+                                        {% if order["livreurPhone"] %}
+
+                                        <span>
+                                            {{ order["livreurPhone"] }}
+                                        </span>
+
+                                        {% endif %}
+
+                                        <small>
+                                            Assigné
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                                {% else %}
+
+                                <span class="unassigned-badge">
+                                    Non assigné
+                                </span>
+
+                                {% endif %}
+
+
+                                {% if order['cmdStatut'] != 'livree' %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'assign_order_livreur',
+                                        order_id=order['cmdId']
+                                    ) }}"
+                                    class="delivery-driver-form"
+                                >
+
+                                    <select
+                                        name="livreur_id"
+                                        required
+                                    >
+
+                                        <option value="">
+                                            Sélectionner un livreur
+                                        </option>
+
+                                        {% for livreur in delivery_persons %}
+
+                                        <option
+                                            value="{{ livreur['userId'] }}"
+                                            {% if order["cmdLivreurId"] == livreur["userId"] %}
+                                            selected
+                                            {% endif %}
+                                        >
+                                            {{ livreur["userName"] }}
+                                            {{ livreur["userSurname"] or "" }}
+                                        </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+
+                                    {% if delivery_persons %}
+
+                                    <button
+                                        type="submit"
+                                        class="assign-button"
+                                    >
+                                        {% if order["cmdLivreurId"] %}
+                                            Réassigner
+                                        {% else %}
+                                            Assigner
+                                        {% endif %}
+                                    </button>
+
+                                    {% else %}
+
+                                    <small class="no-delivery-warning">
+                                        Aucun livreur actif disponible
+                                    </small>
+
+                                    {% endif %}
+
+                                </form>
+
+
+                                {% if order["cmdLivreurId"] %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'assign_order_livreur',
+                                        order_id=order['cmdId']
+                                    ) }}"
+                                    class="remove-delivery-form"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="livreur_id"
+                                        value=""
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="remove-button"
+                                    >
+                                        Retirer l'affectation
+                                    </button>
+
+                                </form>
+
+                                {% endif %}
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- =================================
+                             STATUS
+                        ================================== -->
+
+                        <td>
+
+                            <span class="status-badge status-{{ order['cmdStatut'] }}">
+
+                                <span class="status-dot"></span>
+
+                                {{ order["cmdStatut"]
+                                   |replace("_", " ")
+                                   |title }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- =================================
+                             TIMING
+                        ================================== -->
+
+                        <td>
+
+                            <div class="timing-list">
+
+                                <div>
+                                    <span>Prep.</span>
+                                    <strong>
+                                        {{ order["preparation_duration"] or "?" }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Livraison</span>
+                                    <strong>
+                                        {{ order["delivery_duration"] or "?" }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Total</span>
+                                    <strong>
+                                        {{ order["total_duration"] or "?" }}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- =================================
+                             ACTION
+                        ================================== -->
+
+                        <td>
+
+                            {# =========================================
+                               ADMIN ORDER WORKFLOW
+                            
+                               Admin controls:
+                               - en_attente
+                               - en_preparation
+                               - annulee
+                            
+                               Livreur controls:
+                               - en_livraison
+                               - livree
+                               ========================================= #}
+                            
+                            {% if order["cmdStatut"] == "en_attente" %}
+                            
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'update_order_status',
+                                    order_id=order['cmdId']
+                                ) }}"
+                                class="status-form"
+                            >
+                            
+                                <select
+                                    name="status"
+                                    required
+                                >
+                                    <option
+                                        value="en_attente"
+                                        selected
+                                    >
+                                        En attente
+                                    </option>
+                            
+                                    <option
+                                        value="en_preparation"
+                                    >
+                                        En pr?paration
+                                    </option>
+                            
+                                    <option
+                                        value="annulee"
+                                    >
+                                        Annul?e
+                                    </option>
+                                </select>
+                            
+                                <button
+                                    type="submit"
+                                    class="update-status-button"
+                                >
+                                    Mettre ? jour
+                                </button>
+                            
+                            </form>
+                            
+                            {% elif order["cmdStatut"] == "en_preparation" %}
+                            
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'update_order_status',
+                                    order_id=order['cmdId']
+                                ) }}"
+                                class="status-form"
+                            >
+                            
+                                <select
+                                    name="status"
+                                    required
+                                >
+                                    <option
+                                        value="en_preparation"
+                                        selected
+                                    >
+                                        En pr?paration
+                                    </option>
+                            
+                                    <option
+                                        value="annulee"
+                                    >
+                                        Annul?e
+                                    </option>
+                                </select>
+                            
+                                <button
+                                    type="submit"
+                                    class="update-status-button"
+                                >
+                                    Mettre ? jour
+                                </button>
+                            
+                            </form>
+                            
+                            {% elif order["cmdStatut"] == "en_livraison" %}
+                            
+                            <div class="completed-state">
+                            
+                                <span class="completed-check">
+                                    ?
+                                </span>
+                            
+                                <div>
+                                    <strong>Livraison en cours</strong>
+                            
+                                    {% if order["cmdLivreurConfirmed"] %}
+                                        <span>
+                                            Livreur confirm? ? livraison en cours
+                                        </span>
+                                    {% else %}
+                                        <span>
+                                            En attente de confirmation du Livreur
+                                        </span>
+                                    {% endif %}
+                            
+                                </div>
+                            
+                            </div>
+                            
+                            {% elif order["cmdStatut"] == "livree" %}
+                            
+                            <div class="completed-state">
+                            
+                                <span class="completed-check">
+                                    ?
+                                </span>
+                            
+                                <div>
+                                    <strong>Livraison termin?e</strong>
+                                    <span>
+                                        Commande livr?e par le Livreur
+                                    </span>
+                                </div>
+                            
+                            </div>
+                            
+                            {% elif order["cmdStatut"] == "annulee" %}
+                            
+                            <div class="completed-state">
+                            
+                                <span class="completed-check">
+                                    ?
+                                </span>
+                            
+                                <div>
+                                    <strong>Commande annul?e</strong>
+                                    <span>
+                                        Aucune action de livraison disponible
+                                    </span>
+                                </div>
+                            
+                            </div>
+                            
+                            {% else %}
+                            
+                            <div class="completed-state">
+                            
+                                <span class="completed-check">
+                                    ?
+                                </span>
+                            
+                                <div>
+                                    <strong>
+                                        {{ order["cmdStatut"]
+                                           |replace("_", " ")
+                                           |title }}
+                                    </strong>
+                                    <span>
+                                        Action administrateur non disponible
+                                    </span>
+                                </div>
+                            
+                            </div>
+                            
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            id="commandesNoResults"
+            class="commandes-empty-small hidden"
+        >
+            <div class="empty-icon">?</div>
+            <strong>Aucune commande correspondante</strong>
+            <span>
+                Modifiez votre recherche ou le filtre de statut.
+            </span>
+        </div>
+
+        {% else %}
+
+        <div class="commandes-empty">
+
+            <div class="empty-icon">
+                #
+            </div>
+
+            <h3>
+                Aucune commande trouvée
+            </h3>
+
+            <p>
+                Les commandes clients apparaîtront ici.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<style>
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.commandes-page {
+    padding-top: 110px;
+    width: min(1800px, calc(100% - 40px));
+    margin: 32px auto 60px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.commandes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.commandes-header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.commandes-header-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: #111827;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(17, 24, 39, .14);
+}
+
+.commandes-eyebrow,
+.panel-eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #6b7280;
+}
+
+.commandes-header h1 {
+    margin: 3px 0 5px;
+    font-size: 30px;
+    line-height: 1.15;
+    color: #111827;
+}
+
+.commandes-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.commandes-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    color: #374151;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: .2s ease;
+}
+
+.commandes-back-button:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   KPI CARDS
+========================================================= */
+
+.commandes-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.commandes-kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(17, 24, 39, .05);
+}
+
+.kpi-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+.kpi-icon-total {
+    background: #eef2ff;
+    color: #4338ca;
+}
+
+.kpi-icon-pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.kpi-icon-delivery {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.kpi-icon-completed {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.kpi-content {
+    min-width: 0;
+}
+
+.kpi-label {
+    display: block;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.kpi-value {
+    display: block;
+    color: #111827;
+    font-size: 24px;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.commandes-panel {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 5px 22px rgba(17, 24, 39, .055);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 24px;
+    border-bottom: 1px solid #eef0f3;
+}
+
+.panel-header h2 {
+    margin: 4px 0 4px;
+    color: #111827;
+    font-size: 18px;
+}
+
+.panel-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.panel-count {
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DELIVERY PERFORMANCE
+========================================================= */
+
+.delivery-performance-panel {
+    padding-bottom: 22px;
+}
+
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    padding: 18px 22px 0;
+}
+
+.performance-card {
+    border: 1px solid #edf0f3;
+    border-radius: 12px;
+    padding: 15px;
+    background: #fafbfc;
+}
+
+.performance-card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.zone-marker {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    background: #111827;
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.performance-card-top strong {
+    display: block;
+    color: #1f2937;
+    font-size: 13px;
+}
+
+.performance-card-top span {
+    display: block;
+    margin-top: 2px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.performance-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+}
+
+.performance-metrics div {
+    padding: 9px 10px;
+    background: white;
+    border: 1px solid #eef0f3;
+    border-radius: 8px;
+}
+
+.performance-metrics span {
+    display: block;
+    color: #9ca3af;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.performance-metrics strong {
+    color: #374151;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.commandes-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 22px;
+    background: #fafbfc;
+    border-bottom: 1px solid #eef0f3;
+}
+
+.commandes-search {
+    position: relative;
+    flex: 1;
+    max-width: 430px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.commandes-search input,
+.commandes-filter select {
+    width: 100%;
+    box-sizing: border-box;
+    height: 38px;
+    border: 1px solid #dfe3e8;
+    border-radius: 9px;
+    background: white;
+    color: #374151;
+    outline: none;
+    font-size: 12px;
+    transition: .2s ease;
+}
+
+.commandes-search input {
+    padding: 0 12px 0 36px;
+}
+
+.commandes-filter select {
+    min-width: 175px;
+    padding: 0 10px;
+}
+
+.commandes-search input:focus,
+.commandes-filter select:focus,
+.delivery-driver-form select:focus,
+.status-form select:focus {
+    border-color: #9ca3af;
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, .08);
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.commandes-table-wrapper {
+    overflow-x: auto;
+}
+
+.professional-commandes-table {
+    width: 100%;
+    min-width: 1450px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.professional-commandes-table th {
+    padding: 12px 14px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    color: #6b7280;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.professional-commandes-table td {
+    padding: 15px 14px;
+    border-bottom: 1px solid #f0f1f3;
+    color: #374151;
+    font-size: 12px;
+    vertical-align: top;
+}
+
+.professional-commandes-table tbody tr {
+    transition: background .15s ease;
+}
+
+.professional-commandes-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+.professional-commandes-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   ORDER IDENTITY
+========================================================= */
+
+.order-identity strong {
+    display: block;
+    color: #111827;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.order-identity span {
+    display: block;
+    margin-top: 5px;
+    color: #9ca3af;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   CUSTOMER
+========================================================= */
+
+.customer-identity {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    min-width: 190px;
+}
+
+.customer-avatar,
+.delivery-driver-avatar {
+    width: 31px;
+    height: 31px;
+    flex: 0 0 31px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.customer-identity strong,
+.delivery-driver-assigned strong {
+    display: block;
+    color: #1f2937;
+    font-size: 12px;
+}
+
+.customer-identity span,
+.delivery-driver-assigned span {
+    display: block;
+    margin-top: 3px;
+    color: #9ca3af;
+    font-size: 10px;
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   FINANCIALS
+========================================================= */
+
+.order-financials {
+    min-width: 145px;
+}
+
+.order-financials > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 5px;
+}
+
+.order-financials span {
+    color: #9ca3af;
+    font-size: 10px;
+}
+
+.order-financials strong {
+    color: #374151;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.order-grand-total {
+    padding-top: 6px;
+    margin-top: 7px;
+    border-top: 1px dashed #e5e7eb;
+}
+
+.order-grand-total span {
+    color: #374151;
+    font-weight: 700;
+}
+
+.order-grand-total strong {
+    color: #111827;
+    font-size: 13px;
+}
+
+.payment-method {
+    display: inline-block;
+    margin-top: 5px;
+    color: #9ca3af;
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   DELIVERY
+========================================================= */
+
+.delivery-info {
+    min-width: 180px;
+    max-width: 230px;
+}
+
+.delivery-zone-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mini-icon {
+    color: #6b7280;
+}
+
+.delivery-estimate {
+    display: block;
+    margin-top: 4px;
+    color: #9ca3af;
+    font-size: 10px;
+}
+
+.delivery-address {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid #f0f1f3;
+    color: #6b7280;
+    line-height: 1.45;
+    font-size: 10px;
+}
+
+.muted-text {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   LIVREUR
+========================================================= */
+
+.delivery-driver-cell {
+    min-width: 185px;
+}
+
+.delivery-driver-assigned {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 9px;
+}
+
+.delivery-driver-assigned small {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 3px 6px;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.unassigned-badge {
+    display: inline-block;
+    margin-bottom: 9px;
+    padding: 5px 8px;
+    border-radius: 7px;
+    background: #fff7ed;
+    color: #c2410c;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.delivery-driver-form {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.delivery-driver-form select {
+    width: 125px;
+    height: 32px;
+    padding: 0 7px;
+    border: 1px solid #dfe3e8;
+    border-radius: 7px;
+    background: white;
+    color: #374151;
+    font-size: 10px;
+    outline: none;
+}
+
+.assign-button,
+.update-status-button {
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 700;
+    transition: .18s ease;
+}
+
+.assign-button {
+    height: 32px;
+    padding: 0 9px;
+    background: #111827;
+    color: white;
+}
+
+.assign-button:hover,
+.update-status-button:hover {
+    transform: translateY(-1px);
+    opacity: .92;
+}
+
+.remove-delivery-form {
+    margin-top: 6px;
+}
+
+.remove-button {
+    padding: 4px 0;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 9px;
+}
+
+.remove-button:hover {
+    color: #dc2626;
+}
+
+.commandes-flash-area {
+    margin: 0 0 24px 0;
+}
+
+.commandes-flash {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.commandes-flash-error {
+    border-color: #f1b5b5;
+    background: #fff5f5;
+}
+
+.commandes-flash-warning {
+    border-color: #f0d28a;
+    background: #fffaf0;
+}
+
+.commandes-flash-success {
+    border-color: #b8dfc4;
+    background: #f3fbf5;
+}
+
+.commandes-flash-icon {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.commandes-flash-error .commandes-flash-icon {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.commandes-flash-warning .commandes-flash-icon {
+    background: #fff0c2;
+    color: #7a5b00;
+}
+
+.commandes-flash-success .commandes-flash-icon {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.commandes-flash-content {
+    flex: 1;
+}
+
+.commandes-flash-content strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.commandes-flash-content p {
+    margin: 0;
+    line-height: 1.55;
+    font-size: 14px;
+}
+
+.commandes-flash-close {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+    opacity: 0.6;
+}
+
+.commandes-flash-close:hover {
+    opacity: 1;
+}
+
+.no-delivery-warning {
+    display: block;
+    color: #dc2626;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-en_attente {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.status-en_preparation {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.status-en_livraison {
+    background: #ecfeff;
+    color: #0e7490;
+}
+
+.status-livree {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-annulee {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   TIMING
+========================================================= */
+
+.timing-list {
+    min-width: 115px;
+}
+
+.timing-list div {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.timing-list span {
+    color: #9ca3af;
+    font-size: 9px;
+}
+
+.timing-list strong {
+    color: #374151;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   STATUS ACTION
+========================================================= */
+
+.status-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 130px;
+}
+
+.status-form select {
+    width: 100%;
+    height: 32px;
+    padding: 0 7px;
+    border: 1px solid #dfe3e8;
+    border-radius: 7px;
+    background: white;
+    color: #374151;
+    font-size: 10px;
+    outline: none;
+}
+
+.update-status-button {
+    min-height: 32px;
+    padding: 0 9px;
+    background: #111827;
+    color: white;
+}
+
+.completed-state {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.completed-check {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: #ecfdf5;
+    color: #047857;
+    font-weight: 900;
+}
+
+.completed-state strong {
+    display: block;
+    color: #047857;
+    font-size: 11px;
+}
+
+.completed-state span:last-child {
+    display: block;
+    margin-top: 2px;
+    color: #9ca3af;
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+========================================================= */
+
+.commandes-empty,
+.commandes-empty-small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.commandes-empty {
+    min-height: 260px;
+    padding: 30px;
+}
+
+.commandes-empty-small {
+    padding: 42px 24px;
+    color: #6b7280;
+}
+
+.empty-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-weight: 800;
+}
+
+.commandes-empty h3 {
+    margin: 0 0 5px;
+    color: #374151;
+}
+
+.commandes-empty p,
+.commandes-empty-small span {
+    margin: 0;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.commandes-empty-small strong {
+    color: #374151;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .commandes-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .commandes-page {
+        width: min(100% - 24px, 1800px);
+        margin-top: 20px;
+    }
+
+    .commandes-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .commandes-header h1 {
+        font-size: 24px;
+    }
+
+    .commandes-back-button {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .commandes-kpi-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .commandes-kpi-card {
+        padding: 13px;
+    }
+
+    .kpi-icon {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .kpi-value {
+        font-size: 20px;
+    }
+
+    .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .commandes-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 12px;
+    }
+
+    .commandes-search {
+        max-width: none;
+    }
+
+    .commandes-filter select {
+        width: 100%;
+    }
+
+    .performance-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+(function () {
+
+    const searchInput = document.getElementById("orderSearch");
+    const statusFilter = document.getElementById("statusFilter");
+    const rows = Array.from(document.querySelectorAll(".order-row"));
+    const noResults = document.getElementById("commandesNoResults");
+
+    if (!searchInput || !statusFilter || !rows.length) {
+        return;
+    }
+
+    function filterOrders() {
+
+        const search = searchInput.value
+            .trim()
+            .toLowerCase();
+
+        const status = statusFilter.value;
+
+        let visible = 0;
+
+        rows.forEach(function (row) {
+
+            const rowSearch = row.dataset.search || "";
+            const rowStatut = row.dataset.status || "";
+
+            const matchesSearch =
+                !search ||
+                rowSearch.includes(search);
+
+            const matchesStatut =
+                status === "all" ||
+                rowStatut === status;
+
+            const show =
+                matchesSearch &&
+                matchesStatut;
+
+            row.style.display = show ?"" : "none";
+
+            if (show) {
+                visible++;
+            }
+
+        });
+
+        if (noResults) {
+            noResults.classList.toggle(
+                "hidden",
+                visible !== 0
+            );
+        }
+
+    }
+
+    searchInput.addEventListener(
+        "input",
+        filterOrders
+    );
+
+    statusFilter.addEventListener(
+        "change",
+        filterOrders
+    );
+
+})();
+
+</script>
+
+{% endblock %}

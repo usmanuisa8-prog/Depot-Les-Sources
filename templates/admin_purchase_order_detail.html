@@ -1,0 +1,1998 @@
+{% extends "base.html" %}
+
+{% block title %}{{ purchase_order["purchaseOrderNumber"] }} | Achats{% endblock %}
+
+{% block content %}
+
+<style>
+.purchase-detail-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+}
+
+.purchase-page-header {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, .05);
+}
+
+.purchase-title-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 15px;
+    background: #eef4ff;
+    color: #315efb;
+    font-size: 24px;
+}
+
+.purchase-title-area h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+}
+
+.purchase-title-area p {
+    font-size: 14px;
+}
+
+.purchase-header-actions {
+    align-items: center;
+}
+
+.purchase-back-btn {
+    transition: all .15s ease;
+}
+
+.purchase-back-btn:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.purchase-status {
+    min-height: 34px;
+    box-sizing: border-box;
+}
+
+.purchase-grid {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+}
+
+.purchase-card {
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, .045);
+}
+
+.purchase-card-header {
+    padding: 18px 22px;
+}
+
+.purchase-card-header h2 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.purchase-card-body {
+    padding: 22px;
+}
+
+/* Summary sidebar */
+.purchase-grid > aside {
+    position: sticky;
+    top: 20px;
+}
+
+.purchase-grid > aside .purchase-card {
+    border-color: #e1e6ee;
+}
+
+.purchase-grid > aside .purchase-card-header {
+    background: #f8fafc;
+}
+
+.purchase-grid > aside .purchase-card-header h2 {
+    font-size: 16px;
+}
+
+.purchase-grid > aside .purchase-card-body {
+    padding: 20px;
+}
+
+.purchase-summary-stack {
+    display: grid;
+    gap: 14px;
+}
+
+.purchase-summary-item {
+    padding: 13px 14px;
+    border: 1px solid #edf0f4;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.purchase-summary-label {
+    margin-bottom: 5px;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.purchase-summary-value {
+    color: #111827;
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.purchase-summary-count {
+    font-size: 25px;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.purchase-grid > aside .purchase-status {
+    margin-top: 3px;
+}
+
+@media (max-width: 1000px) {
+    .purchase-grid > aside {
+        position: static;
+    }
+}
+
+
+.info-grid {
+    gap: 14px;
+}
+
+.info-item {
+    padding: 17px;
+    border: 1px solid #edf0f4;
+    background: #f8fafc;
+}
+
+.info-item strong {
+    font-size: 15px;
+}
+
+.supplier-contact {
+    padding-top: 4px;
+}
+
+.contact-row {
+    font-size: 14px;
+}
+
+.notes-box {
+    border-left-width: 4px;
+}
+
+.purchase-table th {
+    font-weight: 800;
+}
+
+.purchase-table td {
+    font-size: 14px;
+}
+
+.product-name {
+    font-size: 14px;
+}
+
+.purchase-table tbody tr {
+    transition: background .12s ease;
+}
+
+.primary-button {
+    min-height: 42px;
+    padding: 10px 18px;
+    transition: background .15s ease, transform .1s ease;
+}
+
+.primary-button:hover {
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1000px) {
+    .purchase-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.purchase-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.purchase-title-area {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.purchase-title-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    color: #315efb;
+    font-size: 23px;
+    flex-shrink: 0;
+}
+
+.purchase-title-area h1 {
+    margin: 0 0 7px;
+    font-size: 30px;
+    line-height: 1.2;
+}
+
+.purchase-title-area p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.purchase-header-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.purchase-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid #d9dee8;
+    border-radius: 9px;
+    background: #fff;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.purchase-back-btn:hover {
+    background: #f8fafc;
+}
+
+.purchase-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.purchase-status::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-draft {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.status-ordered {
+    background: #e8f0ff;
+    color: #315efb;
+}
+
+.status-partial {
+    background: #fff4db;
+    color: #a16207;
+}
+
+.status-received {
+    background: #e7f7ef;
+    color: #15803d;
+}
+
+.purchase-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 22px;
+    align-items: start;
+}
+
+.purchase-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, .06);
+    overflow: hidden;
+    margin-bottom: 22px;
+}
+
+.purchase-card-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid #edf0f4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.purchase-card-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.purchase-card-header p {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.purchase-card-body {
+    padding: 22px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.info-item {
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 11px;
+}
+
+.info-item label {
+    display: block;
+    margin-bottom: 6px;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.info-item strong {
+    color: #1f2937;
+}
+
+.supplier-contact {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4b5563;
+}
+
+.contact-row i {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    border-radius: 8px;
+    color: #315efb;
+}
+
+.notes-box {
+    margin-top: 18px;
+    padding: 15px;
+    border-left: 3px solid #315efb;
+    background: #f7f9ff;
+    border-radius: 8px;
+    color: #4b5563;
+}
+
+.purchase-table-wrapper {
+    overflow-x: auto;
+}
+
+.purchase-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.purchase-table-wrapper {
+    border-radius: 0 0 16px 16px;
+}
+
+.purchase-table {
+    min-width: 760px;
+}
+
+.purchase-table th {
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.purchase-table td {
+    padding: 17px 16px;
+}
+
+.purchase-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.product-name {
+    font-weight: 750;
+    color: #111827;
+}
+
+.article-meta {
+    line-height: 1.5;
+}
+
+.number-cell {
+    font-variant-numeric: tabular-nums;
+}
+
+.remaining {
+    display: inline-block;
+    min-width: 28px;
+    padding: 4px 8px;
+    border-radius: 7px;
+    text-align: center;
+}
+
+.remaining-zero {
+    background: #e7f7ef;
+    color: #15803d;
+}
+
+.remaining-positive {
+    background: #fff4db;
+    color: #a16207;
+}
+
+.price-cell {
+    font-variant-numeric: tabular-nums;
+}
+
+.action-cell {
+    white-space: nowrap;
+}
+
+.delete-button {
+    transition: all .15s ease;
+}
+
+.delete-button:hover {
+    border-color: #fca5a5;
+    transform: translateY(-1px);
+}
+
+
+.purchase-table th {
+    padding: 13px 16px;
+    background: #f8fafc;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .035em;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.purchase-table td {
+    padding: 16px;
+    border-top: 1px solid #edf0f4;
+    color: #374151;
+    vertical-align: middle;
+}
+
+.purchase-table tbody tr:hover {
+    background: #fafcff;
+}
+
+.product-name {
+    font-weight: 700;
+    color: #111827;
+}
+
+.article-meta {
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.number-cell {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.remaining {
+    font-weight: 700;
+}
+
+.remaining-zero {
+    color: #15803d;
+}
+
+.remaining-positive {
+    color: #b45309;
+}
+
+.price-cell {
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.action-cell {
+    text-align: center;
+}
+
+.delete-button {
+    padding: 7px 11px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fff;
+    color: #dc2626;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-button:hover {
+    background: #fef2f2;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(150px, 1fr) minmax(150px, 1fr);
+    gap: 16px;
+}
+
+/* Purchase item entry */
+.purchase-card:has(.form-grid) {
+    border-color: #dbe4ff;
+}
+
+.form-grid {
+    align-items: end;
+    gap: 14px;
+}
+
+.form-field {
+    gap: 7px;
+}
+
+.form-field label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #374151;
+    letter-spacing: .01em;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    min-height: 44px;
+    border-color: #d8dee9;
+    border-radius: 10px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.form-field input:hover,
+.form-field select:hover,
+.form-field textarea:hover {
+    border-color: #b9c2d0;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    border-color: #315efb;
+    box-shadow: 0 0 0 3px rgba(49, 94, 251, .10);
+}
+
+.form-field select {
+    cursor: pointer;
+}
+
+.purchase-card:has(.form-grid) .primary-button {
+    min-width: 170px;
+}
+
+.purchase-card:has(.form-grid) .purchase-card-body {
+    background: linear-gradient(to bottom, #ffffff, #fbfcff);
+}
+
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #d9dee8;
+    border-radius: 9px;
+    background: #fff;
+    font: inherit;
+    color: #111827;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: #315efb;
+    box-shadow: 0 0 0 3px rgba(49, 94, 251, .1);
+}
+
+.primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 17px;
+    border: 0;
+    border-radius: 9px;
+    background: #315efb;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.primary-button:hover {
+    background: #254edb;
+}
+
+.section-divider {
+    height: 1px;
+    background: #edf0f4;
+    margin: 4px 0 22px;
+}
+
+.receive-date {
+    max-width: 230px;
+    margin-bottom: 22px;
+}
+
+/* Validation + reception workflow */
+.purchase-card:has(.receive-item) {
+    border-color: #dbe4ff;
+}
+
+.purchase-card:has(.receive-item) .purchase-card-header {
+    background: #f8faff;
+}
+
+.purchase-card:has(.receive-item) .purchase-card-header i {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #eef4ff;
+}
+
+.receive-date {
+    max-width: 250px;
+}
+
+.receive-item {
+    margin-bottom: 14px;
+    padding: 19px;
+    border: 1px solid #e2e7ef;
+    border-radius: 13px;
+    background: #f9fafb;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.receive-item:hover {
+    border-color: #cfd8e6;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .04);
+}
+
+.receive-item:last-of-type {
+    margin-bottom: 0;
+}
+
+.receive-item-title {
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.receive-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+    gap: 10px;
+    margin-bottom: 17px;
+}
+
+.receive-stat {
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: #ffffff;
+    border: 1px solid #edf0f4;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.receive-stat strong {
+    font-size: 17px;
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.receive-form-grid {
+    grid-template-columns: 190px 190px;
+    gap: 14px;
+}
+
+.receive-submit {
+    padding-top: 4px;
+    border-top: 1px solid #edf0f4;
+}
+
+.receive-submit .primary-button {
+    min-width: 210px;
+}
+
+.purchase-card:has(form[action*="submit_purchase_order"]) {
+    border-color: #cfdcff;
+    background: #fbfcff;
+}
+
+.purchase-card:has(form[action*="submit_purchase_order"]) .purchase-card-header {
+    background: #f5f8ff;
+}
+
+.purchase-card:has(form[action*="submit_purchase_order"]) .purchase-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.purchase-card:has(form[action*="submit_purchase_order"]) .primary-button {
+    min-width: 200px;
+}
+
+@media (max-width: 700px) {
+    .receive-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .receive-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .purchase-card:has(form[action*="submit_purchase_order"]) .purchase-card-body {
+        display: block;
+    }
+
+    .purchase-card:has(form[action*="submit_purchase_order"]) .primary-button {
+        width: 100%;
+    }
+}
+
+
+.receive-item {
+    padding: 18px;
+    margin-bottom: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fafbfc;
+}
+
+.receive-item-title {
+    margin: 0 0 12px;
+    font-size: 15px;
+}
+
+.receive-stats {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.receive-stat {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.receive-stat strong {
+    display: block;
+    margin-top: 3px;
+    color: #111827;
+    font-size: 15px;
+}
+
+.receive-form-grid {
+    display: grid;
+    grid-template-columns: 180px 180px;
+    gap: 16px;
+}
+
+.receive-submit {
+    margin-top: 8px;
+}
+
+.receipt-row {
+    vertical-align: top;
+}
+
+/* Receipt history */
+.receipt-row td {
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+.receipt-number {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #eef4ff;
+    color: #315efb;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.receipt-items-box {
+    margin-top: 12px;
+    padding: 15px;
+    border: 1px solid #e4e9f0;
+    border-radius: 11px;
+    background: #f8fafc;
+}
+
+.receipt-items-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 11px;
+    color: #374151;
+}
+
+.receipt-items-table {
+    min-width: 650px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #ffffff;
+}
+
+.receipt-items-table th {
+    padding: 9px 10px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .035em;
+}
+
+.receipt-items-table td {
+    padding: 10px;
+    border-top: 1px solid #edf0f4;
+    font-size: 12px;
+}
+
+.receipt-items-table tbody tr:hover {
+    background: #fafcff;
+}
+
+.lot-active,
+.lot-inactive {
+    min-width: 52px;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.lot-active {
+    background: #e7f7ef;
+    color: #15803d;
+}
+
+.lot-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.empty-state {
+    padding: 48px 24px;
+}
+
+.empty-state i {
+    opacity: .75;
+}
+
+.receipt-row > td:last-child {
+    min-width: 420px;
+}
+
+@media (max-width: 900px) {
+    .receipt-row > td:last-child {
+        min-width: 320px;
+    }
+}
+
+
+.receipt-number {
+    font-weight: 700;
+    color: #315efb;
+    white-space: nowrap;
+}
+
+.receipt-items-box {
+    margin-top: 12px;
+    padding: 13px;
+    background: #f8fafc;
+    border: 1px solid #edf0f4;
+    border-radius: 10px;
+}
+
+.receipt-items-title {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.receipt-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.receipt-items-table th {
+    padding: 8px;
+    color: #6b7280;
+    background: #eef2f7;
+    text-align: left;
+}
+
+.receipt-items-table td {
+    padding: 9px 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.lot-active,
+.lot-inactive {
+    display: inline-flex;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.lot-active {
+    background: #e7f7ef;
+    color: #15803d;
+}
+
+.lot-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.empty-state {
+    padding: 42px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.empty-state i {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 32px;
+    color: #9ca3af;
+}
+
+.empty-state strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #374151;
+}
+
+@media (max-width: 1000px) {
+    .purchase-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .purchase-detail-page {
+        padding: 22px 14px 45px;
+    }
+
+    .purchase-page-header {
+        flex-direction: column;
+    }
+
+    .purchase-title-area h1 {
+        font-size: 24px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .receive-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+
+<div class="purchase-detail-page">
+
+    <!-- PAGE HEADER -->
+    <div class="purchase-page-header">
+
+        <div class="purchase-title-area">
+
+            <div class="purchase-title-icon">
+                <i class="bi bi-bag-check"></i>
+            </div>
+
+            <div>
+                <h1>
+                    {{ purchase_order["purchaseOrderNumber"] }}
+                </h1>
+
+                <p>
+                    Commande fournisseur ·
+                    <strong>{{ purchase_order["supplierName"] }}</strong>
+                </p>
+            </div>
+
+        </div>
+
+        <div class="purchase-header-actions">
+
+            <a
+                href="{{ url_for('admin_purchase_orders') }}"
+                class="purchase-back-btn"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Retour aux achats
+            </a>
+
+            {% set status = purchase_order["status"] %}
+
+            {% if status == "draft" %}
+                <span class="purchase-status status-draft">
+                    Brouillon
+                </span>
+            {% elif status == "ordered" %}
+                <span class="purchase-status status-ordered">
+                    Commandée
+                </span>
+            {% elif status == "partially_received" %}
+                <span class="purchase-status status-partial">
+                    Partiellement reçue
+                </span>
+            {% elif status == "received" %}
+                <span class="purchase-status status-received">
+                    Reçue
+                </span>
+            {% else %}
+                <span class="purchase-status status-draft">
+                    {{ status }}
+                </span>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="purchase-grid">
+
+        <!-- MAIN COLUMN -->
+        <div>
+
+
+            <!-- ORDER INFORMATION -->
+            <section class="purchase-card">
+
+                <div class="purchase-card-header">
+
+                    <div>
+                        <h2>Informations de la commande</h2>
+                        <p>Détails de la commande fournisseur</p>
+                    </div>
+
+                </div>
+
+                <div class="purchase-card-body">
+
+                    <div class="info-grid">
+
+                        <div class="info-item">
+                            <label>Date de commande</label>
+                            <strong>
+                                {{ purchase_order["orderDate"] }}
+                            </strong>
+                        </div>
+
+                        <div class="info-item">
+                            <label>Date prévue</label>
+                            <strong>
+                                {{ purchase_order["expectedDate"] or "Non spécifiée" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="supplier-contact">
+
+                        {% if purchase_order["supplierContact"] %}
+                        <div class="contact-row">
+                            <i class="bi bi-person"></i>
+                            <span>{{ purchase_order["supplierContact"] }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if purchase_order["supplierPhone"] %}
+                        <div class="contact-row">
+                            <i class="bi bi-telephone"></i>
+                            <span>{{ purchase_order["supplierPhone"] }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if purchase_order["supplierEmail"] %}
+                        <div class="contact-row">
+                            <i class="bi bi-envelope"></i>
+                            <span>{{ purchase_order["supplierEmail"] }}</span>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if purchase_order["notes"] %}
+                    <div class="notes-box">
+                        <strong>Notes</strong>
+                        <div style="margin-top:5px;">
+                            {{ purchase_order["notes"] }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- ITEMS -->
+            <section class="purchase-card">
+
+                <div class="purchase-card-header">
+
+                    <div>
+                        <h2>Articles commandés</h2>
+                        <p>
+                            Produits et quantités de cette commande
+                        </p>
+                    </div>
+
+                    <strong>
+                        {{ items|length }} article(s)
+                    </strong>
+
+                </div>
+
+
+                {% if items %}
+
+                <div class="purchase-table-wrapper">
+
+                    <table class="purchase-table">
+
+                        <thead>
+                            <tr>
+
+                                <th>Produit</th>
+                                <th>Article</th>
+                                <th style="text-align:right;">Commandé</th>
+                                <th style="text-align:right;">Reçu</th>
+                                <th style="text-align:right;">Restant</th>
+                                <th style="text-align:right;">Prix achat</th>
+
+                                {% if purchase_order["status"] == "draft" %}
+                                <th style="text-align:center;">Action</th>
+                                {% endif %}
+
+                            </tr>
+                        </thead>
+
+
+                        <tbody>
+
+                        {% for item in items %}
+
+                            {% set remaining =
+                                item["orderedQuantity"] - item["receivedQuantity"]
+                            %}
+
+                            <tr>
+
+                                <td>
+                                    <div class="product-name">
+                                        {{ item["productName"] }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="article-meta">
+                                        {{ item["articleVolume"] }}
+                                        {% if item["articlePackage"] %}
+                                            · {{ item["articlePackage"] }}
+                                        {% endif %}
+                                    </div>
+                                </td>
+
+                                <td class="number-cell">
+                                    {{ item["orderedQuantity"] }}
+                                </td>
+
+                                <td class="number-cell">
+                                    {{ item["receivedQuantity"] }}
+                                </td>
+
+                                <td class="number-cell remaining
+                                    {% if remaining == 0 %}
+                                        remaining-zero
+                                    {% else %}
+                                        remaining-positive
+                                    {% endif %}
+                                ">
+                                    {{ remaining }}
+                                </td>
+
+                                <td class="price-cell">
+                                    {{ "%.2f"|format(item["purchasePrice"]) }}
+                                </td>
+
+                                {% if purchase_order["status"] == "draft" %}
+
+                                <td class="action-cell">
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'delete_purchase_order_item',
+                                            purchase_order_id=purchase_order['purchaseOrderId'],
+                                            item_id=item['purchaseOrderItemId']
+                                        ) }}"
+                                        onsubmit="return confirm('Supprimer cet article ?');"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="delete-button"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                            Supprimer
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                                {% endif %}
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+                    <i class="bi bi-box-seam"></i>
+                    <strong>Aucun article</strong>
+                    Aucun article n'a encore été ajouté à cette commande.
+                </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- ADD ITEM -->
+            {% if purchase_order["status"] == "draft" %}
+
+            <section class="purchase-card">
+
+                <div class="purchase-card-header">
+
+                    <div>
+                        <h2>Ajouter un article</h2>
+                        <p>Ajouter un produit à la commande fournisseur</p>
+                    </div>
+
+                </div>
+
+                <div class="purchase-card-body">
+
+                    {% if available_articles %}
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'create_purchase_order_item',
+                            purchase_order_id=purchase_order['purchaseOrderId']
+                        ) }}"
+                    >
+
+                        <div class="form-grid">
+
+                            <div class="form-field">
+
+                                <label for="supplierArticleId">
+                                    Article
+                                </label>
+
+                                <select
+                                    id="supplierArticleId"
+                                    name="supplierArticleId"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Sélectionner un article
+                                    </option>
+
+                                    {% for article in available_articles %}
+
+                                    <option
+                                        value="{{ article['supplierArticleId'] }}"
+                                    >
+                                        {{ article["productName"] }}
+                                        -
+                                        {{ article["articleVolume"] }}
+                                        -
+                                        {{ article["articlePackage"] }}
+                                        | Prix fournisseur:
+                                        {{ "%.2f"|format(article["purchasePrice"]) }}
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-field">
+
+                                <label for="orderedQuantity">
+                                    Quantité
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="orderedQuantity"
+                                    name="orderedQuantity"
+                                    min="1"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-field">
+
+                                <label for="purchasePrice">
+                                    Prix d'achat
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="purchasePrice"
+                                    name="purchasePrice"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div style="margin-top:18px;">
+
+                            <button
+                                type="submit"
+                                class="primary-button"
+                            >
+                                <i class="bi bi-plus-lg"></i>
+                                Ajouter l'article
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    {% else %}
+
+                    <div class="empty-state">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <strong>Aucun article disponible</strong>
+                        Aucun article fournisseur actif n'est disponible pour ce fournisseur.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- SUBMIT -->
+            {% if items %}
+
+            <section class="purchase-card">
+
+                <div class="purchase-card-header">
+
+                    <div>
+                        <h2>Valider la commande</h2>
+                        <p>
+                            La commande doit être validée avant réception.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="purchase-card-body">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'submit_purchase_order',
+                            purchase_order_id=purchase_order['purchaseOrderId']
+                        ) }}"
+                        onsubmit="return confirm('Valider cette commande fournisseur ?');"
+                    >
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            <i class="bi bi-check2-circle"></i>
+                            Valider la commande
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+            {% endif %}
+
+
+            <!-- RECEIVE PURCHASE ORDER -->
+            {% if purchase_order["status"] in ["ordered", "partially_received"] and items %}
+
+            <section class="purchase-card">
+
+                <div class="purchase-card-header">
+
+                    <div>
+                        <h2>Réception de la commande</h2>
+                        <p>
+                            Enregistrer les quantités reçues et leurs lots.
+                        </p>
+                    </div>
+
+                    <i class="bi bi-box-arrow-in-down" style="font-size:22px;color:#315efb;"></i>
+
+                </div>
+
+                <div class="purchase-card-body">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'receive_purchase_order',
+                            purchase_order_id=purchase_order['purchaseOrderId']
+                        ) }}"
+                    >
+
+                        <div class="form-field receive-date">
+
+                            <label for="receivedDate">
+                                Date de réception
+                            </label>
+
+                            <input
+                                type="date"
+                                id="receivedDate"
+                                name="receivedDate"
+                                value="{{ current_date }}"
+                                required
+                            >
+
+                        </div>
+
+
+                        {% for item in items %}
+
+                            {% set remaining =
+                                item["orderedQuantity"] - item["receivedQuantity"]
+                            %}
+
+                            {% if remaining > 0 %}
+
+                            <div class="receive-item">
+
+                                <h3 class="receive-item-title">
+                                    {{ item["productName"] }}
+                                    · {{ item["articleVolume"] }}
+                                    {% if item["articlePackage"] %}
+                                        · {{ item["articlePackage"] }}
+                                    {% endif %}
+                                </h3>
+
+
+                                <div class="receive-stats">
+
+                                    <div class="receive-stat">
+                                        Commandé
+                                        <strong>
+                                            {{ item["orderedQuantity"] }}
+                                        </strong>
+                                    </div>
+
+                                    <div class="receive-stat">
+                                        Déjà reçu
+                                        <strong>
+                                            {{ item["receivedQuantity"] }}
+                                        </strong>
+                                    </div>
+
+                                    <div class="receive-stat">
+                                        Restant
+                                        <strong>
+                                            {{ remaining }}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="receive-form-grid">
+
+                                    <div class="form-field">
+
+                                        <label>
+                                            Quantité reçue
+                                        </label>
+
+                                        <input
+                                            type="number"
+                                            name="receivedQuantity_{{ item['purchaseOrderItemId'] }}"
+                                            min="0"
+                                            max="{{ remaining }}"
+                                            value="0"
+                                        >
+
+                                    </div>
+
+
+                                    <div class="form-field">
+
+                                        <label>
+                                            Date d'expiration
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            name="lotExpDate_{{ item['purchaseOrderItemId'] }}"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        <div class="form-field" style="margin-top:18px;">
+
+                            <label for="notes">
+                                Notes de réception
+                            </label>
+
+                            <textarea
+                                id="notes"
+                                name="notes"
+                                rows="3"
+                                placeholder="Ajouter une remarque concernant cette réception..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="receive-submit">
+
+                            <button
+                                type="submit"
+                                class="primary-button"
+                            >
+                                <i class="bi bi-box-arrow-in-down"></i>
+                                Enregistrer la réception
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- RECEIPT HISTORY -->
+            <section class="purchase-card">
+
+                <div class="purchase-card-header">
+
+                    <div>
+                        <h2>Historique des réceptions</h2>
+                        <p>
+                            Toutes les réceptions enregistrées pour cette commande.
+                        </p>
+                    </div>
+
+                    {% if receipts %}
+                        <strong>{{ receipts|length }}</strong>
+                    {% endif %}
+
+                </div>
+
+
+                {% if receipts %}
+
+                <div class="purchase-table-wrapper">
+
+                    <table class="purchase-table">
+
+                        <thead>
+                            <tr>
+                                <th>Réception</th>
+                                <th>Date</th>
+                                <th>Reçue par</th>
+                                <th>Détails</th>
+                            </tr>
+                        </thead>
+
+
+                        <tbody>
+
+                        {% for receipt in receipts %}
+
+                            <tr class="receipt-row">
+
+                                <td>
+                                    <span class="receipt-number">
+                                        {{ receipt["receiptNumber"] }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ receipt["receivedDate"] }}
+                                </td>
+
+                                <td>
+
+                                    {% if receipt["userName"] or receipt["userSurname"] %}
+
+                                        {{ receipt["userName"] or "" }}
+                                        {{ receipt["userSurname"] or "" }}
+
+                                    {% else %}
+
+                                        Inconnu
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {{ receipt["notes"] or "Aucune note" }}
+
+
+                                    {% if receipt["items"] %}
+
+                                    <div class="receipt-items-box">
+
+                                        <span class="receipt-items-title">
+                                            <strong>Articles reçus</strong>
+                                        </span>
+
+
+                                        <div class="purchase-table-wrapper">
+
+                                            <table class="receipt-items-table">
+
+                                                <thead>
+
+                                                    <tr>
+
+                                                        <th>Article</th>
+                                                        <th>Qté</th>
+                                                        <th>Prix achat</th>
+                                                        <th>Lot</th>
+                                                        <th>Expiration</th>
+                                                        <th>Réception lot</th>
+                                                        <th>État</th>
+
+                                                    </tr>
+
+                                                </thead>
+
+
+                                                <tbody>
+
+                                                {% for item in receipt["items"] %}
+
+                                                    <tr>
+
+                                                        <td>
+
+                                                            <strong>
+                                                                {{ item["productName"] }}
+                                                            </strong>
+
+                                                            <div class="article-meta">
+
+                                                                {{ item["articleVolume"] }}
+
+                                                                {% if item["articlePackage"] %}
+                                                                    · {{ item["articlePackage"] }}
+                                                                {% endif %}
+
+                                                            </div>
+
+                                                        </td>
+
+                                                        <td>
+                                                            {{ item["receivedQuantity"] }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ "%.2f"|format(item["purchasePrice"]) }}
+                                                        </td>
+
+                                                        <td>
+
+                                                            {% if item["lotId"] %}
+                                                                #{{ item["lotId"] }}
+                                                            {% else %}
+                                                                Aucun
+                                                            {% endif %}
+
+                                                        </td>
+
+                                                        <td>
+                                                            {{ item["lotExpDate"] or "Non spécifiée" }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ item["lotRecepDate"] or "Non spécifiée" }}
+                                                        </td>
+
+                                                        <td>
+
+                                                            {% if item["lotState"] == 1 %}
+
+                                                                <span class="lot-active">
+                                                                    Actif
+                                                                </span>
+
+                                                            {% else %}
+
+                                                                <span class="lot-inactive">
+                                                                    Inactif
+                                                                </span>
+
+                                                            {% endif %}
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                {% endfor %}
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <i class="bi bi-clock-history"></i>
+
+                    <strong>Aucune réception</strong>
+
+                    Aucune réception n'a encore été enregistrée pour cette commande.
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+        </div>
+
+
+        <!-- SUMMARY SIDEBAR -->
+        <aside>
+
+            <section class="purchase-card">
+
+                <div class="purchase-card-header">
+                    <div>
+                        <h2>R?sum? de la commande</h2>
+                        <p>Vue rapide de l'?tat des achats</p>
+                    </div>
+                </div>
+
+                <div class="purchase-card-body">
+
+                    <div class="purchase-summary-stack">
+
+                        <div class="purchase-summary-item">
+                            <div class="purchase-summary-label">
+                                Fournisseur
+                            </div>
+                            <div class="purchase-summary-value">
+                                {{ purchase_order["supplierName"] }}
+                            </div>
+                        </div>
+
+                        <div class="purchase-summary-item">
+                            <div class="purchase-summary-label">
+                                Statut
+                            </div>
+
+                            {% if purchase_order["status"] == "draft" %}
+                                <span class="purchase-status status-draft">
+                                    Brouillon
+                                </span>
+                            {% elif purchase_order["status"] == "ordered" %}
+                                <span class="purchase-status status-ordered">
+                                    Command?e
+                                </span>
+                            {% elif purchase_order["status"] == "partially_received" %}
+                                <span class="purchase-status status-partial">
+                                    Partiellement re?ue
+                                </span>
+                            {% elif purchase_order["status"] == "received" %}
+                                <span class="purchase-status status-received">
+                                    Re?ue
+                                </span>
+                            {% else %}
+                                <span class="purchase-status status-draft">
+                                    {{ purchase_order["status"] }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="purchase-summary-item">
+                            <div class="purchase-summary-label">
+                                Articles
+                            </div>
+                            <div class="purchase-summary-count">
+                                {{ items|length }}
+                            </div>
+                        </div>
+
+                        <div class="purchase-summary-item">
+                            <div class="purchase-summary-label">
+                                Date de commande
+                            </div>
+                            <div class="purchase-summary-value">
+                                {{ purchase_order["orderDate"] }}
+                            </div>
+                        </div>
+
+                        <div class="purchase-summary-item">
+                            <div class="purchase-summary-label">
+                                Livraison pr?vue
+                            </div>
+                            <div class="purchase-summary-value">
+                                {{ purchase_order["expectedDate"] or "Non sp?cifi?e" }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </aside>
+
+
+</div>
+
+{% endblock %}

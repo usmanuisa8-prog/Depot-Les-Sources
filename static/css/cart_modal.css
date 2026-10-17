@@ -1,0 +1,902 @@
+/* =========================================================
+   SHOPPING CART MODAL
+   Professional / Modern UI
+   ========================================================= */
+
+.shopping-cart-modal {
+    display: flex;
+    flex-direction: column;
+
+    width: min(720px, 94vw);
+    max-width: 720px;
+    height: min(88vh, 820px);
+    max-height: 88vh;
+
+    padding: 0;
+
+    gap: 0;
+
+    background: var(--bg-light);
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, .18),
+        0 8px 25px rgba(0, 0, 0, .08);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.shopping-cart-modal .sc-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    position: relative;
+
+    min-height: 92px;
+    padding: 1.5rem 4.5rem 1.25rem 1.75rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--bg-light) 0%,
+            var(--bg-primary) 100%
+        );
+
+    border-bottom: 1px solid var(--border);
+}
+
+.shopping-cart-modal .sc-header::before {
+    content: "??";
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    margin-right: 14px;
+
+    border-radius: 14px;
+
+    background: rgba(18, 89, 184, .10);
+
+    font-size: 1.35rem;
+}
+
+.shopping-cart-modal .sc-header h1 {
+    margin: 0;
+
+    font-family: var(--title-font);
+    font-size: 1.55rem;
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    color: var(--dark-blue);
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.shopping-cart-modal .modal-close {
+    top: 1.45rem;
+    right: 1.5rem;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, .045);
+
+    cursor: pointer;
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        color .25s ease;
+
+    z-index: 10;
+}
+
+.shopping-cart-modal .modal-close:hover {
+    transform: rotate(90deg);
+
+    background: rgba(204, 0, 0, .09);
+
+    color: var(--red);
+}
+
+.shopping-cart-modal .modal-close svg {
+    width: 17px;
+    height: 17px;
+
+    color: var(--text-gray);
+}
+
+
+/* =========================================================
+   CART CONTENT
+   ========================================================= */
+
+.shopping-cart-modal .sc-content {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+
+    min-height: 0;
+
+    gap: .75rem;
+
+    padding: 1.25rem 1.5rem;
+
+    background: #f8fbfd;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd8e0 transparent;
+}
+
+.shopping-cart-modal .sc-content::-webkit-scrollbar {
+    width: 7px;
+}
+
+.shopping-cart-modal .sc-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.shopping-cart-modal .sc-content::-webkit-scrollbar-thumb {
+    background: #cbd8e0;
+    border-radius: 10px;
+}
+
+.shopping-cart-modal .sc-content::-webkit-scrollbar-thumb:hover {
+    background: #aebfc9;
+}
+
+
+/* =========================================================
+   CART ITEM
+   ========================================================= */
+
+.shopping-cart-modal .sc-item {
+    display: flex;
+    align-items: center;
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 112px;
+
+    padding: 1rem 1rem 1rem 1rem;
+
+    gap: 1rem;
+
+    background: var(--bg-light);
+
+    border: 1px solid #e5edf2;
+
+    border-radius: 16px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .045);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.shopping-cart-modal .sc-item:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(18, 89, 184, .18);
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, .075);
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE
+   ========================================================= */
+
+.shopping-cart-modal .sc-item-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 88px;
+
+    width: 88px;
+    height: 88px;
+
+    padding: .5rem;
+
+    border-radius: 14px;
+
+    background: #f5f9fb;
+
+    overflow: hidden;
+}
+
+.shopping-cart-modal .sc-item-image img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   PRODUCT DESCRIPTION
+   ========================================================= */
+
+.shopping-cart-modal .sc-item-description {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+
+    min-width: 0;
+
+    flex: 1;
+
+    gap: .4rem;
+
+    padding-right: 1.5rem;
+}
+
+.shopping-cart-modal .sc-d-name {
+    margin: 0;
+
+    font-family: var(--title-font);
+
+    font-size: 1rem;
+    font-weight: 700;
+
+    line-height: 1.35;
+
+    color: var(--text-primary);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.shopping-cart-modal .sc-item-description::after {
+    content: "Prix unitaire";
+
+    order: 3;
+
+    margin-top: .05rem;
+
+    font-size: .72rem;
+
+    color: var(--text-gray);
+
+    opacity: .8;
+}
+
+
+/* =========================================================
+   QUANTITY
+   ========================================================= */
+
+.shopping-cart-modal .sc-d-quantity {
+    width: 76px;
+    height: 34px;
+
+    margin-top: .35rem;
+
+    padding: 0 .5rem;
+
+    border: 1px solid #d7e3e9;
+
+    border-radius: 9px;
+
+    background: #f8fbfd;
+
+    color: var(--text-primary);
+
+    text-align: center;
+
+    font-family: var(--text-font);
+    font-size: .9rem;
+    font-weight: 600;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.shopping-cart-modal .sc-d-quantity:hover {
+    border-color: rgba(18, 89, 184, .4);
+}
+
+.shopping-cart-modal .sc-d-quantity:focus {
+    border-color: var(--primary);
+
+    background: var(--bg-light);
+
+    box-shadow:
+        0 0 0 3px rgba(18, 89, 184, .10);
+}
+
+
+/* =========================================================
+   ITEM TOTAL
+   ========================================================= */
+
+.shopping-cart-modal .sc-item-total {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    flex: 0 0 auto;
+
+    min-width: 100px;
+
+    padding-right: 1.75rem;
+
+    color: var(--primary);
+
+    font-family: var(--title-font);
+
+    font-size: 1rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ITEM REMOVE BUTTON
+   ========================================================= */
+
+.shopping-cart-modal .sc-item-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 30px;
+    height: 30px;
+
+    margin: 0;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.shopping-cart-modal .sc-item-close:hover {
+    background: rgba(204, 0, 0, .08);
+
+    transform: scale(1.08);
+}
+
+.shopping-cart-modal .sc-item-close svg {
+    width: 14px;
+    height: 14px;
+
+    color: #a5afb5;
+
+    transition: color .2s ease;
+}
+
+.shopping-cart-modal .sc-item-close:hover svg {
+    color: var(--red);
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.shopping-cart-modal .sc-item-error {
+    margin-top: .15rem;
+
+    color: var(--red);
+
+    font-size: .78rem;
+
+    font-style: italic;
+
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.shopping-cart-modal .sc-footer {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1rem;
+
+    padding: 1.25rem 1.5rem 1.5rem;
+
+    background: var(--bg-light);
+
+    border-top: 1px solid var(--border);
+}
+
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+.shopping-cart-modal .total-cart {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+
+    padding: .25rem 0 .85rem;
+
+    border-bottom: 1px dashed #dbe5ea;
+}
+
+.shopping-cart-modal .total-cart::before {
+    content: "Total de la commande";
+
+    font-family: var(--text-font);
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    color: var(--text-gray);
+}
+
+.shopping-cart-modal .total-cart h2 {
+    margin: 0;
+
+    font-family: var(--title-font);
+
+    font-size: 1.45rem;
+    font-weight: 700;
+
+    color: var(--primary);
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   LOGIN MESSAGE
+   ========================================================= */
+
+.shopping-cart-modal .sc-footer > p {
+    margin: 0;
+
+    padding: .8rem 1rem;
+
+    border-radius: 10px;
+
+    background: #fff8e8;
+
+    border: 1px solid #f3dfad;
+
+    color: #805f15;
+
+    font-size: .85rem;
+
+    text-align: center;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   ACTION AREA
+   ========================================================= */
+
+.shopping-cart-modal .sc-f-actions {
+    display: grid;
+
+    grid-template-columns: 1.35fr 1fr auto;
+
+    align-items: stretch;
+
+    width: 100%;
+
+    gap: .65rem;
+
+    justify-content: stretch;
+}
+
+.shopping-cart-modal .sc-f-actions button,
+.shopping-cart-modal .sc-f-actions a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+
+    padding: .75rem 1rem;
+
+    border: none;
+    border-radius: 11px;
+
+    gap: .5rem;
+
+    font-family: var(--text-font);
+
+    font-size: .9rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: none;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.shopping-cart-modal .sc-f-actions button:hover,
+.shopping-cart-modal .sc-f-actions a:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .10);
+}
+
+.shopping-cart-modal .sc-f-actions button:active,
+.shopping-cart-modal .sc-f-actions a:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   CONFIRM ORDER
+   ========================================================= */
+
+.shopping-cart-modal #submit-cart {
+    background: var(--primary);
+
+    color: var(--text-light);
+}
+
+.shopping-cart-modal #submit-cart:hover {
+    background: #0d4eaa;
+}
+
+.shopping-cart-modal #submit-cart svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* =========================================================
+   CONTINUE SHOPPING
+   ========================================================= */
+
+.shopping-cart-modal #continue {
+    background: #eef3f6;
+
+    color: var(--text-primary);
+
+    border: 1px solid #dce6eb;
+}
+
+.shopping-cart-modal #continue:hover {
+    background: #e4edf2;
+}
+
+.shopping-cart-modal #continue svg {
+    width: 15px;
+    height: 15px;
+
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   EMPTY CART / RESET
+   ========================================================= */
+
+.shopping-cart-modal #reset-cart {
+    min-width: 48px;
+
+    padding-left: .8rem;
+    padding-right: .8rem;
+
+    background: #fff0f0;
+
+    color: var(--red);
+
+    border: 1px solid #f2d0d0;
+}
+
+.shopping-cart-modal #reset-cart:hover {
+    background: #ffe3e3;
+}
+
+.shopping-cart-modal #reset-cart svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* =========================================================
+   EMPTY CONTENT
+   ========================================================= */
+
+.shopping-cart-modal .sc-content:empty::before {
+    content: "Votre panier est vide";
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 220px;
+
+    color: var(--text-gray);
+
+    font-family: var(--title-font);
+
+    font-size: 1rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE ? TABLET
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .shopping-cart-modal {
+        width: 94vw;
+        max-width: 94vw;
+
+        height: 90vh;
+        max-height: 90vh;
+
+        border-radius: 20px;
+    }
+
+    .shopping-cart-modal .sc-header {
+        min-height: 82px;
+
+        padding:
+            1.2rem
+            4rem
+            1.1rem
+            1.25rem;
+    }
+
+    .shopping-cart-modal .sc-header::before {
+        width: 42px;
+        height: 42px;
+
+        font-size: 1.15rem;
+    }
+
+    .shopping-cart-modal .sc-header h1 {
+        font-size: 1.35rem;
+    }
+
+    .shopping-cart-modal .sc-content {
+        padding: 1rem;
+    }
+
+    .shopping-cart-modal .sc-footer {
+        padding: 1rem;
+    }
+
+    .shopping-cart-modal .sc-item {
+        padding: .85rem;
+
+        gap: .8rem;
+    }
+
+    .shopping-cart-modal .sc-item-image {
+        flex-basis: 72px;
+
+        width: 72px;
+        height: 72px;
+    }
+
+    .shopping-cart-modal .sc-item-total {
+        min-width: 85px;
+
+        padding-right: 1.5rem;
+
+        font-size: .9rem;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE ? MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .shopping-cart-modal {
+        width: 96vw;
+        max-width: 96vw;
+
+        height: 92vh;
+        max-height: 92vh;
+
+        border-radius: 18px;
+    }
+
+    .shopping-cart-modal .sc-header {
+        min-height: 76px;
+
+        padding:
+            1rem
+            3.5rem
+            1rem
+            1rem;
+    }
+
+    .shopping-cart-modal .sc-header::before {
+        width: 38px;
+        height: 38px;
+
+        margin-right: 10px;
+
+        border-radius: 11px;
+
+        font-size: 1rem;
+    }
+
+    .shopping-cart-modal .sc-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .shopping-cart-modal .modal-close {
+        top: 1rem;
+        right: .85rem;
+
+        width: 36px;
+        height: 36px;
+    }
+
+    .shopping-cart-modal .sc-content {
+        padding: .75rem;
+
+        gap: .6rem;
+    }
+
+    .shopping-cart-modal .sc-item {
+        min-height: 100px;
+
+        padding: .75rem;
+
+        gap: .7rem;
+    }
+
+    .shopping-cart-modal .sc-item-image {
+        flex-basis: 62px;
+
+        width: 62px;
+        height: 62px;
+
+        padding: .35rem;
+
+        border-radius: 11px;
+    }
+
+    .shopping-cart-modal .sc-item-description {
+        padding-right: 1rem;
+    }
+
+    .shopping-cart-modal .sc-d-name {
+        font-size: .88rem;
+    }
+
+    .shopping-cart-modal .sc-d-quantity {
+        width: 64px;
+        height: 30px;
+
+        font-size: .8rem;
+    }
+
+    .shopping-cart-modal .sc-item-total {
+        min-width: auto;
+
+        padding-right: 1.25rem;
+
+        font-size: .82rem;
+    }
+
+    .shopping-cart-modal .sc-item-close {
+        top: 7px;
+        right: 7px;
+
+        width: 26px;
+        height: 26px;
+    }
+
+    .shopping-cart-modal .sc-footer {
+        gap: .8rem;
+
+        padding: .9rem;
+    }
+
+    .shopping-cart-modal .total-cart h2 {
+        font-size: 1.2rem;
+    }
+
+    .shopping-cart-modal .sc-f-actions {
+        grid-template-columns: 1fr 1fr;
+
+        gap: .55rem;
+    }
+
+    .shopping-cart-modal #submit-cart {
+        grid-column: 1 / -1;
+    }
+
+    .shopping-cart-modal .sc-f-actions button,
+    .shopping-cart-modal .sc-f-actions a {
+        min-height: 44px;
+
+        padding: .65rem .7rem;
+
+        font-size: .8rem;
+    }
+
+    .shopping-cart-modal #reset-cart {
+        min-width: 0;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .shopping-cart-modal .sc-item-image {
+        flex-basis: 52px;
+
+        width: 52px;
+        height: 52px;
+    }
+
+    .shopping-cart-modal .sc-item-total {
+        display: none;
+    }
+
+    .shopping-cart-modal .sc-item-description {
+        padding-right: .5rem;
+    }
+}

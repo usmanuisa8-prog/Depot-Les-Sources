@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+
+{% block title %}À propos - Dépôt Les Sources{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <section class="about-hero">
+        <div class="hero-background">
+            <img src="{{ url_for('static', filename='images/images/about-hero.jpg') }}" alt="Dépôt Les Sources Hero Image">
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="about-hero-content">
+            <h1>À propos de Dépôt Les Sources</h1>
+            <p>
+                Votre partenaire de confiance pour la distribution 
+                d'eau minérale, de jus et de boissons gazeuses 
+                à Ngaoundéré.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="{{ url_for('products') }}" class="btn primary-btn">
+                    <i class="fa-solid fa-boxes-stacked"></i> Découvrir nos produits
+                </a>
+                <a href="#contact" class="btn secondary-btn">
+                    <i class="fa-solid fa-envelope"></i> Nous contacter
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-story section">
+        <div class="container story-grid">
+            <div class="story-image">
+                <img src="{{ url_for('static', filename='images/images/about.jpg') }}" alt="Entrepôt Dépôt Les Sources">
+            </div>
+
+            <div class="story-content">
+                <span class="section-tag">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Notre histoire
+                </span>
+                <h2>Une entreprise proche de ses clients</h2>
+                <p>
+                    Depuis sa création, Dépôt Les Sources s'engage 
+                    à fournir des boissons de qualité aux particuliers, 
+                    commerces et revendeurs.
+                </p>
+                <p>
+                    Grâce à un stock permanent, des prix compétitifs 
+                    et un service fiable, nous sommes devenus un 
+                    partenaire de confiance à Ngaoundéré.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mission section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag"><i class="fa-solid fa-bullseye"></i> Notre mission</span>
+                <h2>Ce qui guide notre engagement</h2>
+            </div>
+
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <div class="card-media">
+                        <img src="{{ url_for('static', filename='images/images/mission-quality.jpg') }}" alt="Qualité des boissons">
+                    </div>
+                    <div class="card-icon-wrapper">
+                        <i class="bi bi-droplet-fill"></i>
+                    </div>
+                    <h3>Qualité</h3>
+                    <p>Offrir des boissons fraîches et certifiées à l'ensemble de nos clients.</p>
+                </div>
+
+                <div class="mission-card">
+                    <div class="card-media">
+                        <img src="{{ url_for('static', filename='images/images/mission-delivery.jpg') }}" alt="Service de livraison">
+                    </div>
+                    <div class="card-icon-wrapper">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <h3>Service</h3>
+                    <p>Assurer une livraison rapide et un service professionnel au quotidien.</p>
+                </div>
+
+                <div class="mission-card">
+                    <div class="card-media">
+                        <img src="{{ url_for('static', filename='images/images/mission-trust.jpg') }}" alt="Relation client">
+                    </div>
+                    <div class="card-icon-wrapper">
+                        <i class="bi bi-hand-thumbs-up-fill"></i>
+                    </div>
+                    <h3>Confiance</h3>
+                    <p>Construire des relations transparentes et durables avec nos partenaires.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="team section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag"><i class="fa-solid fa-people-group"></i> Notre organisation</span>
+                <h2>Des services structurés pour mieux vous servir</h2>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <i class="bi bi-person-badge-fill"></i>
+                    <h3>Gestion</h3>
+                    <p>Supervision rigoureuse et suivi des opérations commerciales.</p>
+                </div>
+
+                <div class="team-card">
+                    <i class="bi bi-box-seam-fill"></i>
+                    <h3>Stock & Logistique</h3>
+                    <p>Contrôle continu de l'inventaire et disponibilité garantie.</p>
+                </div>
+
+                <div class="team-card">
+                    <i class="bi bi-truck-flatbed"></i>
+                    <h3>Livraison</h3>
+                    <p>Flotte de transport réactive vers tous les secteurs de la ville.</p>
+                </div>
+
+                <div class="team-card">
+                    <i class="bi bi-headset"></i>
+                    <h3>Service Client</h3>
+                    <p>Accompagnement personnalisé et traitement immédiat de vos demandes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="statistics">
+        <div class="statistics-overlay"></div>
+        <div class="container statistics-content">
+            <div class="stat-item">
+                <i class="bi bi-boxes stat-icon"></i>
+                <h2 data-number="500">500+</h2>
+                <p>Cartons en stock</p>
+            </div>
+
+            <div class="stat-item">
+                <i class="bi bi-emoji-smile stat-icon"></i>
+                <h2 data-number="1000">1000+</h2>
+                <p>Clients satisfaits</p>
+            </div>
+
+            <div class="stat-item">
+                <i class="bi bi-calendar-check stat-icon"></i>
+                <h2>7j/7</h2>
+                <p>Service ouvert</p>
+            </div>
+
+            <div class="stat-item">
+                <i class="bi bi-speedometer2 stat-icon"></i>
+                <h2 data-number="300">300+</h2>
+                <p>Livraisons effectuées</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="why-us" class="why-us section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag"><i class="fa-solid fa-star"></i> Avantages</span>
+                <h2>Pourquoi choisir Dépôt Les Sources ?</h2>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="bi bi-box-seam"></i>
+                    <h3>Stock permanent</h3>
+                    <p>Des étagères constamment approvisionnées pour répondre à tous vos besoins.</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="bi bi-award-fill"></i>
+                    <h3>Produits certifiés</h3>
+                    <p>Sélection de marques reconnues pour leur goût et leur pureté.</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="bi bi-cash-stack"></i>
+                    <h3>Prix de gros et détail</h3>
+                    <p>Des structures tarifaires avantageuses adaptées à votre volume.</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <h3>Livraison express</h3>
+                    <p>Expédition rapide et ponctuelle directement à votre point de vente.</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="bi bi-people-fill"></i>
+                    <h3>Accompagnement pro</h3>
+                    <p>Une équipe commerciale dédiée à l'écoute de vos demandes.</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="bi bi-heart-fill"></i>
+                    <h3>Satisfaction garantie</h3>
+                    <p>Un engagement ferme envers la qualité globale de notre service.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag"><i class="fa-solid fa-quote-left"></i> Témoignages</span>
+                <h2>Ce que nos clients disent de nous</h2>
+            </div>
+
+            <div class="testimonial-slider">
+                <div class="testimonial-card">
+                    <div class="client-avatar">
+                        <img src="{{ url_for('static', filename='images/profile/user1.jpg') }}" alt="Avatar Client Jean M.">
+                    </div>
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <p>"Service d'approvisionnement ultra rapide et prix imbattables pour mon commerce."</p>
+                    <h4>— Jean M.</h4>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="client-avatar">
+                        <img src="{{ url_for('static', filename='images/profile/user2.jpg') }}" alt="Avatar Client Amina N.">
+                    </div>
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <p>"Un dépôt fiable avec toujours de la fraîcheur et du stock disponible au bon moment."</p>
+                    <h4>— Amina N.</h4>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="client-avatar">
+                        <img src="{{ url_for('static', filename='images/profile/user3.jpg') }}" alt="Avatar Client Ibrahim A.">
+                    </div>
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <p>"Disponibilité 7j/7 et personnel très courtois. Je recommande vivement !"</p>
+                    <h4>— Ibrahim A.</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vision section">
+        <div class="container">
+            <div class="vision-box">
+                <div class="vision-image">
+                    <img src="{{ url_for('static', filename='images/images/vision.jpg') }}" alt="Notre Vision Dépôt Les Sources">
+                </div>
+                <div class="vision-content">
+                    <i class="bi bi-eye-fill vision-icon"></i>
+                    <h2>Notre vision</h2>
+                    <p>
+                        Devenir le dépôt de référence dans la région de l'Adamaoua 
+                        en offrant des boissons de qualité supérieure, un excellent service client 
+                        et une disponibilité permanente des produits.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-cta">
+        <div class="container">
+            <h2>Prêt à passer votre commande ?</h2>
+            <p>Contactez-nous dès aujourd'hui pour approvisionner vos stocks en boissons.</p>
+            <div class="cta-actions">
+                <a href="{{ url_for('products') }}" class="btn primary-btn">
+                    <i class="fa-solid fa-cart-shopping"></i> Commander maintenant
+                </a>
+                <a href="#contact" class="btn secondary-btn">
+                    <i class="fa-solid fa-phone"></i> Nous contacter
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section section" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag"><i class="fa-solid fa-paper-plane"></i> Contact</span>
+                <h2>Contactez Dépôt Les Sources</h2>
+                <p>Une question, une commande ou un besoin particulier ? Notre équipe est là pour vous répondre.</p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2>Parlons de vos besoins</h2>
+                    <p>Une commande urgente, une demande de tarif de gros ou un partenariat ? Contactez-nous directement.</p>
+
+                    <div class="contact-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <h3>Adresse</h3>
+                            <p>Quartier Bali, Ngaoundéré, Cameroun</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <div>
+                            <h3>Téléphone</h3>
+                            <p><a href="tel:+237650731007">+237 650 731 007</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-whatsapp"></i>
+                        <div>
+                            <h3>WhatsApp</h3>
+                            <p><a href="https://wa.me/237650731007" target="_blank">Commandez directement via WhatsApp</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-clock-fill"></i>
+                        <div>
+                            <h3>Horaires</h3>
+                            <p>Lundi - Dimanche : 7h30 - 20h00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm" action="#" method="POST">
+                    <div class="form-group">
+                        <label for="name">Nom complet</label>
+                        <div class="input-with-icon">
+                            <i class="bi bi-person"></i>
+                            <input type="text" id="name" name="name" placeholder="Ex: Jean Dupont" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Téléphone</label>
+                        <div class="input-with-icon">
+                            <i class="bi bi-telephone"></i>
+                            <input type="tel" id="phone" name="phone" placeholder="Ex: +237 650 731 007" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email (optionnel)</label>
+                        <div class="input-with-icon">
+                            <i class="bi bi-envelope"></i>
+                            <input type="email" id="email" name="email" placeholder="votre.email@exemple.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Votre message ou détails de votre commande..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn primary-btn submit-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Envoyer le message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

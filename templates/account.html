@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/account.css') }}"
+>
+{% endblock %}
+
+{% block title %}My Account - Dépôt Les Sources{% endblock %}
+
+{% block content %}
+
+<div class="account-container">
+
+    <div class="account-header">
+    <div>
+        <h1>My Account</h1>
+        <p>Manage your profile and view your order history.</p>
+    </div>
+
+    <a
+        href="{{ url_for('logout') }}"
+        class="logout-button"
+    >
+        Logout
+    </a>
+</div>
+
+    <div class="account-grid">
+
+        <!-- Profile -->
+        <section class="account-card">
+
+           <div class="card-header">
+
+    <h2>My Profile</h2>
+
+    <div class="profile-actions">
+
+        <a
+            href="{{ url_for('account_edit') }}"
+            class="edit-profile-button"
+        >
+            Edit Profile
+        </a>
+
+        <a
+            href="{{ url_for('account_change_password') }}"
+            class="edit-profile-button"
+        >
+            Change Password
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-button"
+        >
+            Logout
+        </a>
+
+    </div>
+
+</div>
+
+            <div class="profile-info">
+
+                <div class="profile-row">
+                    <span>First Name</span>
+                    <strong>{{ customer["userName"] }}</strong>
+                </div>
+
+                <div class="profile-row">
+                    <span>Last Name</span>
+                    <strong>{{ customer["userSurname"] }}</strong>
+                </div>
+
+                <div class="profile-row">
+                    <span>Email</span>
+                    <strong>{{ customer["userMail"] }}</strong>
+                </div>
+
+                <div class="profile-row">
+                    <span>Phone</span>
+                    <strong>{{ customer["userPhone"] }}</strong>
+                </div>
+
+                <div class="profile-row">
+                    <span>Address</span>
+                    <strong>
+                        {{ customer["userAddress"] or "Not provided" }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Statistics -->
+        <section class="account-card">
+
+            <div class="card-header">
+                <h2>Account Overview</h2>
+            </div>
+
+            <div class="account-statistics">
+
+                <div class="stat-box">
+                    <span class="stat-value">
+                        {{ statistics["total_orders"] }}
+                    </span>
+
+                    <span class="stat-label">
+                        Total Orders
+                    </span>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-value">
+                        {{ "%.0f"|format(statistics["total_spent"]) }} XAF
+                    </span>
+
+                    <span class="stat-label">
+                        Total Spent
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Loyalty Rewards -->
+        <section class="account-card">
+
+            <div class="card-header">
+                <h2>Loyalty Rewards</h2>
+            </div>
+
+            <div class="account-statistics">
+
+                <div class="stat-box">
+                    <span class="stat-value">
+                        {{ loyalty_balance }}
+                    </span>
+
+                    <span class="stat-label">
+                        Current Points
+                    </span>
+                </div>
+
+
+                <div class="stat-box">
+                    <span class="stat-value">
+                        {{ loyalty_statistics["rewarded_orders_count"] }}
+                    </span>
+
+                    <span class="stat-label">
+                        Rewards Earned
+                    </span>
+                </div>
+
+
+                <div class="stat-box">
+                    <span class="stat-value">
+                        {{ loyalty_statistics["total_points_earned"] }}
+                    </span>
+
+                    <span class="stat-label">
+                        Total Points Earned
+                    </span>
+                </div>
+
+
+                <div class="stat-box">
+                    <span class="stat-value">
+                        {{ loyalty_statistics["last_reward_date"] or "N/A" }}
+                    </span>
+
+                    <span class="stat-label">
+                        Last Reward
+                    </span>
+                </div>
+
+            </div>
+
+            {% if loyalty_transactions %}
+
+                <div class="loyalty-history">
+
+                    <h3>Loyalty History</h3>
+
+                    {% for transaction in loyalty_transactions %}
+
+                        <div class="profile-row">
+
+                            <span>
+                                {{ transaction["description"] or transaction["type"] }}
+                            </span>
+
+                            <strong>
+                                {% if transaction["points"] > 0 %}+{% endif %}{{ transaction["points"] }} pts
+                            </strong>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-orders">
+                    <p>No loyalty activity yet.</p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+    </div>
+
+
+    <!-- Invoice & Notifications -->
+    <section class="account-card invoice-preferences-card">
+
+        <div class="card-header invoice-preferences-header">
+
+            <div>
+                <h2>Invoice &amp; Notifications</h2>
+
+                <p class="invoice-preferences-subtitle">
+                    Choose how you want to receive your invoices.
+                </p>
+            </div>
+
+            <span class="invoice-preferences-badge">
+                Invoice delivery
+            </span>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('account_invoice_preferences') }}"
+            class="invoice-preferences-form"
+        >
+
+            <div class="invoice-method-grid">
+
+                <!-- EMAIL -->
+
+                <label class="invoice-method-option">
+
+                    <input
+                        type="radio"
+                        name="delivery_method"
+                        value="email"
+                        {% if customer["invoiceDeliveryMethod"] == "email" %}
+                        checked
+                        {% endif %}
+                    >
+
+                    <span class="invoice-method-content">
+
+                        <span class="invoice-method-icon">
+                            @
+                        </span>
+
+                        <span class="invoice-method-text">
+
+                            <strong>Email</strong>
+
+                            <span>
+                                Receive your invoice by email
+                                as a PDF attachment.
+                            </span>
+
+                            <small>
+                                {{ customer["userMail"] or "Email not provided" }}
+                            </small>
+
+                        </span>
+
+                    </span>
+
+                </label>
+
+
+                <!-- WHATSAPP -->
+
+                <label class="invoice-method-option">
+
+                    <input
+                        type="radio"
+                        name="delivery_method"
+                        value="whatsapp"
+                        {% if customer["invoiceDeliveryMethod"] == "whatsapp" %}
+                        checked
+                        {% endif %}
+                    >
+
+                    <span class="invoice-method-content">
+
+                        <span class="invoice-method-icon">
+                            WA
+                        </span>
+
+                        <span class="invoice-method-text">
+
+                            <strong>WhatsApp</strong>
+
+                            <span>
+                                Prepare your invoice for
+                                WhatsApp delivery.
+                            </span>
+
+                            <small>
+                                {{ customer["userPhone"] or "Phone not provided" }}
+                            </small>
+
+                        </span>
+
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <div class="invoice-preferences-info">
+
+                <div class="invoice-info-icon">
+                    i
+                </div>
+
+                <div>
+
+                    <strong>Your invoice preference</strong>
+
+                    {% if customer["invoiceDeliveryMethod"] == "whatsapp" %}
+
+                    <p>
+                        New invoices will be prepared for
+                        WhatsApp delivery using your phone number.
+                    </p>
+
+                    {% else %}
+
+                    <p>
+                        New invoices will be prepared for
+                        email delivery using your account email address.
+                    </p>
+
+                    {% endif %}
+
+                    <small>
+                        You can also view and download generated
+                        invoices from your order details.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="invoice-preferences-actions">
+
+                <button
+                    type="submit"
+                    class="invoice-save-button"
+                >
+                    Save Invoice Preference
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- Order History -->
+    <section class="account-card order-history">
+
+        <div class="card-header">
+            <h2>Order History</h2>
+        </div>
+
+        {% if orders %}
+
+        <div class="orders-table-wrapper">
+
+            <table class="orders-table">
+
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for order in orders %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ order["cmdNum"] }}</strong>
+                        </td>
+
+                        <td>
+                            {{ order["cmdDate"] }}
+                        </td>
+
+                        <td>
+                            <span class="order-status status-{{ order['cmdStatut'] }}">
+                                {{ order["cmdStatut"] }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ order["cmdPayementMethod"] or "Not specified" }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ "%.0f"|format(order["cmdTotal"]) }} XAF
+                            </strong>
+                        </td>
+
+                        <td>
+                            <a
+                                href="{{ url_for(
+                                    'account_order_details',
+                                    order_id=order['cmdId']
+                                ) }}"
+                                class="view-order"
+                            >
+                                View
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-orders">
+            <h3>No orders yet</h3>
+            <p>Your completed and previous orders will appear here.</p>
+
+            <a href="{{ url_for('products') }}">
+                Browse Products
+            </a>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

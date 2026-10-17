@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - Dépôt Les Sources{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <section class="contact-hero">
+        <div class="hero-background">
+            <img src="{{ url_for('static', filename='images/images/contact-bg.jpg') }}" alt="Contact Dépôt Les Sources">
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="contact-hero-content">
+            <h1>Contactez-nous</h1>
+            <p>
+                Notre équipe est à votre disposition pour répondre à vos questions, 
+                traiter vos commandes et vous accompagner au quotidien.
+            </p>
+        </div>
+    </section>
+
+    <section class="contact-section section" id="contact">
+        <div class="container">
+            
+            <div class="section-header">
+                <span class="section-tag">
+                    <i class="fa-solid fa-paper-plane"></i> Restons en contact
+                </span>
+                <h2>Un besoin, une commande ?</h2>
+                <p>
+                    Que vous soyez un particulier, un commerce ou un partenaire, 
+                    n'hésitez pas à nous envoyer un message ou nous appeler directement.
+                </p>
+            </div>
+
+            <div class="contact-grid">
+                
+                <div class="contact-info">
+                    <h2>Parlons de vos besoins</h2>
+                    <p>
+                        Contactez-nous directement pour vos commandes de boissons, 
+                        vos demandes de prix de gros ou toute information complémentaire.
+                    </p>
+
+                    <div class="contact-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <h3>Adresse</h3>
+                            <p>Quartier Bali, Ngaoundéré, Cameroun</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <div>
+                            <h3>Téléphone</h3>
+                            <p><a href="tel:+237650731007">+237 650 731 007</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-whatsapp"></i>
+                        <div>
+                            <h3>WhatsApp</h3>
+                            <p><a href="https://wa.me/237650731007" target="_blank">Commandez directement via WhatsApp</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-clock-fill"></i>
+                        <div>
+                            <h3>Horaires d'ouverture</h3>
+                            <p>Lundi - Dimanche : 7h00 - 20h00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm" action="#" method="POST">
+                    <h2>Envoyez-nous un message</h2>
+                    
+                    <div class="form-group">
+                        <label for="name">Nom complet</label>
+                        <div class="input-with-icon">
+                            <i class="bi bi-person"></i>
+                            <input type="text" id="name" name="name" placeholder="Ex: Jean Dupont" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Téléphone</label>
+                        <div class="input-with-icon">
+                            <i class="bi bi-telephone"></i>
+                            <input type="tel" id="phone" name="phone" placeholder="Ex: +237 6XX XXX XXX" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email (optionnel)</label>
+                        <div class="input-with-icon">
+                            <i class="bi bi-envelope"></i>
+                            <input type="email" id="email" name="email" placeholder="votre.email@exemple.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Détaillez votre demande ou votre commande ici..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn primary-btn submit-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Envoyer le message
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="map-section">
+        <div class="container">
+            <div class="map-wrapper">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15814.757041793397!2d13.5701!3d7.3197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10eb2451f0b00001%3A0x8bbd351b038ca44c!2sNgaound%C3%A9r%C3%A9!5e0!3m2!1sfr!2scm!4v1700000000000!5m2!1sfr!2scm" 
+                    width="100%" 
+                    height="400" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

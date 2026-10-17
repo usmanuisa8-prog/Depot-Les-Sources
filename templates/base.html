@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global/modal_overlay.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modals/modal_dialog.css') }}">
+    
+    <!-- Footer Stylesheet (Global) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+
+    {% block extra_css %}{% endblock %}
+    {% block cart_modal_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cart_modal.css') }}">
+    {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global/theme.css') }}">
+</head>
+<body>
+
+    {% block header %}
+        {% include 'header.html' %}
+    {% endblock %}
+    
+    <div class="modal-overlay hidden">
+        {% block cart_modal %}
+            {% include 'modal_panier.html' %}
+        {% endblock %}
+        {% include 'modals/modal_dialog.html' %}
+        {% block modal_content %}{% endblock %}
+    </div>
+
+    <main class="{% block main_class %}{% endblock %}">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% block footer %}
+        {% include 'footer.html' %}
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename='js/global/global.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modals/modal_dialog.js') }}"></script>
+    {% block scripts %}{% endblock %}
+    {% block cart_modal_script %}
+        <script src="{{ url_for('static', filename='js/cart_modal.js') }}"></script>
+    {% endblock %}
+
+</body>
+</html>

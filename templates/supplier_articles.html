@@ -1,0 +1,1639 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Supplier Articles - Depot Les Sources
+{% endblock %}
+
+{% block content %}
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+>
+
+<div class="supplier-articles-page">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+
+        <div class="page-heading">
+
+            <div class="page-heading-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div>
+                <h1>Supplier Articles</h1>
+
+                <p>
+                    Manage articles supplied by
+                    <strong>{{ supplier["supplierName"] }}</strong>
+                </p>
+            </div>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a
+                href="{{ url_for('admin_suppliers') }}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Suppliers
+            </a>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="openAddModal()"
+            >
+                <i class="bi bi-plus-lg"></i>
+                Add Article
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUPPLIER SUMMARY -->
+    <section class="summary-grid">
+
+        <div class="summary-card">
+
+            <div class="summary-icon supplier-icon">
+                <i class="bi bi-building"></i>
+            </div>
+
+            <div>
+                <span class="summary-label">Supplier</span>
+
+                <strong class="summary-value">
+                    {{ supplier["supplierName"] }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon status-icon">
+                <i class="bi bi-circle-fill"></i>
+            </div>
+
+            <div>
+                <span class="summary-label">Status</span>
+
+                {% if supplier["supplierActive"] %}
+                    <span class="status status-active">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Active
+                    </span>
+                {% else %}
+                    <span class="status status-inactive">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Inactive
+                    </span>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon assigned-icon">
+                <i class="bi bi-boxes"></i>
+            </div>
+
+            <div>
+                <span class="summary-label">Assigned Articles</span>
+
+                <strong class="summary-number">
+                    {{ assigned_articles|length }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon available-icon">
+                <i class="bi bi-plus-circle"></i>
+            </div>
+
+            <div>
+                <span class="summary-label">Available Articles</span>
+
+                <strong class="summary-number">
+                    {{ available_articles|length }}
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ASSIGNED ARTICLES -->
+    <section class="content-card">
+
+        <div class="section-header">
+
+            <div>
+                <h2>
+                    <i class="bi bi-box-seam"></i>
+                    Assigned Articles
+                </h2>
+
+                <p>
+                    Articles currently linked to this supplier.
+                </p>
+            </div>
+
+            <span class="count-badge">
+                {{ assigned_articles|length }}
+                article(s)
+            </span>
+
+        </div>
+
+
+        {% if assigned_articles %}
+
+        <div class="table-container">
+
+            <table class="articles-table">
+
+                <thead>
+                    <tr>
+                        <th>Article</th>
+                        <th>Stock</th>
+                        <th>Selling Price</th>
+                        <th>Purchase Price</th>
+                        <th>MOQ</th>
+                        <th>Lead Time</th>
+                        <th>Preferred</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for article in assigned_articles %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="article-cell">
+
+                                <div class="article-icon">
+                                    <i class="bi bi-box"></i>
+                                </div>
+
+                                <div>
+
+                                    <div class="article-name">
+                                        {{ article["productName"] }}
+                                    </div>
+
+                                    <div class="article-details">
+
+                                        {{ article["articleVolume"] }}
+
+                                        {% if article["articlePackage"] %}
+                                            <span>?</span>
+                                            {{ article["articlePackage"] }}
+                                        {% endif %}
+
+                                        {% if article["supplierReference"] %}
+                                            <span>?</span>
+                                            Ref:
+                                            {{ article["supplierReference"] }}
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="stock-value">
+                                {{ article["articleStock"] }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                {{ "{:,.0f}".format(article["articlePrice"]) }}
+                            </strong>
+
+                            <span class="currency">
+                                XAF
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                {{ "{:,.0f}".format(article["purchasePrice"]) }}
+                            </strong>
+
+                            <span class="currency">
+                                XAF
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            {{ article["minimumOrderQuantity"] }}
+                        </td>
+
+
+                        <td>
+
+                            {% if article["leadTimeDays"] is not none %}
+
+                                <span class="lead-time">
+                                    <i class="bi bi-clock"></i>
+                                    {{ article["leadTimeDays"] }} day(s)
+                                </span>
+
+                            {% else %}
+
+                                <span class="muted">
+                                    Not specified
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if article["isPreferred"] %}
+
+                                <span class="preferred">
+                                    <i class="bi bi-star-fill"></i>
+                                    Preferred
+                                </span>
+
+                            {% else %}
+
+                                <span class="muted">
+                                    No
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if article["supplierArticleActive"] %}
+
+                                <span class="status status-active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="status status-inactive">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="actions">
+
+                                <button
+                                    type="button"
+                                    class="icon-action edit"
+                                    title="Edit article"
+                                    onclick='openEditModal(
+                                        {{ article["supplierArticleId"] }},
+                                        {{ article["supplierReference"]|tojson }},
+                                        {{ article["purchasePrice"] }},
+                                        {{ article["minimumOrderQuantity"] }},
+                                        {{ article["leadTimeDays"] if article["leadTimeDays"] is not none else "null" }},
+                                        {{ article["isPreferred"] }}
+                                    )'
+                                >
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'toggle_supplier_article',
+                                        supplier_id=supplier['supplierId'],
+                                        supplier_article_id=article['supplierArticleId']
+                                    ) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="icon-action
+                                        {% if article['supplierArticleActive'] %}
+                                            danger
+                                        {% else %}
+                                            success
+                                        {% endif %}"
+                                        title="{% if article['supplierArticleActive'] %}Disable article{% else %}Activate article{% endif %}"
+                                    >
+
+                                        {% if article["supplierArticleActive"] %}
+                                            <i class="bi bi-pause-circle"></i>
+                                        {% else %}
+                                            <i class="bi bi-check-circle"></i>
+                                        {% endif %}
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <h3>No articles assigned</h3>
+
+            <p>
+                Add the first article supplied by
+                {{ supplier["supplierName"] }}.
+            </p>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="openAddModal()"
+            >
+                <i class="bi bi-plus-lg"></i>
+                Add Article
+            </button>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- ADD ARTICLE MODAL -->
+    <div
+        id="addModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <span class="modal-eyebrow">
+                        Supplier Catalog
+                    </span>
+
+                    <h2>
+                        Add Supplier Article
+                    </h2>
+
+                    <p>
+                        Link an existing article to this supplier.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="close-btn"
+                    onclick="closeAddModal()"
+                    aria-label="Close"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            {% if available_articles %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'create_supplier_article',
+                    supplier_id=supplier['supplierId']
+                ) }}"
+            >
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+
+                        <label for="articleId">
+                            Article
+                        </label>
+
+                        <select
+                            id="articleId"
+                            name="articleId"
+                            required
+                        >
+
+                            <option value="">
+                                Select article
+                            </option>
+
+                            {% for article in available_articles %}
+
+                            <option
+                                value="{{ article['articleId'] }}"
+                            >
+                                {{ article["productName"] }}
+                                ?
+                                {{ article["articleVolume"] }}
+
+                                {% if article["articlePackage"] %}
+                                    ({{ article["articlePackage"] }})
+                                {% endif %}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="supplierReference">
+                            Supplier Reference
+                        </label>
+
+                        <input
+                            type="text"
+                            id="supplierReference"
+                            name="supplierReference"
+                            placeholder="Optional"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="purchasePrice">
+                            Purchase Price (XAF)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="purchasePrice"
+                            name="purchasePrice"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="minimumOrderQuantity">
+                            Minimum Order Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            id="minimumOrderQuantity"
+                            name="minimumOrderQuantity"
+                            min="1"
+                            value="1"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="leadTimeDays">
+                            Lead Time (days)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="leadTimeDays"
+                            name="leadTimeDays"
+                            min="0"
+                            placeholder="Optional"
+                        >
+
+                    </div>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            id="isPreferred"
+                            name="isPreferred"
+                        >
+
+                        <span class="checkbox-content">
+
+                            <strong>
+                                Preferred supplier article
+                            </strong>
+
+                            <small>
+                                Mark this supplier as the preferred source
+                                for this article.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        onclick="closeAddModal()"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-check-lg"></i>
+                        Add Article
+                    </button>
+
+                </div>
+
+            </form>
+
+            {% else %}
+
+            <div class="empty-state modal-empty">
+
+                <div class="empty-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <h3>
+                    All articles are already assigned
+                </h3>
+
+                <p>
+                    There are no additional active articles
+                    available for this supplier.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- EDIT ARTICLE MODAL -->
+    <div
+        id="editModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <span class="modal-eyebrow">
+                        Supplier Catalog
+                    </span>
+
+                    <h2>
+                        Edit Supplier Article
+                    </h2>
+
+                    <p>
+                        Update purchasing information for this supplier.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="close-btn"
+                    onclick="closeEditModal()"
+                    aria-label="Close"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            <form
+                id="editForm"
+                method="POST"
+            >
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="editSupplierReference">
+                            Supplier Reference
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editSupplierReference"
+                            name="supplierReference"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editPurchasePrice">
+                            Purchase Price (XAF)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="editPurchasePrice"
+                            name="purchasePrice"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editMinimumOrderQuantity">
+                            Minimum Order Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            id="editMinimumOrderQuantity"
+                            name="minimumOrderQuantity"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editLeadTimeDays">
+                            Lead Time (days)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="editLeadTimeDays"
+                            name="leadTimeDays"
+                            min="0"
+                        >
+
+                    </div>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            id="editIsPreferred"
+                            name="isPreferred"
+                        >
+
+                        <span class="checkbox-content">
+
+                            <strong>
+                                Preferred supplier article
+                            </strong>
+
+                            <small>
+                                Use this supplier as the preferred source
+                                for this article.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        onclick="closeEditModal()"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-save"></i>
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.supplier-articles-page {
+    width: min(1500px, 100%);
+    margin: 0 auto;
+    padding: 90px 0 40px;
+}
+
+
+/* HEADER */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.page-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.page-heading-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 22px;
+}
+
+.page-heading h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    color: #111827;
+}
+
+.page-heading p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* BUTTONS */
+
+.btn {
+    border: 0;
+    border-radius: 9px;
+    padding: 10px 15px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease,
+        background .15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, .18);
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.btn-light {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+
+/* SUMMARY */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    min-height: 104px;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+}
+
+.summary-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.supplier-icon {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.status-icon {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.assigned-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.available-icon {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.summary-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.summary-value {
+    display: block;
+    color: #111827;
+    font-size: 15px;
+}
+
+.summary-number {
+    display: block;
+    color: #111827;
+    font-size: 23px;
+}
+
+
+/* CONTENT CARD */
+
+.content-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 13px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+    overflow: hidden;
+}
+
+.section-header {
+    min-height: 78px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+}
+
+.section-header h2 i {
+    margin-right: 7px;
+    color: #2563eb;
+}
+
+.section-header p {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.count-badge {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+
+/* TABLE */
+
+.table-container {
+    overflow-x: auto;
+}
+
+.articles-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.articles-table th {
+    padding: 12px 14px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: .055em;
+    white-space: nowrap;
+}
+
+.articles-table td {
+    padding: 14px;
+    border-bottom: 1px solid #f0f1f3;
+    color: #374151;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.articles-table tbody tr:hover {
+    background: #fafcff;
+}
+
+.articles-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* ARTICLE */
+
+.article-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 220px;
+}
+
+.article-icon {
+    width: 35px;
+    height: 35px;
+    flex: 0 0 35px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.article-name {
+    color: #111827;
+    font-weight: 650;
+}
+
+.article-details {
+    margin-top: 3px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.article-details span {
+    margin: 0 3px;
+}
+
+.stock-value {
+    display: inline-flex;
+    min-width: 34px;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    color: #374151;
+    font-weight: 650;
+}
+
+.currency {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.lead-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.lead-time i {
+    color: #6b7280;
+}
+
+.muted {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+
+/* BADGES */
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.status-active {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-inactive {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.preferred {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #fffbeb;
+    color: #a16207;
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+
+/* ACTIONS */
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.icon-action {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .15s ease;
+}
+
+.icon-action.edit {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.icon-action.edit:hover {
+    background: #dbeafe;
+}
+
+.icon-action.danger {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.icon-action.danger:hover {
+    background: #fee2e2;
+}
+
+.icon-action.success {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.icon-action.success:hover {
+    background: #d1fae5;
+}
+
+
+/* EMPTY STATE */
+
+.empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.empty-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 15px;
+    border-radius: 14px;
+    background: #f3f4f6;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.empty-state h3 {
+    margin: 0;
+    color: #374151;
+    font-size: 17px;
+}
+
+.empty-state p {
+    max-width: 440px;
+    margin: 7px auto 18px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, .55);
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    width: min(720px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .25);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 23px;
+}
+
+.modal-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    color: #2563eb;
+    font-size: 10px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 21px;
+}
+
+.modal-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.close-btn {
+    width: 35px;
+    height: 35px;
+    flex: 0 0 35px;
+    border: 0;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 23px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #e5e7eb;
+}
+
+
+/* FORM */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.checkbox-card {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #fafafa;
+    cursor: pointer;
+}
+
+.checkbox-card input {
+    margin-top: 3px;
+    accent-color: #2563eb;
+}
+
+.checkbox-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.checkbox-content strong {
+    color: #374151;
+    font-size: 13px;
+}
+
+.checkbox-content small {
+    color: #6b7280;
+    font-size: 11px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 25px;
+    padding-top: 18px;
+    border-top: 1px solid #e5e7eb;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .supplier-articles-page {
+        padding-bottom: 25px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        flex: 1;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full-width,
+    .checkbox-card {
+        grid-column: auto;
+    }
+
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+function openAddModal() {
+    const modal = document.getElementById("addModal");
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
+}
+
+
+function closeAddModal() {
+    const modal = document.getElementById("addModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+
+function openEditModal(
+    supplierArticleId,
+    supplierReference,
+    purchasePrice,
+    minimumOrderQuantity,
+    leadTimeDays,
+    isPreferred
+) {
+
+    document.getElementById(
+        "editSupplierReference"
+    ).value = supplierReference || "";
+
+
+    document.getElementById(
+        "editPurchasePrice"
+    ).value = purchasePrice;
+
+
+    document.getElementById(
+        "editMinimumOrderQuantity"
+    ).value = minimumOrderQuantity;
+
+
+    document.getElementById(
+        "editLeadTimeDays"
+    ).value =
+        leadTimeDays === null
+            ? ""
+            : leadTimeDays;
+
+
+    document.getElementById(
+        "editIsPreferred"
+    ).checked = Boolean(isPreferred);
+
+
+    document.getElementById(
+        "editForm"
+    ).action =
+        "{{ url_for(
+            'edit_supplier_article',
+            supplier_id=supplier['supplierId'],
+            supplier_article_id=0
+        ) }}"
+        .replace(
+            "/0/edit",
+            "/" + supplierArticleId + "/edit"
+        );
+
+
+    document.getElementById(
+        "editModal"
+    ).style.display = "flex";
+}
+
+
+function closeEditModal() {
+    const modal = document.getElementById("editModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+
+window.addEventListener(
+    "click",
+    function(event) {
+
+        const addModal =
+            document.getElementById("addModal");
+
+        const editModal =
+            document.getElementById("editModal");
+
+
+        if (event.target === addModal) {
+            closeAddModal();
+        }
+
+
+        if (event.target === editModal) {
+            closeEditModal();
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+        closeAddModal();
+        closeEditModal();
+
+    }
+);
+
+</script>
+
+{% endblock %}

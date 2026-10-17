@@ -1,0 +1,455 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Depot Les Sources{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<nav class="public-navbar">
+    <div class="public-navbar-inner">
+        <a href="{{ url_for('index') }}" class="brand">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Depot Les Sources Logo" class="brand-logo">
+            <div class="brand-text">
+                <strong>Depot <span>Les Sources</span></strong>
+                <small>Purity, freshness, trust</small>
+            </div>
+        </a>
+
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}" class="nav-item active">Home</a>
+            <a href="#products" class="nav-item">Products</a>
+            <a href="#about" class="nav-item">About Us</a>
+            <a href="#why-us" class="nav-item">Why Choose Us</a>
+            <a href="#contact" class="nav-item">Contact</a>
+        </div>
+
+        <div class="nav-actions">
+            {% if session.get("user_id") %}
+                <a href="{{ url_for('products') }}" class="btn-link">
+                    <i class="fa-solid fa-user"></i> My Account
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-link">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                </a>
+            {% endif %}
+
+            <a href="{{ url_for('products') }}" class="btn-odoo-primary">
+                <i class="fa-solid fa-cart-shopping"></i> Order Now
+            </a>
+        </div>
+    </div>
+</nav>
+<section class="public-hero">
+    <div class="hero-background">
+        <img src="{{ url_for('static', filename='images/images/hero.jpg') }}" alt="Beverages Banner" class="hero-bg-img" />
+        <div class="hero-overlay"></div>
+    </div>
+
+    <div class="hero-inner">
+        <div class="hero-content">
+            <span class="hero-eyebrow">
+                <i class="fa-solid fa-droplet"></i>
+                Your beverage partner in Ngaoundere
+            </span>
+
+            <h1>
+                Your drinks,<br>
+                <span>at the best price.</span>
+            </h1>
+
+            <p class="hero-description">
+                Mineral water, juices, soft drinks, and cans.
+                Find your favorite beverages retail or wholesale,
+                with fast and reliable service.
+            </p>
+
+            <div class="hero-actions">
+                <a href="{{ url_for('products') }}" class="btn btn-primary btn-large">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Order Now
+                </a>
+
+                <a href="#products" class="btn btn-outline btn-large">
+                    Explore Our Products
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+            </div>
+
+            <div class="hero-trust">
+                <div class="hero-trust-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Quality Products</span>
+                </div>
+                <div class="hero-trust-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Competitive Prices</span>
+                </div>
+                <div class="hero-trust-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Wholesale Sales</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <div class="hero-card-badge">
+                <i class="fa-solid fa-star"></i>
+                Trusted Service
+            </div>
+
+            <div class="hero-card-icon">
+                <img src="../static/images/images/OIP (1).ico" alt="Icon" class="hero-icon-img">
+            </div>
+            <h2>Beverages for Every Need</h2>
+
+            <p>
+                Individuals, businesses, events, and resellers:
+                we support you with available products and tailored pricing.
+            </p>
+
+            <div class="hero-card-info">
+                <div>
+                    <strong>12+</strong>
+                    <span>units for wholesale</span>
+                </div>
+                <div>
+                    <strong>Fast</strong>
+                    <span>service & delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="benefits">
+    <div class="container benefits-grid">
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <div>
+                <h3>Stock Always Available</h3>
+                <p>Beverages in stock for your daily needs.</p>
+            </div>
+        </div>
+
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fa-solid fa-tags"></i>
+            </div>
+            <div>
+                <h3>Competitive Prices</h3>
+                <p>Great rates for both retail and wholesale purchases.</p>
+            </div>
+        </div>
+
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fa-solid fa-truck-fast"></i>
+            </div>
+            <div>
+                <h3>Delivery Service</h3>
+                <p>Get delivered according to your location and schedule.</p>
+            </div>
+        </div>
+
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            <div>
+                <h3>Customer Support</h3>
+                <p>A dedicated team ready to assist you anytime.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section products-section" id="products">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <h2>Explore Our Products</h2>
+                <p>Find all the drinks you need for your home, business, or special events.</p>
+            </div>
+            <a href="{{ url_for('products') }}" class="section-link">
+                View Full Catalog <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="categories-products">
+            {% for category in categories %}
+            <article class="category-card">
+                <div class="category-card-header">
+                    <div class="category-title-row">
+                        <div class="category-icon">
+                            {% if category["categoryIcon"] %}
+                                {% include '/icons/' + category["categoryIcon"] %}
+                            {% else %}
+                                <i class="fa-solid fa-wine-glass-empty"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3>{{ category["categoryName"] }}</h3>
+                            <p>{{ category["categoryDescription"] }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-products">
+                    {% for product in category["products"] %}
+                    <div class="product-preview">
+                        <div class="product-image-wrap">
+                            <img
+                                src="{{ url_for('static', filename='images/products/' + product['productMainImage']) }}"
+                                alt="{{ product['productName'] }}"
+                                class="product-image"
+                            >
+                        </div>
+                        <div class="product-preview-info">
+                            <h4>{{ product["productName"] }}</h4>
+                            <div class="product-stars">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="category-card-footer">
+                    <a
+                        href="{{ url_for('products', selectedCategory=category['categorySlug']) }}"
+                        class="category-link"
+                    >
+                        View Products <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section about-section" id="about">
+    <div class="container about-grid">
+        <div class="about-visual">
+            <div class="about-image-main">
+                <img
+                    src="{{ url_for('static', filename='images/images/about.jpg') }}"
+                    alt="Depot Les Sources Warehouse Storefront"
+                >
+            </div>
+
+            <div class="about-floating-card">
+                <div class="floating-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div>
+                    <strong>Bali District</strong>
+                    <span>Ngaoundere</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-content">
+           
+            <h2>Your trusted partner for beverages in Ngaoundere</h2>
+            <p>
+                Located in the Bali district in Ngaoundere,
+                <strong>Depot Les Sources</strong> specializes
+                in the retail and wholesale distribution of mineral water, juices, and soft drinks.
+            </p>
+            <p>
+                Our priority is to provide top-quality products,
+                competitive rates, and fast service—whether you are an individual customer, shop owner, or reseller.
+            </p>
+
+            <div class="about-checks">
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Quality Guaranteed Products</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Tailored Retail & Wholesale Rates</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Flexible Delivery Services</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Professional Service</span>
+                </div>
+            </div>
+
+            <a href="#contact" class="btn btn-primary">
+                Contact Us <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section why-section" id="why-us">
+    <div class="container">
+        <div class="section-heading centered">
+            <h2>A Service Designed for You</h2>
+            <p>
+                We combine consistent availability, competitive pricing,
+                and local proximity to streamline your purchasing experience.
+            </p>
+        </div>
+
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">
+                    <i class="fa-solid fa-droplet"></i>
+                </div>
+                <h3>Permanent Stock</h3>
+                <p>We maintain consistent stock availability for all our primary drink lines.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h3>Fast Delivery</h3>
+                <p>Order with ease and enjoy a reliable delivery service catered to your location.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">
+                    <i class="fa-solid fa-tags"></i>
+                </div>
+                <h3>Great Value Pricing</h3>
+                <p>Our prices are optimized specifically for individuals, shop owners, and distributors.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3>At Your Service</h3>
+                <p>A friendly team is always available to answer your questions and handle requests.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-heading">
+            <span class="section-eyebrow">
+                <i class="fa-solid fa-chart-line"></i> Depot Les Sources
+            </span>
+            <h2>Building Trust Every Day</h2>
+            <p>
+                Supporting individual buyers, local shops, and wholesale resellers with all their beverage supply needs.
+            </p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <strong>500+</strong>
+                <span>Crates in Stock</span>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-truck-fast"></i>
+                <strong>300+</strong>
+                <span>Completed Deliveries</span>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-users"></i>
+                <strong>1000+</strong>
+                <span>Satisfied Customers</span>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <strong>6 Days/Week</strong>
+                <span>Service Availability</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-card">
+            <div class="cta-content">
+                <span class="section-eyebrow">
+                    <i class="fa-solid fa-truck-ramp-box"></i> Need Drinks Delivered?
+                </span>
+                <h2>Order Simply & Save Time.</h2>
+                <p>Browse our catalog, pick your products, and place your order in a few simple steps.</p>
+            </div>
+
+            <div class="cta-actions">
+                <a href="{{ url_for('products') }}" class="btn btn-light btn-large">
+                    <i class="fa-solid fa-cart-shopping"></i> Place an Order
+                </a>
+                <a href="#contact" class="btn btn-outline-light btn-large">
+                    <i class="fa-solid fa-paper-plane"></i> Get in Touch
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section contact-section" id="contact">
+    <div class="container">
+        <div class="section-heading centered">
+            <h2>Contact Us</h2>
+            <p>
+                Have a question, an order, or need bulk supplies?
+                Our team is here to assist you.
+            </p>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div>
+                    <span>Address</span>
+                    <strong>Bali District, Ngaoundere</strong>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fa-solid fa-phone"></i>
+                </div>
+                <div>
+                    <span>Phone</span>
+                    <strong>+237 650 731 007</strong>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div>
+                    <span>Business Hours</span>
+                    <strong>Monday - Saturday</strong>
+                    <small>7:30 AM - 6:30 PM</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

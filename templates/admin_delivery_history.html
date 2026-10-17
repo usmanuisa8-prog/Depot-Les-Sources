@@ -1,0 +1,1337 @@
+{% extends "base.html" %}
+
+{% block title %}
+Livraisons | Dépôt Les Sources
+{% endblock %}
+
+{% block content %}
+
+<div class="delivery-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <section class="delivery-page-header">
+
+        <div class="delivery-heading">
+
+            <div class="delivery-heading-icon">
+                <i class="bi bi-truck"></i>
+            </div>
+
+            <div>
+                <span class="delivery-eyebrow">
+                    LOGISTIQUE
+                </span>
+
+                <h1>
+                    Suivi des livraisons
+                </h1>
+
+                <p>
+                    Consultez l'historique des changements de statut
+                    et suivez les opérations de livraison.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="delivery-header-actions">
+
+            <a
+                href="{{ url_for('admin_orders') }}"
+                class="delivery-secondary-button"
+            >
+                <i class="bi bi-arrow-left"></i>
+                <span>Commandes</span>
+            </a>
+
+            <a
+                href="{{ url_for('admin_delivery_persons') }}"
+                class="delivery-primary-button"
+            >
+                <i class="bi bi-person-badge"></i>
+                <span>Livreurs</span>
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         KPI CARDS
+         ===================================================== -->
+
+    <section class="delivery-kpi-grid">
+
+        <article class="delivery-kpi-card">
+
+            <div class="delivery-kpi-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <div class="delivery-kpi-content">
+
+                <span>Total événements</span>
+
+                <strong>
+                    {{ delivery_history|length }}
+                </strong>
+
+                <small>
+                    Historique enregistré
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <article class="delivery-kpi-card">
+
+            <div class="delivery-kpi-icon delivered">
+                <i class="bi bi-check2-circle"></i>
+            </div>
+
+            <div class="delivery-kpi-content">
+
+                <span>Livraisons terminées</span>
+
+                <strong>
+                    {{ delivery_history
+                       |selectattr("new_status", "equalto", "livree")
+                       |list
+                       |length }}
+                </strong>
+
+                <small>
+                    Commandes livrées
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <article class="delivery-kpi-card">
+
+            <div class="delivery-kpi-icon transit">
+                <i class="bi bi-truck"></i>
+            </div>
+
+            <div class="delivery-kpi-content">
+
+                <span>En livraison</span>
+
+                <strong>
+                    {{ delivery_history
+                       |selectattr("new_status", "equalto", "en_livraison")
+                       |list
+                       |length }}
+                </strong>
+
+                <small>
+                    Événements de livraison
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <article class="delivery-kpi-card">
+
+            <div class="delivery-kpi-icon activity">
+                <i class="bi bi-activity"></i>
+            </div>
+
+            <div class="delivery-kpi-content">
+
+                <span>Activité récente</span>
+
+                <strong>
+                    {{ delivery_history|length }}
+                </strong>
+
+                <small>
+                    Événements affichés
+                </small>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         MAIN CARD
+         ===================================================== -->
+
+    <section class="delivery-card">
+
+        <div class="delivery-card-header">
+
+            <div>
+
+                <span class="delivery-section-label">
+                    HISTORIQUE
+                </span>
+
+                <h2>
+                    Activité des livraisons
+                </h2>
+
+                <p>
+                    Suivez chaque transition de statut des commandes.
+                </p>
+
+            </div>
+
+            <div class="delivery-record-count">
+
+                <span>
+                    {{ delivery_history|length }}
+                </span>
+
+                événement{% if delivery_history|length != 1 %}s{% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FILTERS
+             ================================================= -->
+
+        <form
+            method="GET"
+            action="{{ url_for('admin_delivery_history') }}"
+            class="delivery-filters"
+        >
+
+            <div class="delivery-filter-field">
+
+                <label for="order">
+                    Recherche
+                </label>
+
+                <div class="delivery-input-wrapper">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="text"
+                        id="order"
+                        name="order"
+                        value="{{ order_search }}"
+                        placeholder="N° de commande ou ID"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="delivery-filter-field">
+
+                <label for="status">
+                    Statut
+                </label>
+
+                <div class="delivery-select-wrapper">
+
+                    <select
+                        id="status"
+                        name="status"
+                    >
+
+                        <option value="">
+                            Tous les statuts
+                        </option>
+
+                        <option
+                            value="en_attente"
+                            {% if status_filter == "en_attente" %}selected{% endif %}
+                        >
+                            En attente
+                        </option>
+
+                        <option
+                            value="en_preparation"
+                            {% if status_filter == "en_preparation" %}selected{% endif %}
+                        >
+                            En préparation
+                        </option>
+
+                        <option
+                            value="en_livraison"
+                            {% if status_filter == "en_livraison" %}selected{% endif %}
+                        >
+                            En livraison
+                        </option>
+
+                        <option
+                            value="livree"
+                            {% if status_filter == "livree" %}selected{% endif %}
+                        >
+                            Livrée
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="delivery-filter-field">
+
+                <label for="changed_by">
+                    Opérateur
+                </label>
+
+                <div class="delivery-select-wrapper">
+
+                    <select
+                        id="changed_by"
+                        name="changed_by"
+                    >
+
+                        <option value="">
+                            Tous les opérateurs
+                        </option>
+
+                        {% for user in history_users %}
+
+                        <option
+                            value="{{ user['userId'] }}"
+                            {% if changed_by_filter == user['userId']|string %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ user['userName'] }}
+                            {{ user['userSurname'] or "" }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="delivery-filter-actions">
+
+                <button
+                    type="submit"
+                    class="delivery-filter-button"
+                >
+                    <i class="bi bi-funnel"></i>
+                    Filtrer
+                </button>
+
+                <a
+                    href="{{ url_for('admin_delivery_history') }}"
+                    class="delivery-clear-button"
+                    title="Réinitialiser les filtres"
+                >
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </a>
+
+            </div>
+
+        </form>
+
+
+        <!-- =================================================
+             TABLE
+             ================================================= -->
+
+        {% if delivery_history %}
+
+        <div class="delivery-table-wrapper">
+
+            <table class="delivery-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Commande
+                        </th>
+
+                        <th>
+                            Client
+                        </th>
+
+                        <th>
+                            Transition
+                        </th>
+
+                        <th>
+                            Opérateur
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for history in delivery_history %}
+
+                    <tr>
+
+                        <!-- DATE -->
+
+                        <td>
+
+                            <div class="delivery-date">
+
+                                <strong>
+                                    {{ history["changed_at"] }}
+                                </strong>
+
+                                <span>
+                                    Modification
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- ORDER -->
+
+                        <td>
+
+                            <div class="delivery-order">
+
+                                <div class="delivery-order-icon">
+                                    <i class="bi bi-receipt"></i>
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ history["cmdNum"] or "#" ~ history["cmdId"] }}
+                                    </strong>
+
+                                    <span>
+                                        Commande #{{ history["cmdId"] }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- CUSTOMER -->
+
+                        <td>
+
+                            <div class="delivery-person">
+
+                                <div class="delivery-person-avatar">
+                                    <i class="bi bi-person"></i>
+                                </div>
+
+                                <div>
+
+                                    {% if history["customerName"] %}
+
+                                    <strong>
+                                        {{ history["customerName"] }}
+                                        {{ history["customerSurname"] or "" }}
+                                    </strong>
+
+                                    {% else %}
+
+                                    <strong>
+                                        Client inconnu
+                                    </strong>
+
+                                    {% endif %}
+
+                                    <span>
+                                        Client
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- STATUS TRANSITION -->
+
+                        <td>
+
+                            <div class="delivery-transition">
+
+                                {% if history["old_status"] %}
+
+                                <span class="delivery-status old">
+                                    {{ history["old_status"]|replace("_", " ")|title }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="delivery-status initial">
+                                    Initial
+                                </span>
+
+                                {% endif %}
+
+                                <i class="bi bi-arrow-right"></i>
+
+
+                                {% if history["new_status"] == "livree" %}
+
+                                <span class="delivery-status delivered">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Livrée
+                                </span>
+
+                                {% elif history["new_status"] == "en_livraison" %}
+
+                                <span class="delivery-status transit">
+                                    <i class="bi bi-truck"></i>
+                                    En livraison
+                                </span>
+
+                                {% elif history["new_status"] == "en_preparation" %}
+
+                                <span class="delivery-status preparation">
+                                    <i class="bi bi-box-seam"></i>
+                                    En préparation
+                                </span>
+
+                                {% elif history["new_status"] == "en_attente" %}
+
+                                <span class="delivery-status pending">
+                                    <i class="bi bi-clock"></i>
+                                    En attente
+                                </span>
+
+                                {% else %}
+
+                                <span class="delivery-status default">
+                                    {{ history["new_status"]|replace("_", " ")|title }}
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- OPERATOR -->
+
+                        <td>
+
+                            <div class="delivery-person">
+
+                                <div class="delivery-person-avatar operator">
+                                    <i class="bi bi-person-check"></i>
+                                </div>
+
+                                <div>
+
+                                    {% if history["changerName"] %}
+
+                                    <strong>
+                                        {{ history["changerName"] }}
+                                        {{ history["changerSurname"] or "" }}
+                                    </strong>
+
+                                    {% else %}
+
+                                    <strong>
+                                        Système
+                                    </strong>
+
+                                    {% endif %}
+
+                                    <span>
+                                        Opérateur
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <div class="delivery-empty">
+
+            <div class="delivery-empty-icon">
+                <i class="bi bi-truck"></i>
+            </div>
+
+            <h3>
+                Aucun événement de livraison
+            </h3>
+
+            <p>
+                Les changements de statut des commandes
+                apparaîtront ici.
+            </p>
+
+            <a
+                href="{{ url_for('admin_orders') }}"
+                class="delivery-primary-button"
+            >
+                <i class="bi bi-cart3"></i>
+                Voir les commandes
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<style>
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.delivery-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 32px 36px 50px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.delivery-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 28px;
+}
+
+.delivery-heading {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.delivery-heading-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef5ff;
+    color: #2563eb;
+    font-size: 24px;
+}
+
+.delivery-eyebrow,
+.delivery-section-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: #64748b;
+}
+
+.delivery-heading h1 {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1.2;
+    color: #172033;
+}
+
+.delivery-heading p {
+    margin: 7px 0 0;
+    color: #718096;
+    font-size: 14px;
+}
+
+.delivery-header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.delivery-primary-button,
+.delivery-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 15px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: .2s ease;
+}
+
+.delivery-primary-button {
+    background: #172033;
+    color: white;
+}
+
+.delivery-primary-button:hover {
+    background: #0f172a;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.delivery-secondary-button {
+    background: white;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+}
+
+.delivery-secondary-button:hover {
+    background: #f8fafc;
+    color: #172033;
+}
+
+
+/* =========================================================
+   KPI
+   ========================================================= */
+
+.delivery-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.delivery-kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #e8edf3;
+    border-radius: 13px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .04);
+}
+
+.delivery-kpi-icon {
+    width: 45px;
+    height: 45px;
+    flex: 0 0 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 19px;
+}
+
+.delivery-kpi-icon.delivered {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+.delivery-kpi-icon.transit {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.delivery-kpi-icon.activity {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+.delivery-kpi-content {
+    min-width: 0;
+}
+
+.delivery-kpi-content span,
+.delivery-kpi-content small {
+    display: block;
+}
+
+.delivery-kpi-content span {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.delivery-kpi-content strong {
+    display: block;
+    margin: 3px 0;
+    color: #172033;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.delivery-kpi-content small {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MAIN CARD
+   ========================================================= */
+
+.delivery-card {
+    background: white;
+    border: 1px solid #e8edf3;
+    border-radius: 15px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, .05);
+    overflow: hidden;
+}
+
+.delivery-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 26px 20px;
+}
+
+.delivery-card-header h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 19px;
+}
+
+.delivery-card-header p {
+    margin: 5px 0 0;
+    color: #7b8798;
+    font-size: 13px;
+}
+
+.delivery-record-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.delivery-record-count span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 7px;
+    border-radius: 7px;
+    background: #f1f5f9;
+    color: #334155;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.delivery-filters {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+    margin: 0 26px 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1px solid #edf1f5;
+    border-radius: 11px;
+}
+
+.delivery-filter-field {
+    min-width: 0;
+}
+
+.delivery-filter-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.delivery-input-wrapper,
+.delivery-select-wrapper {
+    position: relative;
+}
+
+.delivery-input-wrapper i {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.delivery-filter-field input,
+.delivery-filter-field select {
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    background: white;
+    color: #334155;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: .2s ease;
+}
+
+.delivery-filter-field input {
+    padding: 0 12px 0 34px;
+}
+
+.delivery-filter-field select {
+    padding: 0 12px;
+}
+
+.delivery-filter-field input:focus,
+.delivery-filter-field select:focus {
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, .12);
+}
+
+.delivery-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.delivery-filter-button {
+    height: 40px;
+    padding: 0 15px;
+    border: none;
+    border-radius: 8px;
+    background: #172033;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.delivery-filter-button:hover {
+    background: #0f172a;
+}
+
+.delivery-clear-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    background: white;
+    color: #64748b;
+    text-decoration: none;
+}
+
+.delivery-clear-button:hover {
+    background: #f1f5f9;
+    color: #172033;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.delivery-table-wrapper {
+    overflow-x: auto;
+}
+
+.delivery-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.delivery-table th {
+    padding: 12px 18px;
+    border-top: 1px solid #edf1f5;
+    border-bottom: 1px solid #edf1f5;
+    background: #fafbfc;
+    color: #64748b;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.delivery-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #eef2f6;
+    vertical-align: middle;
+}
+
+.delivery-table tbody tr {
+    transition: .15s ease;
+}
+
+.delivery-table tbody tr:hover {
+    background: #fafcff;
+}
+
+.delivery-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+.delivery-date strong,
+.delivery-date span {
+    display: block;
+}
+
+.delivery-date strong {
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.delivery-date span {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   ORDER
+   ========================================================= */
+
+.delivery-order {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 150px;
+}
+
+.delivery-order-icon {
+    width: 35px;
+    height: 35px;
+    flex: 0 0 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.delivery-order strong,
+.delivery-order span {
+    display: block;
+}
+
+.delivery-order strong {
+    color: #172033;
+    font-size: 13px;
+}
+
+.delivery-order span {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   PERSON
+   ========================================================= */
+
+.delivery-person {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 160px;
+}
+
+.delivery-person-avatar {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.delivery-person-avatar.operator {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+.delivery-person strong,
+.delivery-person span {
+    display: block;
+}
+
+.delivery-person strong {
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.delivery-person span {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   STATUS TRANSITION
+   ========================================================= */
+
+.delivery-transition {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.delivery-transition > i {
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+.delivery-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.delivery-status.old,
+.delivery-status.initial {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.delivery-status.pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.delivery-status.preparation {
+    background: #fffbeb;
+    color: #a16207;
+}
+
+.delivery-status.transit {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.delivery-status.delivered {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+.delivery-status.default {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.delivery-empty {
+    padding: 70px 30px;
+    text-align: center;
+}
+
+.delivery-empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 25px;
+}
+
+.delivery-empty h3 {
+    margin: 0;
+    color: #172033;
+    font-size: 18px;
+}
+
+.delivery-empty p {
+    max-width: 430px;
+    margin: 8px auto 20px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .delivery-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .delivery-filters {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .delivery-filter-actions {
+        grid-column: span 2;
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .delivery-page {
+        padding: 22px 15px 35px;
+    }
+
+    .delivery-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .delivery-heading h1 {
+        font-size: 23px;
+    }
+
+    .delivery-header-actions {
+        width: 100%;
+    }
+
+    .delivery-header-actions a {
+        flex: 1;
+    }
+
+    .delivery-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .delivery-card-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .delivery-filters {
+        grid-template-columns: 1fr;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .delivery-filter-actions {
+        grid-column: auto;
+    }
+
+    .delivery-filter-button {
+        flex: 1;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .delivery-heading {
+        align-items: flex-start;
+    }
+
+    .delivery-heading-icon {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 46px;
+    }
+
+    .delivery-header-actions {
+        flex-direction: column;
+    }
+
+    .delivery-card-header {
+        padding: 20px 17px;
+    }
+
+    .delivery-record-count {
+        display: none;
+    }
+
+    .delivery-table {
+        min-width: 900px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

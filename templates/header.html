@@ -1,0 +1,47 @@
+<header>
+       <div class="logo-titre">
+            <img src="../static/logo.png" alt="">
+            <h1 class="titre-page">Dépôt Les Sources</h1>
+        </div>
+        {% if request.endpoint == 'products' %}
+            <div>
+                <form action="" id="searchForm">
+                    <label for="search">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" class="icon"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc. --><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+                    </label>
+                    <input type="search" name="search" id="search">
+                </form>
+            </div>
+        {% endif %}
+        <nav>
+            <div class="menu">
+                <a href="/" class="menu-lien {{'active' if request.endpoint == 'accueil' }}">Accueil</a>
+                <a href="{{ url_for('products' ) }}" class="menu-lien {{'active' if request.endpoint == 'products' }}">Nos Produits</a>
+                <a href="{{ url_for('about' ) }}" class="menu-lien {{'active' if request.endpoint == 'about' }}">A propos</a>
+                <a href="{{ url_for('contact' ) }}" class="menu-lien {{'active' if request.endpoint == 'contact' }}">Contact</a>
+            </div>
+            <div class="nav-options">
+                <button class="shopping-cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="icon"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
+                </button>
+            
+                {% if session.get("user_id") %}
+                                <a href="{{ url_for('account' ) }}" class="log-in-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="icon">
+                                        <path fill="currentColor" d="M416 160L480 160C497.7 160 512 174.3 512 192L512 448C512 465.7 497.7 480 480 480L416 480C398.3 480 384 494.3 384 512C384 529.7 398.3 544 416 544L480 544C533 544 576 501 576 448L576 192C576 139 533 96 480 96L416 96C398.3 96 384 110.3 384 128C384 145.7 398.3 160 416 160zM406.6 342.6C419.1 330.1 419.1 309.8 406.6 297.3L278.6 169.3C266.1 156.8 245.8 156.8 233.3 169.3C220.8 181.8 220.8 202.1 233.3 214.6L306.7 288L96 288C78.3 288 64 302.3 64 320C64 337.7 78.3 352 96 352L306.7 352L233.3 425.4C220.8 437.9 220.8 458.2 233.3 470.7C245.8 483.2 266.1 483.2 278.6 470.7L406.6 342.7z"/>
+                                    </svg>
+                                    <span>My Account</span>
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('login' ) }}" class="log-in-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="icon">
+                                        <path fill="currentColor" d="M416 160L480 160C497.7 160 512 174.3 512 192L512 448C512 465.7 497.7 480 480 480L416 480C398.3 480 384 494.3 384 512C384 529.7 398.3 544 416 544L480 544C533 544 576 501 576 448L576 192C576 139 533 96 480 96L416 96C398.3 96 384 110.3 384 128C384 145.7 398.3 160 416 160zM406.6 342.6C419.1 330.1 419.1 309.8 406.6 297.3L278.6 169.3C266.1 156.8 245.8 156.8 233.3 169.3C220.8 181.8 220.8 202.1 233.3 214.6L306.7 288L96 288C78.3 288 64 302.3 64 320C64 337.7 78.3 352 96 352L306.7 352L233.3 425.4C220.8 437.9 220.8 458.2 233.3 470.7C245.8 483.2 266.1 483.2 278.6 470.7L406.6 342.7z"/>
+                                    </svg>
+                                    <span>Se connecter</span>
+                                </a>
+                            {% endif %}
+            </div>
+        </nav>
+
+
+</header>

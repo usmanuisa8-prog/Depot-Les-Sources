@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+
+{% block title %}Fidelite | Gestion commerciale{% endblock %}
+
+{% block extra_css %}
+<style>
+    .loyalty-shell {
+        margin-left: var(--sidebar-width, 260px);
+        padding: calc(var(--header-height, 70px) + 2rem) 2rem 3rem;
+        min-height: calc(100vh - var(--header-height, 70px));
+        background: var(--bg-color, #f5f7fa);
+        box-sizing: border-box;
+    }
+
+    .loyalty-container {
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    .loyalty-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .loyalty-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        color: var(--text-primary, #172033);
+    }
+
+    .loyalty-header p {
+        margin: .45rem 0 0;
+        color: var(--text-secondary, #667085);
+    }
+
+    .loyalty-back {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .7rem 1rem;
+        border-radius: 9px;
+        background: #fff;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .loyalty-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .loyalty-kpi {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.15rem;
+    }
+
+    .loyalty-kpi-label {
+        font-size: .82rem;
+        color: #6b7280;
+        margin-bottom: .4rem;
+    }
+
+    .loyalty-kpi-value {
+        font-size: 1.65rem;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .loyalty-kpi-note {
+        margin-top: .3rem;
+        font-size: .76rem;
+        color: #9ca3af;
+    }
+
+    .loyalty-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .loyalty-card-header {
+        padding: 1.1rem 1.2rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .loyalty-card-header h2 {
+        margin: 0;
+        font-size: 1.15rem;
+        color: #111827;
+    }
+
+    .loyalty-card-header p {
+        margin: .35rem 0 0;
+        color: #6b7280;
+        font-size: .86rem;
+    }
+
+    .loyalty-table-wrap {
+        overflow-x: auto;
+    }
+
+    .loyalty-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    .loyalty-table th,
+    .loyalty-table td {
+        padding: .9rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #f0f1f3;
+        vertical-align: middle;
+    }
+
+    .loyalty-table th {
+        font-size: .76rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #6b7280;
+        background: #fafafa;
+        white-space: nowrap;
+    }
+
+    .loyalty-table td {
+        font-size: .88rem;
+        color: #374151;
+    }
+
+    .customer-name {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .customer-contact {
+        margin-top: .2rem;
+        color: #6b7280;
+        font-size: .76rem;
+    }
+
+    .points-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        padding: .35rem .6rem;
+        border-radius: 999px;
+        background: #f3f4f6;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .points-positive {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .transaction-positive {
+        font-weight: 700;
+    }
+
+    .empty-state {
+        padding: 2rem;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    @media (max-width: 1100px) {
+        .loyalty-kpis {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 800px) {
+        .loyalty-shell {
+            margin-left: 0;
+            padding: 1rem;
+            padding-top: calc(var(--header-height, 70px) + 1rem);
+        }
+
+        .loyalty-header {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .loyalty-kpis {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-shell">
+    <div class="loyalty-container">
+
+        <div class="loyalty-header">
+            <div>
+                <h1>Programme de fidelite</h1>
+                <p>
+                    Suivi des points et des recompenses des clients.
+                </p>
+            </div>
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="loyalty-back"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Tableau de bord
+            </a>
+        </div>
+
+        <div class="loyalty-kpis">
+
+            <div class="loyalty-kpi">
+                <div class="loyalty-kpi-label">
+                    Clients inscrits
+                </div>
+
+                <div class="loyalty-kpi-value">
+                    {{ enrolled_customers }}
+                </div>
+
+                <div class="loyalty-kpi-note">
+                    Comptes fid?lit? existants
+                </div>
+            </div>
+
+            <div class="loyalty-kpi">
+                <div class="loyalty-kpi-label">
+                    Points en circulation
+                </div>
+
+                <div class="loyalty-kpi-value">
+                    {{ "{:,.0f}".format(total_points_balance).replace(",", " ") }}
+                </div>
+
+                <div class="loyalty-kpi-note">
+                    Solde actuel des clients
+                </div>
+            </div>
+
+            <div class="loyalty-kpi">
+                <div class="loyalty-kpi-label">
+                    Points gagnes
+                </div>
+
+                <div class="loyalty-kpi-value">
+                    {{ "{:,.0f}".format(total_points_earned).replace(",", " ") }}
+                </div>
+
+                <div class="loyalty-kpi-note">
+                    R?compenses d'achat cumul?es
+                </div>
+            </div>
+
+            <div class="loyalty-kpi">
+                <div class="loyalty-kpi-label">
+                    R?compenses attribu?es
+                </div>
+
+                <div class="loyalty-kpi-value">
+                    {{ total_rewards }}
+                </div>
+
+                <div class="loyalty-kpi-note">
+                    {{ points_per_reward | int }} XAF = 1 point
+                </div>
+            </div>
+
+        </div>
+
+        <div class="loyalty-card">
+
+            <div class="loyalty-card-header">
+                <h2>Clients fidelite</h2>
+                <p>
+                    Seuls les comptes clients sont affiches.
+                </p>
+            </div>
+
+            <div class="loyalty-table-wrap">
+
+                {% if customers %}
+
+                <table class="loyalty-table">
+
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Points actuels</th>
+                            <th>Total gagnes</th>
+                            <th>Recompenses</th>
+                            <th>Derniere recompense</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for customer in customers %}
+
+                        <tr>
+
+                            <td>
+                                <div class="customer-name">
+                                    {{ customer.userName }}
+                                    {{ customer.userSurname }}
+                                </div>
+
+                                <div class="customer-contact">
+                                    {% if customer.userPhone %}
+                                        {{ customer.userPhone }}
+                                    {% endif %}
+                                    {% if customer.userMail %}
+                                        ? {{ customer.userMail }}
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="points-badge {% if customer.points_balance > 0 %}points-positive{% endif %}">
+                                    <i class="bi bi-star-fill"></i>
+                                    {{ customer.points_balance }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ customer.total_points_earned }}
+                            </td>
+
+                            <td>
+                                {{ customer.rewards_count }}
+                            </td>
+
+                            <td>
+                                {% if customer.last_reward %}
+                                    {{ customer.last_reward }}
+                                {% else %}
+                                    <span style="color:#9ca3af;">
+                                        Aucune recompense
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+                {% else %}
+
+                <div class="empty-state">
+                    Aucun client fidelite trouve.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="loyalty-card">
+
+            <div class="loyalty-card-header">
+                <h2>Historique des recompenses</h2>
+                <p>
+                    Les 100 dernieres transactions de fidelite des clients.
+                </p>
+            </div>
+
+            <div class="loyalty-table-wrap">
+
+                {% if transactions %}
+
+                <table class="loyalty-table">
+
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Type</th>
+                            <th>Commande</th>
+                            <th>Points</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for transaction in transactions %}
+
+                        <tr>
+
+                            <td>
+                                {{ transaction.created_at }}
+                            </td>
+
+                            <td>
+                                <div class="customer-name">
+                                    {{ transaction.userName }}
+                                    {{ transaction.userSurname }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ transaction.type }}
+                            </td>
+
+                            <td>
+                                {% if transaction.command_id %}
+                                    #{{ transaction.command_id }}
+                                {% else %}
+                                    ?
+                                {% endif %}
+                            </td>
+
+                            <td class="transaction-positive">
+                                +{{ transaction.points }}
+                            </td>
+
+                            <td>
+                                {{ transaction.description or "?" }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+                {% else %}
+
+                <div class="empty-state">
+                    Aucune recompense de fidelite attribuee aux clients.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

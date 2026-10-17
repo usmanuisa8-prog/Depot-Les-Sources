@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block title %}Stock{% endblock %}
+
+{% block extra_css %}
+<style>
+.stock-shell {
+    padding: 2rem;
+    margin-left: var(--sidebar-width, 250px);
+    padding-top: calc(var(--header-height, 70px) + 2rem);
+}
+
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stock-header h1 {
+    margin: 0;
+}
+
+.stock-header p {
+    margin: .4rem 0 0;
+    opacity: .7;
+}
+
+.stock-kpis {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stock-kpi {
+    padding: 1.2rem;
+    border-radius: 12px;
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #ddd);
+}
+
+.stock-kpi-label {
+    font-size: .85rem;
+    opacity: .7;
+}
+
+.stock-kpi-value {
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-top: .3rem;
+}
+
+.stock-section {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.stock-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stock-section-header h2 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.stock-table-wrap {
+    overflow-x: auto;
+}
+
+.stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+.stock-table th,
+.stock-table td {
+    padding: .75rem;
+    border-bottom: 1px solid var(--border-color, #eee);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.stock-table th {
+    font-size: .8rem;
+    text-transform: uppercase;
+    opacity: .65;
+}
+
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: .25rem .55rem;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.stock-normal {
+    background: rgba(40, 167, 69, .12);
+}
+
+.stock-low {
+    background: rgba(255, 193, 7, .18);
+}
+
+.stock-out {
+    background: rgba(220, 53, 69, .12);
+}
+
+.stock-expiring {
+    background: rgba(255, 193, 7, .18);
+}
+
+.stock-expired {
+    background: rgba(220, 53, 69, .12);
+}
+
+.stock-filter {
+    width: 100%;
+    max-width: 360px;
+    padding: .65rem .8rem;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 8px;
+    background: inherit;
+}
+
+.stock-empty {
+    text-align: center;
+    padding: 2rem;
+    opacity: .6;
+}
+
+@media (max-width: 1200px) {
+    .stock-kpis {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .stock-shell {
+        margin-left: 0;
+        padding: 1rem;
+        padding-top: calc(var(--header-height, 70px) + 1rem);
+    }
+
+    .stock-kpis {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stock-header,
+    .stock-section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .stock-kpis {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block main_class %}stock-shell{% endblock %}
+
+{% block content %}
+
+<div class="stock-header">
+    <div>
+        <h1>Gestion du stock</h1>
+        <p>Vue consolid?e des articles, d?p?ts, lots et mouvements.</p>
+    </div>
+</div>
+
+<section class="stock-kpis">
+
+    <div class="stock-kpi">
+        <div class="stock-kpi-label">Articles actifs</div>
+        <div class="stock-kpi-value">{{ stock_kpis.activeArticles }}</div>
+    </div>
+
+    <div class="stock-kpi">
+        <div class="stock-kpi-label">Unit?s en stock</div>
+        <div class="stock-kpi-value">{{ stock_kpis.totalUnits }}</div>
+    </div>
+
+    <div class="stock-kpi">
+        <div class="stock-kpi-label">Stock faible</div>
+        <div class="stock-kpi-value">{{ stock_kpis.lowStockArticles }}</div>
+    </div>
+
+    <div class="stock-kpi">
+        <div class="stock-kpi-label">Rupture</div>
+        <div class="stock-kpi-value">{{ stock_kpis.outOfStockArticles }}</div>
+    </div>
+
+    <div class="stock-kpi">
+        <div class="stock-kpi-label">Lots actifs</div>
+        <div class="stock-kpi-value">{{ lot_kpis.activeLots }}</div>
+    </div>
+
+</section>
+
+<section class="stock-section">
+
+    <div class="stock-section-header">
+        <h2>Stock global</h2>
+
+        <input
+            id="globalStockSearch"
+            class="stock-filter"
+            type="search"
+            placeholder="Rechercher un produit ou article..."
+        >
+    </div>
+
+    <div class="stock-table-wrap">
+        <table class="stock-table" id="globalStockTable">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Article</th>
+                    <th>Conditionnement</th>
+                    <th>Prix</th>
+                    <th>Stock</th>
+                    <th>?tat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory %}
+                <tr>
+                    <td>{{ item.productName or '?' }}</td>
+                    <td>
+                        {{ item.articleVolume or '?' }}
+                    </td>
+                    <td>
+                        {{ item.articlePackage or '?' }}
+                    </td>
+                    <td>
+                        {{ "{:,.0f}".format(item.articlePrice or 0).replace(",", " ") }}
+                        FCFA
+                    </td>
+                    <td><strong>{{ item.articleStock }}</strong></td>
+                    <td>
+                        {% if item.stockStatus == 'rupture' %}
+                            <span class="stock-badge stock-out">Rupture</span>
+                        {% elif item.stockStatus == 'faible' %}
+                            <span class="stock-badge stock-low">Faible</span>
+                        {% else %}
+                            <span class="stock-badge stock-normal">Normal</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="stock-empty">
+                        Aucun article actif.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<section class="stock-section">
+
+    <div class="stock-section-header">
+        <h2>Stock par d?p?t</h2>
+    </div>
+
+    <div class="stock-table-wrap">
+        <table class="stock-table">
+            <thead>
+                <tr>
+                    <th>D?p?t</th>
+                    <th>Produit</th>
+                    <th>Article</th>
+                    <th>Stock d?p?t</th>
+                    <th>Stock global</th>
+                    <th>?cart</th>
+                    <th>?tat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in depot_inventory %}
+                <tr>
+                    <td>{{ item.depotName }}</td>
+                    <td>{{ item.productName or '?' }}</td>
+                    <td>
+                        {{ item.articleVolume or '?' }}
+                        ?
+                        {{ item.articlePackage or '?' }}
+                    </td>
+                    <td><strong>{{ item.depotQuantity }}</strong></td>
+                    <td>{{ item.globalStock }}</td>
+                    <td>{{ item.stockDifference }}</td>
+                    <td>
+                        {% if item.stockStatus == 'rupture' %}
+                            <span class="stock-badge stock-out">Rupture</span>
+                        {% elif item.stockStatus == 'faible' %}
+                            <span class="stock-badge stock-low">Faible</span>
+                        {% else %}
+                            <span class="stock-badge stock-normal">Normal</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="stock-empty">
+                        Aucun stock de d?p?t enregistr?.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<section class="stock-section">
+
+    <div class="stock-section-header">
+        <h2>Lots ? FEFO</h2>
+        <span>{{ lot_kpis.activeLots }} lots actifs</span>
+    </div>
+
+    <div class="stock-table-wrap">
+        <table class="stock-table">
+            <thead>
+                <tr>
+                    <th>Lot</th>
+                    <th>Produit</th>
+                    <th>Article</th>
+                    <th>Quantit?</th>
+                    <th>Expiration</th>
+                    <th>R?ception</th>
+                    <th>?tat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lot in lots %}
+                <tr>
+                    <td>#{{ lot.lotId }}</td>
+                    <td>{{ lot.productName or '?' }}</td>
+                    <td>
+                        {{ lot.articleVolume or '?' }}
+                    </td>
+                    <td><strong>{{ lot.lotQuantity }}</strong></td>
+                    <td>{{ lot.lotExpDate }}</td>
+                    <td>{{ lot.lotRecepDate }}</td>
+                    <td>
+                        {% if lot.lotStatus == 'expire' %}
+                            <span class="stock-badge stock-expired">Expir?</span>
+                        {% elif lot.lotStatus == 'expire_bientot' %}
+                            <span class="stock-badge stock-expiring">Expire bient?t</span>
+                        {% else %}
+                            <span class="stock-badge stock-normal">Actif</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="stock-empty">
+                        Aucun lot actif.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<section class="stock-section">
+
+    <div class="stock-section-header">
+        <h2>Historique des mouvements</h2>
+        <span>{{ movement_kpis.movementCount }} mouvements</span>
+    </div>
+
+    <div class="stock-table-wrap">
+        <table class="stock-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Produit</th>
+                    <th>Quantit?</th>
+                    <th>Avant</th>
+                    <th>Apr?s</th>
+                    <th>D?p?t</th>
+                    <th>R?f?rence</th>
+                    <th>Utilisateur</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movement in movements %}
+                <tr>
+                    <td>{{ movement.createdAt }}</td>
+                    <td>
+                        {% if movement.movementType == 'IN' %}
+                            <span class="stock-badge stock-normal">Entr?e</span>
+                        {% else %}
+                            <span class="stock-badge stock-out">Sortie</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ movement.productName or '?' }}
+                        <br>
+                        <small>
+                            {{ movement.articleVolume or '?' }}
+                        </small>
+                    </td>
+                    <td><strong>{{ movement.quantity }}</strong></td>
+                    <td>{{ movement.stockBefore if movement.stockBefore is not none else '?' }}</td>
+                    <td>{{ movement.stockAfter if movement.stockAfter is not none else '?' }}</td>
+                    <td>{{ movement.depotName or '?' }}</td>
+                    <td>
+                        {{ movement.referenceType or '?' }}
+                        {% if movement.referenceId %}
+                            #{{ movement.referenceId }}
+                        {% endif %}
+                    </td>
+                    <td>{{ movement.userName or '?' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="stock-empty">
+                        Aucun mouvement enregistr?.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const search = document.getElementById("globalStockSearch");
+    const table = document.getElementById("globalStockTable");
+
+    if (!search || !table) {
+        return;
+    }
+
+    search.addEventListener("input", function () {
+        const term = this.value.trim().toLowerCase();
+
+        table.querySelectorAll("tbody tr").forEach(function (row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = !term || text.includes(term) ? "" : "none";
+        });
+    });
+});
+</script>
+{% endblock %}

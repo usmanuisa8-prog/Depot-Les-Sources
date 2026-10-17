@@ -1,0 +1,726 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Details | DÃ©pÃ´t Les Sources{% endblock %}
+
+{% block extra_css %}
+<style>
+
+    .order-details-container {
+        max-width: 1100px;
+        margin: 50px auto;
+        padding: 0 20px;
+    }
+
+    .order-details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .order-details-header h1 {
+        margin: 0;
+    }
+
+    .order-details-header p {
+        margin-top: 8px;
+        opacity: 0.7;
+    }
+
+    .back-account {
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .order-summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .summary-card {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #e5e5e5;
+        background: #fff;
+    }
+
+    .summary-card span {
+        display: block;
+        font-size: 13px;
+        opacity: 0.65;
+        margin-bottom: 8px;
+    }
+
+    .summary-card strong {
+        font-size: 17px;
+    }
+
+    .order-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .status-en_attente {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-en_preparation {
+        background: #cfe2ff;
+        color: #084298;
+    }
+
+    .status-en_livraison {
+        background: #e2d9f3;
+        color: #59359a;
+    }
+
+    .status-livree {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-annulee {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .order-address {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .order-address h2 {
+        margin-top: 0;
+        font-size: 18px;
+    }
+
+    .order-items {
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .order-items-header {
+        padding: 20px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .order-items-header h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .order-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .order-table th,
+    .order-table td {
+        padding: 15px 18px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-table th {
+        font-size: 13px;
+        opacity: 0.65;
+    }
+
+    .product-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .product-image {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .product-name {
+        font-weight: 600;
+    }
+
+    .product-volume {
+        display: block;
+        font-size: 12px;
+        opacity: 0.6;
+        margin-top: 3px;
+    }
+
+    .order-total {
+        display: flex;
+        justify-content: flex-end;
+        padding: 20px;
+    }
+
+    .order-total-box {
+        min-width: 250px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .invoice-card {
+        margin: 30px 0;
+        padding: 24px;
+        border: 1px solid #dfe3e8;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .invoice-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .invoice-card-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .invoice-card-subtitle {
+        margin: 6px 0 0;
+        font-size: 13px;
+        opacity: 0.65;
+    }
+
+    .invoice-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #d1e7dd;
+        color: #0f5132;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .invoice-info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .invoice-info-item {
+        padding: 14px;
+        border: 1px solid #e8ebef;
+        border-radius: 10px;
+        background: #fff;
+    }
+
+    .invoice-info-item span {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 12px;
+        opacity: 0.6;
+    }
+
+    .invoice-info-item strong {
+        font-size: 14px;
+    }
+
+    .invoice-financials {
+        margin-top: 8px;
+        padding: 18px;
+        border-radius: 10px;
+        background: #f8f9fa;
+    }
+
+    .invoice-financial-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 7px 0;
+        font-size: 14px;
+    }
+
+    .invoice-financial-row.total {
+        margin-top: 8px;
+        padding-top: 14px;
+        border-top: 1px solid #dfe3e8;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .invoice-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .invoice-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #d8dde3;
+        background: #fff;
+    }
+
+    .invoice-action.primary {
+        border-color: #212529;
+        background: #212529;
+        color: #fff;
+    }
+
+    .invoice-delivery-note {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        background: #eef4ff;
+        color: #29466f;
+        font-size: 13px;
+    }
+
+
+    @media (max-width: 800px) {
+
+        .order-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .invoice-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .invoice-card-header {
+            flex-direction: column;
+        }
+
+
+        .order-details-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 500px) {
+
+        .order-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .order-details-container {
+            margin-top: 30px;
+        }
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="order-details-container">
+
+    <div class="order-details-header">
+
+        <div>
+            <h1>Order {{ order.cmdNum }}</h1>
+
+            <p>
+                Order placed on {{ order.cmdDate }}
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('account') }}"
+            class="back-account"
+        >
+            Back to My Account
+        </a>
+
+    </div>
+
+
+    <div class="order-summary">
+
+        <div class="summary-card">
+
+            <span>Order Number</span>
+
+            <strong>
+                {{ order.cmdNum }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>Status</span>
+
+            <strong>
+
+                <span class="order-status status-{{ order.cmdStatut }}">
+                    {{ order.cmdStatut|replace('_', ' ')|title }}
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>Payment Method</span>
+
+            <strong>
+                {{ order.cmdPayementMethod or 'Not specified' }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>Total</span>
+
+            <strong>
+                {{ "{:,.0f}".format(order.cmdTotal) }} FCFA
+            </strong>
+
+        </div>
+
+
+        {% if loyalty_transaction %}
+
+        <div class="summary-card">
+
+            <span>Loyalty Reward</span>
+
+            <strong>
+                +{{ loyalty_transaction["points"] }} Points
+            </strong>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="order-address">
+
+        <h2>Delivery Address</h2>
+
+        <p>
+            {{ order.cmdLivAddress }}
+        </p>
+
+    </div>
+
+
+    {% if invoice %}
+
+    <section class="invoice-card">
+
+        <div class="invoice-card-header">
+
+            <div>
+                <h2 class="invoice-card-title">
+                    Invoice
+                </h2>
+
+                <p class="invoice-card-subtitle">
+                    Your official invoice for this order
+                </p>
+            </div>
+
+            <span class="invoice-status">
+                {% if invoice.sendStatus == 'sent' %}
+                    Sent
+                {% elif invoice.sendStatus == 'failed' %}
+                    Sending failed
+                {% elif invoice.sendStatus == 'not_configured' %}
+                    Not configured
+                {% else %}
+                    Ready
+                {% endif %}
+            </span>
+
+        </div>
+
+
+        <div class="invoice-info-grid">
+
+            <div class="invoice-info-item">
+                <span>Invoice Number</span>
+                <strong>
+                    {{ invoice.invoiceNumber }}
+                </strong>
+            </div>
+
+            <div class="invoice-info-item">
+                <span>Invoice Date</span>
+                <strong>
+                    {{ invoice.invoiceDate }}
+                </strong>
+            </div>
+
+            <div class="invoice-info-item">
+                <span>Delivery Channel</span>
+                <strong>
+                    {% if invoice.deliveryMethod == 'whatsapp' %}
+                        WhatsApp
+                    {% else %}
+                        Email
+                    {% endif %}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="invoice-financials">
+
+            <div class="invoice-financial-row">
+                <span>Subtotal</span>
+                <strong>
+                    {{ "{:,.0f}".format(invoice.subtotal) }} FCFA
+                </strong>
+            </div>
+
+            <div class="invoice-financial-row">
+                <span>Delivery Fee</span>
+                <strong>
+                    {{ "{:,.0f}".format(invoice.deliveryFee) }} FCFA
+                </strong>
+            </div>
+
+            <div class="invoice-financial-row total">
+                <span>Total</span>
+                <strong>
+                    {{ "{:,.0f}".format(invoice.total) }} FCFA
+                </strong>
+            </div>
+
+        </div>
+
+
+        {% if invoice.deliveryMethod == 'whatsapp' %}
+
+        <div class="invoice-delivery-note">
+            This invoice is configured for delivery by WhatsApp.
+        </div>
+
+        {% elif invoice.deliveryMethod == 'email' %}
+
+        <div class="invoice-delivery-note">
+            This invoice is configured for delivery by email.
+            {% if invoice.emailAddress %}
+                <strong>{{ invoice.emailAddress }}</strong>
+            {% endif %}
+        </div>
+
+        {% endif %}
+
+
+        <div class="invoice-actions">
+
+            <a
+                href="{{ url_for('account_invoice_pdf', invoice_id=invoice.invoiceId) }}"
+                class="invoice-action primary"
+                target="_blank"
+                rel="noopener"
+            >
+                View Invoice PDF
+            </a>
+
+            <a
+                href="{{ url_for('account_invoice_download', invoice_id=invoice.invoiceId) }}"
+                class="invoice-action"
+            >
+                Download Invoice
+            </a>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+
+    <section class="order-items">
+
+        <div class="order-items-header">
+
+            <h2>Items in this Order</h2>
+
+        </div>
+
+
+        {% if items %}
+
+        <div class="order-table-wrapper">
+
+            <table class="order-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Promotion</th>
+                        <th>Subtotal</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in items %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="product-cell">
+
+                                {% if item.articleImage %}
+
+                                    <img
+                                        src="{{ url_for(
+                                            'static',
+                                            filename=item.articleImage
+                                        ) }}"
+                                        alt="{{ item.productName }}"
+                                        class="product-image"
+                                    >
+
+                                {% endif %}
+
+                                <div>
+
+                                    <span class="product-name">
+                                        {{ item.productName }}
+                                    </span>
+
+                                    {% if item.articleVolume %}
+                                        <span class="product-volume">
+                                            {{ item.articleVolume }}
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <td>
+                            {{ item.artcmdQuantity }}
+                        </td>
+
+                        <td>
+                            {{ "{:,.0f}".format(item.artcmdPrice) }}
+                            FCFA
+                        </td>
+
+                        <td>
+
+                            {% if item.promotionId and item.discountAmount > 0 %}
+
+                                <div class="order-promotion">
+
+                                    <strong>
+                                        {{ item.promotionName }}
+                                    </strong>
+
+                                    <span>
+                                        -{{ "{:,.0f}".format(item.discountAmount) }}
+                                        FCFA
+                                    </span>
+
+                                </div>
+
+                            {% else %}
+
+                                <span>No promotion</span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ "{:,.0f}".format(item.artcmdSubTotal) }}
+                                FCFA
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="order-total">
+
+            <div class="order-total-box">
+
+                <span>Total</span>
+
+                <span>
+                    {{ "{:,.0f}".format(order.cmdTotal) }}
+                    FCFA
+                </span>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div style="padding: 30px;">
+            No items were found for this order.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}
+

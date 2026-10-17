@@ -1,0 +1,913 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord | Dépôt Les Sources{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block header %}
+<header class="top-header">
+
+    <div class="brand">
+        <a href="{{ url_for('admin_stock') }}" class="brand-link">
+            <span class="brand-mark">
+     <img src="{{ url_for('static', filename='logo.png') }}" alt="Depot Les Sources Logo" class="brand-logo">
+</span>
+
+            <span class="brand-text">
+                <strong>Dépôt Les Sources</strong>
+                <small>Gestion commerciale</small>
+            </span>
+        </a>
+    </div>
+
+    <div class="header-search">
+        <i class="bi bi-search"></i>
+        <input
+            type="search"
+            placeholder="Rechercher produit, commande, client..."
+        >
+        <span class="search-shortcut">⌘ K</span>
+    </div>
+
+    <div class="header-actions">
+
+        <button class="header-icon" type="button" title="Notifications">
+            <i class="bi bi-bell"></i>
+            <span>5</span>
+        </button>
+
+        <div class="header-divider"></div>
+
+        <div class="user-profile">
+            <div class="user-avatar">
+                A
+            </div>
+
+            <div class="user-info">
+                <strong>Administrateur</strong>
+                <small>Gestionnaire</small>
+            </div>
+
+            <i class="bi bi-chevron-down"></i>
+        </div>
+
+    </div>
+
+</header>
+{% endblock %}
+
+
+{% block main_class %}dashboard-shell{% endblock %}
+
+
+{% block content %}
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar">
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">Principal</span>
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link active">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Tableau de bord</span>
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">Ventes</span>
+
+            <a href="{{ url_for('admin_orders') }}" class="sidebar-link">
+                <i class="bi bi-cart3"></i>
+                <span>Commandes</span>
+            </a>
+
+            <a href="{{ url_for('admin_clients') }}" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>Clients</span>
+            </a>
+
+            <a href="{{ url_for('admin_credit') }}" class="sidebar-link">
+                <i class="bi bi-credit-card-2-front"></i>
+                <span>Clients à crédit</span>
+                <span class="sidebar-badge">Nouveau</span>
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">Inventaire</span>
+
+            <a href="{{ url_for('products') }}" class="sidebar-link">
+                <i class="bi bi-box-seam"></i>
+                <span>Produits</span>
+            </a>
+
+            <a href="{{ url_for('admin_stock') }}" class="sidebar-link">
+                <i class="bi bi-archive"></i>
+                <span>Stock</span>
+            </a>
+
+            <a href="{{ url_for('admin_suppliers') }}" class="sidebar-link">
+                <i class="bi bi-building"></i>
+                <span>Fournisseurs</span>
+            </a>
+
+            <a href="{{ url_for('admin_purchase_orders') }}" class="sidebar-link">
+                <i class="bi bi-bag-check"></i>
+                <span>Achats</span>
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">Logistique</span>
+
+            <a href="{{ url_for('admin_delivery_history') }}" class="sidebar-link">
+                <i class="bi bi-truck"></i>
+                <span>Livraisons</span>
+            </a>
+
+            <a href="{{ url_for('admin_delivery_persons') }}" class="sidebar-link">
+                <i class="bi bi-person-badge"></i>
+                <span>Livreurs</span>
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">Commercial</span>
+
+            <a href="{{ url_for('admin_promotions') }}" class="sidebar-link">
+                <i class="bi bi-megaphone"></i>
+                <span>Promotions</span>
+            </a>
+
+            <a href="{{ url_for('admin_fidelite') }}" class="sidebar-link">
+                <i class="bi bi-star"></i>
+                <span>Fidélité</span>
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">Analyse</span>
+
+            <a href="{{ url_for('admin_reports') }}" class="sidebar-link">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Rapports</span>
+            </a>
+        </div>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-gear"></i>
+                <span>Paramètres</span>
+            </a>
+
+            <a href="{{ url_for('logout') }}" class="sidebar-link logout-link">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Déconnexion</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN WORKSPACE -->
+    <main class="dashboard-main">
+
+        <!-- PAGE HEADER -->
+        <section class="page-heading">
+
+            <div>
+                <span class="eyebrow">
+                    Vue d'ensemble
+                </span>
+
+                <h1>
+                    Bonjour, Administrateur
+                </h1>
+
+                <p>
+                    Voici l'état actuel de votre activité commerciale.
+                </p>
+            </div>
+
+            <div class="date-display">
+                <i class="bi bi-calendar3"></i>
+
+                <div>
+                    <small>Aujourd'hui</small>
+                    <strong>{{ dashboard_date }}</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- KPI -->
+        <section class="stats-grid">
+
+            <article class="stat-card">
+
+                <div class="stat-icon revenue-icon">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+
+                <div class="stat-content">
+                    <span>Chiffre d'affaires</span>
+                    <strong>{{ "{:,.0f}".format(chiffre_affaires).replace(",", " ") }} FCFA</strong>
+                    <small class="trend positive">
+                        <i class="bi bi-arrow-up"></i>
+                        12% aujourd'hui
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <div class="stat-icon orders-icon">
+                    <i class="bi bi-cart-check"></i>
+                </div>
+
+                <div class="stat-content">
+                    <span>Commandes</span>
+                    <strong>{{ commandes_aujourd_hui }}</strong>
+                    <small>
+                        Aujourd'hui
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <div class="stat-icon products-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div class="stat-content">
+                    <span>Produits</span>
+                    <strong>{{ produits }}</strong>
+                    <small>
+                        Produits actifs
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <div class="stat-icon customers-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div class="stat-content">
+                    <span>Clients</span>
+                    <strong>324</strong>
+                    <small>
+                        Enregistrés
+                    </small>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- SECONDARY BUSINESS KPIs -->
+        <section class="secondary-stats">
+
+            <div class="mini-stat">
+                <div class="mini-stat-icon warning">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div>
+                    <span>Commandes en attente</span>
+                    <strong>{{ commandes_en_attente }}</strong>
+                </div>
+            </div>
+
+
+            <div class="mini-stat">
+                <div class="mini-stat-icon danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <div>
+                    <span>Produits en stock faible</span>
+                    <strong>{{ stock_faible }}</strong>
+                </div>
+            </div>
+
+
+            <div class="mini-stat">
+                <div class="mini-stat-icon credit">
+                    <i class="bi bi-credit-card"></i>
+                </div>
+
+                <div>
+                    <span>Crédit à recouvrer</span>
+                    <strong>{{ "{:,.0f}".format(credit_a_recouvrer).replace(",", " ") }} FCFA</strong>
+                </div>
+            </div>
+
+
+            <div class="mini-stat">
+                <div class="mini-stat-icon success">
+                    <i class="bi bi-truck"></i>
+                </div>
+
+                <div>
+                    <span>Livraisons aujourd'hui</span>
+                    <strong>{{ livraisons_aujourd_hui }}</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- SALES + STOCK -->
+        <section class="dashboard-grid">
+
+            <div class="dashboard-card sales-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <span class="card-eyebrow">
+                            Performance commerciale
+                        </span>
+
+                        <h2>
+                            Évolution des ventes
+                        </h2>
+                    </div>
+
+                    <a href="{{ url_for('admin_reports') }}" class="outline-button">
+                        Voir rapport
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <span class="card-eyebrow">
+                            Inventaire
+                        </span>
+
+                        <h2>
+                            Stock à surveiller
+                        </h2>
+                    </div>
+
+                    <a href="{{ url_for('admin_stock') }}" class="text-link">
+                        Voir tout
+                    </a>
+
+                </div>
+
+
+                <div class="stock-list">
+
+                    {% if stock_a_surveille %}
+
+                        {% for article in stock_a_surveille %}
+
+                            <div class="stock-item">
+
+                                <div class="stock-product">
+
+                                    <div class="product-icon">
+                                        {% if article.articleStock <= 5 %}
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                        {% elif article.articleStock <= stock_faible_seuil %}
+                                            <i class="bi bi-box-seam"></i>
+                                        {% else %}
+                                            <i class="bi bi-box"></i>
+                                        {% endif %}
+                                    </div>
+
+                                    <div>
+                                        <strong>
+                                            {{ article.productName }}
+                                        </strong>
+
+                                        <small>
+                                            {% if article.productMark and article.productMark != 0 %}
+                                                {{ article.productMark }}
+                                            {% endif %}
+                                            {% if article.articleVolume %}
+                                                {% if article.productMark and article.productMark != 0 %} ? {% endif %}
+                                                {{ article.articleVolume }}
+                                            {% endif %}
+                                            {% if article.articlePackage %}
+                                                {% if article.productMark or article.articleVolume %} ? {% endif %}
+                                                {{ article.articlePackage }}
+                                            {% endif %}
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                <span class="stock-badge {% if article.articleStock <= 5 %}danger{% else %}warning{% endif %}">
+                                    {{ article.articleStock }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="stock-empty">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Aucun produit en stock faible.</span>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+            </div>
+
+        </section>
+
+
+        <!-- QUICK ACTIONS -->
+        <section class="quick-actions">
+
+            <div class="section-heading">
+                <div>
+                    <span class="card-eyebrow">
+                        Raccourcis
+                    </span>
+
+                    <h2>
+                        Actions rapides
+                    </h2>
+                </div>
+            </div>
+
+
+            <div class="actions-grid">
+
+                <a href="#" class="action-card">
+                    <span class="action-icon green">
+                        <i class="bi bi-plus-lg"></i>
+                    </span>
+                    <strong>Nouveau produit</strong>
+                    <small>Ajouter au catalogue</small>
+                </a>
+
+
+                <a href="{{ url_for('admin_orders') }}" class="action-card">
+                    <span class="action-icon blue">
+                        <i class="bi bi-cart-plus"></i>
+                    </span>
+                    <strong>Nouvelle commande</strong>
+                    <small>Gérer les commandes</small>
+                </a>
+
+
+                <a href="{{ url_for('admin_clients') }}" class="action-card">
+                    <span class="action-icon purple">
+                        <i class="bi bi-person-plus"></i>
+                    </span>
+                    <strong>Nouveau client</strong>
+                    <small>Enregistrer un client</small>
+                </a>
+
+
+                <a href="{{ url_for('admin_suppliers') }}" class="action-card">
+                    <span class="action-icon orange">
+                        <i class="bi bi-building-add"></i>
+                    </span>
+                    <strong>Fournisseur</strong>
+                    <small>Gérer les fournisseurs</small>
+                </a>
+
+
+                <a href="#" class="action-card">
+                    <span class="action-icon gold">
+                        <i class="bi bi-credit-card-2-front"></i>
+                    </span>
+                    <strong>Client à crédit</strong>
+                    <small>Gérer les comptes crédit</small>
+                </a>
+
+
+                <a href="{{ url_for('admin_reports') }}" class="action-card">
+                    <span class="action-icon red">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+                    </span>
+                    <strong>Rapport</strong>
+                    <small>Analyser l'activité</small>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECENT ORDERS + ACTIVITY -->
+        <section class="dashboard-bottom">
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <span class="card-eyebrow">
+                            Ventes
+                        </span>
+
+                        <h2>
+                            Dernières commandes
+                        </h2>
+                    </div>
+
+                    <a href="{{ url_for('admin_orders') }}" class="text-link">
+                        Voir tout
+                    </a>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+                            <tr>
+                                <th>Commande</th>
+                                <th>Client</th>
+                                <th>Total</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td><strong>CMD-1001</strong></td>
+                                <td>Jean M.</td>
+                                <td>15 000 FCFA</td>
+                                <td>
+                                    <span class="status delivered">
+                                        Livrée
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>CMD-1002</strong></td>
+                                <td>Amina N.</td>
+                                <td>8 000 FCFA</td>
+                                <td>
+                                    <span class="status pending">
+                                        En attente
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>CMD-1003</strong></td>
+                                <td>Ibrahim A.</td>
+                                <td>12 500 FCFA</td>
+                                <td>
+                                    <span class="status shipping">
+                                        En livraison
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>CMD-1004</strong></td>
+                                <td>Fatima B.</td>
+                                <td>25 000 FCFA</td>
+                                <td>
+                                    <span class="status delivered">
+                                        Livrée
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-side-column">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+                        <div>
+                            <span class="card-eyebrow">
+                                Activité
+                            </span>
+
+                            <h2>
+                                Activité récente
+                            </h2>
+                        </div>
+                    </div>
+
+
+                    <div class="activity-list">
+
+                        <div class="activity-item">
+                            <span class="activity-icon success">
+                                <i class="bi bi-check-lg"></i>
+                            </span>
+
+                            <div>
+                                <strong>Commande validée</strong>
+                                <small>Il y a 5 minutes</small>
+                            </div>
+                        </div>
+
+
+                        <div class="activity-item">
+                            <span class="activity-icon blue">
+                                <i class="bi bi-box-seam"></i>
+                            </span>
+
+                            <div>
+                                <strong>Nouveau produit ajouté</strong>
+                                <small>Il y a 20 minutes</small>
+                            </div>
+                        </div>
+
+
+                        <div class="activity-item">
+                            <span class="activity-icon orange">
+                                <i class="bi bi-truck"></i>
+                            </span>
+
+                            <div>
+                                <strong>Livraison terminée</strong>
+                                <small>Aujourd'hui</small>
+                            </div>
+                        </div>
+
+
+                        <div class="activity-item">
+                            <span class="activity-icon purple">
+                                <i class="bi bi-person-plus"></i>
+                            </span>
+
+                            <div>
+                                <strong>Nouveau client</strong>
+                                <small>Aujourd'hui</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="card-eyebrow">
+                                Performance
+                            </span>
+
+                            <h2>
+                                Produits populaires
+                            </h2>
+                        </div>
+
+                    </div>
+
+
+                    <div class="ranking-list">
+
+                        {% if produits_populaires %}
+
+                            {% for produit in produits_populaires %}
+
+                                <div class="ranking-item">
+
+                                    <span class="rank-number">
+                                        {{ "%02d" | format(loop.index) }}
+                                    </span>
+
+                                    <div>
+                                        <strong>
+                                            {{ produit.productName }}
+                                        </strong>
+
+                                        <small>
+                                            {{ produit.quantity }} vente{% if produit.quantity != 1 %}s{% endif %}
+                                            ?
+                                            {{ "{:,.0f}".format(produit.total or 0).replace(",", " ") }} FCFA
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <div class="empty-state">
+                                <i class="bi bi-bar-chart"></i>
+                                <span>Aucune vente enregistr?e.</span>
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+                        </div>
+
+
+                        <div class="ranking-item">
+                            <span class="rank-number">02</span>
+
+                            <div>
+                                <strong>Canette Coca</strong>
+                                <small>210 ventes</small>
+                            </div>
+                        </div>
+
+
+                        <div class="ranking-item">
+                            <span class="rank-number">03</span>
+
+                            <div>
+                                <strong>Jus d'Orange</strong>
+                                <small>180 ventes</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+{% endblock %}
+
+
+{% block footer %}
+
+<footer class="dashboard-footer">
+    <span>© 2026 Dépôt Les Sources</span>
+    <span>Système de Gestion Commerciale</span>
+    <span>Version 1.0</span>
+</footer>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const canvas = document.getElementById("salesChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const salesLabels = [
+        {% for vente in evolution_ventes %}
+            "{{ vente.saleDate }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const salesData = [
+        {% for vente in evolution_ventes %}
+            {{ vente.total or 0 }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    // Determine a sensible Y-axis maximum from the actual sales data.
+    const maxSales = salesData.length > 0
+        ? Math.max(...salesData)
+        : 0;
+
+    const yAxisMax = maxSales > 0
+        ? Math.ceil(maxSales * 1.2 / 1000) * 1000
+        : 1000;
+
+    new Chart(canvas, {
+        type: "line",
+
+        data: {
+            labels: salesLabels,
+
+            datasets: [{
+                label: "Ventes",
+                data: salesData,
+
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2,
+
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y
+                                .toLocaleString("fr-FR")
+                                + " FCFA";
+                        }
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    ticks: {
+                        maxRotation: 0
+                    }
+                },
+
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: yAxisMax,
+
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString("fr-FR") + " FCFA";
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1502 @@
+{% extends "base.html" %}
+
+{% block title %}Clients | Gestion commerciale{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* =========================================================
+       CLIENT CRM WORKSPACE
+       ========================================================= */
+
+    .admin-clients-shell {
+        min-height: calc(100vh - 72px);
+        background: #f6f8fb;
+        padding: 88px 28px 40px;
+        box-sizing: border-box;
+    }
+
+    .admin-clients-container {
+        width: 100%;
+        max-width: 1560px;
+        margin: 0 auto;
+    }
+
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .clients-page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 26px;
+    }
+
+    .clients-heading {
+        min-width: 0;
+    }
+
+    .clients-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #8a94a6;
+    }
+
+    .clients-breadcrumb span:last-child {
+        color: #475467;
+    }
+
+    .clients-title {
+        margin: 0;
+        color: #101828;
+        font-size: 30px;
+        line-height: 1.2;
+        font-weight: 750;
+        letter-spacing: -0.6px;
+    }
+
+    .clients-subtitle {
+        margin: 8px 0 0;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .clients-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .clients-action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid #d0d5dd;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        box-sizing: border-box;
+        transition:
+            background .18s ease,
+            border-color .18s ease,
+            box-shadow .18s ease,
+            transform .18s ease;
+    }
+
+    .clients-action-button:hover {
+        background: #f9fafb;
+        border-color: #98a2b3;
+        box-shadow: 0 2px 8px rgba(16, 24, 40, .06);
+    }
+
+    .clients-action-button.primary {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        color: #ffffff;
+    }
+
+    .clients-action-button.primary:hover {
+        background: #1e40af;
+        border-color: #1e40af;
+    }
+
+    /* =========================================================
+       KPI CARDS
+       ========================================================= */
+
+    .clients-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .client-kpi-card {
+        position: relative;
+        min-width: 0;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 13px;
+        padding: 20px;
+        box-sizing: border-box;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, .03);
+        overflow: hidden;
+    }
+
+    .client-kpi-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: #1d4ed8;
+    }
+
+    .client-kpi-card:nth-child(2)::after {
+        background: #16a34a;
+    }
+
+    .client-kpi-card:nth-child(3)::after {
+        background: #7c3aed;
+    }
+
+    .client-kpi-card:nth-child(4)::after {
+        background: #ea580c;
+    }
+
+    .client-kpi-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .client-kpi-label {
+        color: #667085;
+        font-size: 12px;
+        font-weight: 650;
+        text-transform: uppercase;
+        letter-spacing: .035em;
+    }
+
+    .client-kpi-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 16px;
+        font-weight: 750;
+        flex-shrink: 0;
+    }
+
+    .client-kpi-card:nth-child(2) .client-kpi-icon {
+        background: #ecfdf3;
+        color: #15803d;
+    }
+
+    .client-kpi-card:nth-child(3) .client-kpi-icon {
+        background: #f5f3ff;
+        color: #6d28d9;
+    }
+
+    .client-kpi-card:nth-child(4) .client-kpi-icon {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .client-kpi-value {
+        margin-top: 12px;
+        color: #101828;
+        font-size: 25px;
+        line-height: 1.15;
+        font-weight: 750;
+        letter-spacing: -.4px;
+    }
+
+    .client-kpi-meta {
+        margin-top: 7px;
+        color: #98a2b3;
+        font-size: 12px;
+    }
+
+    /* =========================================================
+       SECONDARY SUMMARY
+       ========================================================= */
+
+    .clients-summary-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .clients-summary-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-width: 0;
+        padding: 14px 16px;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 11px;
+    }
+
+    .clients-summary-label {
+        color: #667085;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .clients-summary-value {
+        color: #101828;
+        font-size: 14px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       CLIENT TABLE CARD
+       ========================================================= */
+
+    .clients-table-card {
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 14px;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, .04);
+        overflow: hidden;
+    }
+
+    .clients-table-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 20px 22px;
+        border-bottom: 1px solid #eaecf0;
+    }
+
+    .clients-table-heading h2 {
+        margin: 0;
+        color: #101828;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .clients-table-heading p {
+        margin: 5px 0 0;
+        color: #98a2b3;
+        font-size: 12px;
+    }
+
+    .clients-tools {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .client-search-wrapper {
+        position: relative;
+        width: 280px;
+    }
+
+    .client-search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #98a2b3;
+        font-size: 13px;
+        pointer-events: none;
+    }
+
+    .client-search {
+        width: 100%;
+        height: 40px;
+        padding: 0 12px 0 34px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        outline: none;
+        background: #ffffff;
+        color: #101828;
+        font-size: 13px;
+        box-sizing: border-box;
+        transition:
+            border-color .18s ease,
+            box-shadow .18s ease;
+    }
+
+    .client-search:focus {
+        border-color: #84adff;
+        box-shadow: 0 0 0 3px rgba(29, 78, 216, .10);
+    }
+
+    .client-filter {
+        height: 40px;
+        padding: 0 32px 0 11px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 12px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .clients-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .clients-table {
+        width: 100%;
+        min-width: 1180px;
+        border-collapse: collapse;
+    }
+
+    .clients-table thead th {
+        padding: 12px 16px;
+        background: #f9fafb;
+        border-bottom: 1px solid #eaecf0;
+        color: #667085;
+        font-size: 10px;
+        line-height: 1.3;
+        font-weight: 750;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: .055em;
+        white-space: nowrap;
+    }
+
+    .clients-table tbody td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #f0f2f5;
+        color: #344054;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .clients-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .client-row {
+        transition: background .15s ease;
+    }
+
+    .client-row:hover {
+        background: #fafcff;
+    }
+
+    /* =========================================================
+       CLIENT IDENTITY
+       ========================================================= */
+
+    .client-identity {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 220px;
+    }
+
+    .client-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        border-radius: 50%;
+        background: #eaf2ff;
+        color: #1d4ed8;
+        font-size: 13px;
+        font-weight: 750;
+        text-transform: uppercase;
+    }
+
+    .client-identity-main {
+        min-width: 0;
+    }
+
+    .client-name {
+        color: #101828;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .client-address {
+        max-width: 230px;
+        margin-top: 3px;
+        color: #98a2b3;
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* =========================================================
+       CONTACT
+       ========================================================= */
+
+    .client-contact-block {
+        min-width: 190px;
+    }
+
+    .client-email {
+        max-width: 230px;
+        color: #344054;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .client-phone {
+        margin-top: 4px;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       STATUS
+       ========================================================= */
+
+    .client-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 10px;
+        line-height: 1;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .client-status::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .client-status.active {
+        background: #ecfdf3;
+        color: #15803d;
+    }
+
+    .client-status.inactive {
+        background: #f2f4f7;
+        color: #667085;
+    }
+
+    /* =========================================================
+       NUMBERS
+       ========================================================= */
+
+    .client-number {
+        color: #101828;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .client-money {
+        color: #101828;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .client-money.zero {
+        color: #98a2b3;
+        font-weight: 550;
+    }
+
+    .client-points {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #6d28d9;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .client-points.zero {
+        color: #98a2b3;
+        font-weight: 550;
+    }
+
+    .client-credit {
+        color: #c2410c;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .client-credit.zero {
+        color: #98a2b3;
+        font-weight: 550;
+    }
+
+    .client-last-order {
+        color: #475467;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       VIEW ACTION
+       ========================================================= */
+
+    .client-view-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 34px;
+        padding: 0 11px;
+        border: 1px solid #d0d5dd;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        transition:
+            background .15s ease,
+            border-color .15s ease,
+            color .15s ease;
+    }
+
+    .client-view-button:hover {
+        background: #f9fafb;
+        border-color: #98a2b3;
+        color: #1d4ed8;
+    }
+
+    .client-view-button.disabled {
+        cursor: default;
+        opacity: .55;
+    }
+
+    /* =========================================================
+       EMPTY / NO SEARCH RESULTS
+       ========================================================= */
+
+    .clients-empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 260px;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .clients-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        margin-bottom: 15px;
+        border-radius: 14px;
+        background: #f2f4f7;
+        color: #667085;
+        font-size: 20px;
+        font-weight: 750;
+    }
+
+    .clients-empty-state h3 {
+        margin: 0;
+        color: #344054;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .clients-empty-state p {
+        max-width: 420px;
+        margin: 7px 0 0;
+        color: #98a2b3;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    .clients-table-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 13px 20px;
+        border-top: 1px solid #eaecf0;
+        background: #fcfcfd;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    .clients-results-count {
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 1250px) {
+        .clients-kpi-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .clients-summary-strip {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 850px) {
+        .admin-clients-shell {
+            padding: 82px 18px 30px;
+        }
+
+        .clients-page-header {
+            flex-direction: column;
+        }
+
+        .clients-header-actions {
+            width: 100%;
+        }
+
+        .clients-action-button {
+            width: 100%;
+        }
+
+        .clients-table-header {
+            flex-direction: column;
+        }
+
+        .clients-tools {
+            width: 100%;
+            justify-content: stretch;
+        }
+
+        .client-search-wrapper {
+            width: 100%;
+        }
+
+        .client-filter {
+            flex: 1;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .admin-clients-shell {
+            padding: 76px 12px 24px;
+        }
+
+        .clients-title {
+            font-size: 24px;
+        }
+
+        .clients-subtitle {
+            font-size: 13px;
+        }
+
+        .clients-kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .clients-summary-strip {
+            grid-template-columns: 1fr;
+        }
+
+        .clients-table-header {
+            padding: 16px;
+        }
+
+        .clients-table-footer {
+            padding: 12px 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main_class %}dashboard-main{% endblock %}
+
+{% block content %}
+
+<div class="admin-clients-shell">
+    <div class="admin-clients-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <header class="clients-page-header">
+
+            <div class="clients-heading">
+
+                <div class="clients-breadcrumb">
+                    <span>Administration</span>
+                    <span>›</span>
+                    <span>Clients</span>
+                </div>
+
+                <h1 class="clients-title">
+                    Clients
+                </h1>
+
+                <p class="clients-subtitle">
+                    Gestion de la clientèle et suivi commercial
+                </p>
+
+            </div>
+
+            <div class="clients-header-actions">
+
+                <a
+                    href="{{ url_for('dashboard') }}"
+                    class="clients-action-button"
+                >
+                    ← Tableau de bord
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             MAIN KPI CARDS
+             ===================================================== -->
+
+        <section class="clients-kpi-grid">
+
+            <!-- Total clients -->
+            <article class="client-kpi-card">
+
+                <div class="client-kpi-top">
+
+                    <div class="client-kpi-label">
+                        Total clients
+                    </div>
+
+                    <div class="client-kpi-icon">
+                        C
+                    </div>
+
+                </div>
+
+                <div class="client-kpi-value">
+                    {{ client_summary.totalClients or 0 }}
+                </div>
+
+                <div class="client-kpi-meta">
+                    Clients enregistrés
+                </div>
+
+            </article>
+
+
+            <!-- Active clients -->
+            <article class="client-kpi-card">
+
+                <div class="client-kpi-top">
+
+                    <div class="client-kpi-label">
+                        Clients actifs
+                    </div>
+
+                    <div class="client-kpi-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+                <div class="client-kpi-value">
+                    {{ client_summary.activeClients or 0 }}
+                </div>
+
+                <div class="client-kpi-meta">
+                    Comptes actuellement actifs
+                </div>
+
+            </article>
+
+
+            <!-- Orders -->
+            <article class="client-kpi-card">
+
+                <div class="client-kpi-top">
+
+                    <div class="client-kpi-label">
+                        Commandes clients
+                    </div>
+
+                    <div class="client-kpi-icon">
+                        #
+                    </div>
+
+                </div>
+
+                <div class="client-kpi-value">
+                    {{ sales_summary.totalOrders or 0 }}
+                </div>
+
+                <div class="client-kpi-meta">
+                    Commandes enregistrées
+                </div>
+
+            </article>
+
+
+            <!-- Revenue -->
+            <article class="client-kpi-card">
+
+                <div class="client-kpi-top">
+
+                    <div class="client-kpi-label">
+                        Ventes livrées
+                    </div>
+
+                    <div class="client-kpi-icon">
+                        $
+                    </div>
+
+                </div>
+
+                <div class="client-kpi-value">
+                    {{ "{:,.0f}".format(sales_summary.totalRevenue or 0).replace(",", " ") }}
+                    FCFA
+                </div>
+
+                <div class="client-kpi-meta">
+                    Chiffre d'affaires livré
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             SECONDARY COMMERCIAL SUMMARY
+             ===================================================== -->
+
+        <section class="clients-summary-strip">
+
+            <div class="clients-summary-item">
+
+                <span class="clients-summary-label">
+                    Clients inactifs
+                </span>
+
+                <span class="clients-summary-value">
+                    {{ client_summary.inactiveClients or 0 }}
+                </span>
+
+            </div>
+
+
+            <div class="clients-summary-item">
+
+                <span class="clients-summary-label">
+                    Commandes moyennes
+                </span>
+
+                <span class="clients-summary-value">
+                    {% if client_summary.totalClients and client_summary.totalClients > 0 %}
+                        {{ "{:,.1f}".format(
+                            (sales_summary.totalOrders or 0)
+                            / client_summary.totalClients
+                        ).replace(",", " ") }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </span>
+
+            </div>
+
+
+            <div class="clients-summary-item">
+
+                <span class="clients-summary-label">
+                    CA moyen / client
+                </span>
+
+                <span class="clients-summary-value">
+                    {% if client_summary.totalClients and client_summary.totalClients > 0 %}
+                        {{ "{:,.0f}".format(
+                            (sales_summary.totalRevenue or 0)
+                            / client_summary.totalClients
+                        ).replace(",", " ") }}
+                        FCFA
+                    {% else %}
+                        0 FCFA
+                    {% endif %}
+                </span>
+
+            </div>
+
+
+            <div class="clients-summary-item">
+
+                <span class="clients-summary-label">
+                    Statut
+                </span>
+
+                <span class="clients-summary-value">
+                    Suivi commercial
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CLIENT TABLE
+             ===================================================== -->
+
+        <section class="clients-table-card">
+
+            <div class="clients-table-header">
+
+                <div class="clients-table-heading">
+
+                    <h2>
+                        Portefeuille clients
+                    </h2>
+
+                    <p>
+                        Consultez les informations commerciales et l'activité de chaque client.
+                    </p>
+
+                </div>
+
+
+                <div class="clients-tools">
+
+                    <div class="client-search-wrapper">
+
+                        <span class="client-search-icon">
+                            ⌕
+                        </span>
+
+                        <input
+                            type="search"
+                            id="clientSearch"
+                            class="client-search"
+                            placeholder="Rechercher un client..."
+                            autocomplete="off"
+                            aria-label="Rechercher un client"
+                        >
+
+                    </div>
+
+
+                    <select
+                        id="clientStatusFilter"
+                        class="client-filter"
+                        aria-label="Filtrer par statut"
+                    >
+                        <option value="all">
+                            Tous les statuts
+                        </option>
+
+                        <option value="active">
+                            Actifs
+                        </option>
+
+                        <option value="inactive">
+                            Inactifs
+                        </option>
+                    </select>
+
+
+                    <select
+                        id="clientCreditFilter"
+                        class="client-filter"
+                        aria-label="Filtrer par crédit"
+                    >
+                        <option value="all">
+                            Tous les crédits
+                        </option>
+
+                        <option value="credit">
+                            Avec crédit
+                        </option>
+
+                        <option value="no-credit">
+                            Sans crédit
+                        </option>
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="clients-table-wrapper">
+
+                {% if clients %}
+
+                <table class="clients-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Client</th>
+                            <th>Contact</th>
+                            <th>Statut</th>
+                            <th>Commandes</th>
+                            <th>CA livré</th>
+                            <th>Articles</th>
+                            <th>Fidélité</th>
+                            <th>Crédit</th>
+                            <th>Dernière commande</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="clientsTableBody">
+
+                    {% for client in clients %}
+
+                        {% set client_first = (client.userName or "?") %}
+                        {% set client_last = (client.userSurname or "") %}
+
+                        {% set initials =
+                            (client_first[:1] ~ client_last[:1])
+                            | upper
+                        %}
+
+                        <tr
+                            class="client-row"
+                            data-status="{% if client.userActive %}active{% else %}inactive{% endif %}"
+                            data-credit="{% if (client.creditBalance or 0) > 0 %}credit{% else %}no-credit{% endif %}"
+                        >
+
+                            <!-- CLIENT -->
+                            <td>
+
+                                <div class="client-identity">
+
+                                    <div class="client-avatar">
+                                        {{ initials or "C" }}
+                                    </div>
+
+                                    <div class="client-identity-main">
+
+                                        <div class="client-name">
+                                            {{ client.userName }}
+                                            {{ client.userSurname or "" }}
+                                        </div>
+
+                                        <div class="client-address">
+                                            {{ client.userAddress or "Adresse non renseignée" }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- CONTACT -->
+                            <td>
+
+                                <div class="client-contact-block">
+
+                                    <div class="client-email">
+                                        {{ client.userMail or "Email non renseigné" }}
+                                    </div>
+
+                                    <div class="client-phone">
+                                        {{ client.userPhone or "Téléphone non renseigné" }}
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- STATUS -->
+                            <td>
+
+                                {% if client.userActive %}
+
+                                    <span class="client-status active">
+                                        Actif
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="client-status inactive">
+                                        Inactif
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ORDERS -->
+                            <td>
+
+                                <span class="client-number">
+                                    {{ client.orderCount or 0 }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- REVENUE -->
+                            <td>
+
+                                {% if (client.totalSpent or 0) > 0 %}
+
+                                    <span class="client-money">
+                                        {{ "{:,.0f}".format(client.totalSpent or 0).replace(",", " ") }}
+                                        FCFA
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="client-money zero">
+                                        0 FCFA
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ITEMS -->
+                            <td>
+
+                                <span class="client-number">
+                                    {{ client.totalItemsPurchased or 0 }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- LOYALTY -->
+                            <td>
+
+                                {% if (client.loyaltyPoints or 0) > 0 %}
+
+                                    <span class="client-points">
+                                        ★ {{ client.loyaltyPoints or 0 }} pts
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="client-points zero">
+                                        0 pts
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- CREDIT -->
+                            <td>
+
+                                {% if (client.creditBalance or 0) > 0 %}
+
+                                    <span class="client-credit">
+                                        {{ "{:,.0f}".format(client.creditBalance or 0).replace(",", " ") }}
+                                        FCFA
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="client-credit zero">
+                                        0 FCFA
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- LAST ORDER -->
+                            <td>
+
+                                <span class="client-last-order">
+                                    {{ client.lastOrderDate or "Aucune commande" }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- ACTION -->
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="client-view-button"
+                                    data-client-id="{{ client.userId }}"
+                                    data-client-name="{{ client.userName }} {{ client.userSurname or '' }}"
+                                    title="Consulter le client"
+                                >
+                                    Voir
+                                    <span>→</span>
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+                <!-- NO SEARCH RESULT -->
+                <div
+                    id="clientNoResults"
+                    class="clients-empty-state"
+                    style="display:none;"
+                >
+
+                    <div class="clients-empty-icon">
+                        ⌕
+                    </div>
+
+                    <h3>
+                        Aucun client trouvé
+                    </h3>
+
+                    <p>
+                        Aucun client ne correspond aux critères de recherche ou de filtrage sélectionnés.
+                    </p>
+
+                </div>
+
+
+                {% else %}
+
+                <!-- NO CLIENTS -->
+                <div class="clients-empty-state">
+
+                    <div class="clients-empty-icon">
+                        C
+                    </div>
+
+                    <h3>
+                        Aucun client enregistré
+                    </h3>
+
+                    <p>
+                        Aucun compte client n'est actuellement disponible dans la base de données.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if clients %}
+
+            <div class="clients-table-footer">
+
+                <span
+                    id="clientResultsCount"
+                    class="clients-results-count"
+                >
+                    {{ clients|length }} client{% if clients|length != 1 %}s{% endif %}
+                </span>
+
+                <span>
+                    Gestion commerciale
+                </span>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("clientSearch");
+    const statusFilter = document.getElementById("clientStatusFilter");
+    const creditFilter = document.getElementById("clientCreditFilter");
+
+    const rows = Array.from(
+        document.querySelectorAll(".client-row")
+    );
+
+    const noResults = document.getElementById("clientNoResults");
+    const resultsCount = document.getElementById("clientResultsCount");
+
+
+    function updateClients() {
+
+        const query = (
+            searchInput
+                ? searchInput.value.trim().toLowerCase()
+                : ""
+        );
+
+        const selectedStatus = (
+            statusFilter
+                ? statusFilter.value
+                : "all"
+        );
+
+        const selectedCredit = (
+            creditFilter
+                ? creditFilter.value
+                : "all"
+        );
+
+        let visibleCount = 0;
+
+
+        rows.forEach(function (row) {
+
+            const text = row.textContent.toLowerCase();
+
+            const status = row.dataset.status || "";
+            const credit = row.dataset.credit || "";
+
+            const matchesSearch =
+                !query ||
+                text.includes(query);
+
+            const matchesStatus =
+                selectedStatus === "all" ||
+                status === selectedStatus;
+
+            const matchesCredit =
+                selectedCredit === "all" ||
+                credit === selectedCredit;
+
+            const visible =
+                matchesSearch &&
+                matchesStatus &&
+                matchesCredit;
+
+            row.style.display = visible ? "" : "none";
+
+            if (visible) {
+                visibleCount++;
+            }
+
+        });
+
+
+        if (noResults) {
+            noResults.style.display =
+                visibleCount === 0
+                    ? "flex"
+                    : "none";
+        }
+
+
+        if (resultsCount) {
+
+            resultsCount.textContent =
+                visibleCount +
+                " client" +
+                (visibleCount !== 1 ? "s" : "");
+
+        }
+
+    }
+
+
+    if (searchInput) {
+        searchInput.addEventListener(
+            "input",
+            updateClients
+        );
+    }
+
+
+    if (statusFilter) {
+        statusFilter.addEventListener(
+            "change",
+            updateClients
+        );
+    }
+
+
+    if (creditFilter) {
+        creditFilter.addEventListener(
+            "change",
+            updateClients
+        );
+    }
+
+
+    /*
+     * Open the detailed CRM profile.
+     *
+     * The backend route performs the administrator
+     * authorization check and loads the complete
+     * read-only customer profile.
+     */
+
+    document.querySelectorAll(
+        ".client-view-button"
+    ).forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const clientId =
+                    this.dataset.clientId;
+
+                if (!clientId) {
+                    return;
+                }
+
+                window.location.href =
+                    "/admin/clients/" +
+                    encodeURIComponent(clientId);
+
+            }
+        );
+
+    });
+
+
+    updateClients();
+
+});
+</script>
+
+{% endblock %}

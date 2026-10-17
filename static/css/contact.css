@@ -1,0 +1,439 @@
+/* ==========================================================================
+   CONTACT PAGE STYLESHEET - DEPOT LES SOURCES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS VARIABLES & SYSTEM DEFAULTS
+   -------------------------------------------------------------------------- */
+:root {
+  --primary-color: #0066cc;
+  --primary-hover: #0052a3;
+  --secondary-color: #003366;
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --bg-light: #f8fafc;
+  --bg-white: #ffffff;
+  
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --radius-full: 9999px;
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Layout Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --------------------------------------------------------------------------
+   2. HERO SECTION
+   -------------------------------------------------------------------------- */
+.contact-hero {
+  min-height: 45vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--secondary-color);
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 32, 64, 0.75) 0%, rgba(0, 16, 32, 0.9) 100%);
+  z-index: 1;
+}
+
+.contact-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 750px;
+  text-align: center;
+  color: #ffffff;
+  padding: 60px 20px 40px;
+}
+
+.contact-hero-content h1 {
+  font-size: clamp(2.3rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.contact-hero-content p {
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* --------------------------------------------------------------------------
+   3. SECTION HEADER
+   -------------------------------------------------------------------------- */
+.section {
+  padding: 90px 0;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto 55px auto;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-color);
+  background: rgba(0, 102, 204, 0.08);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.section-header h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+  margin-top: 6px;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   4. CONTACT SECTION & GRID (FIXED BACKGROUND & FALLBACK)
+   -------------------------------------------------------------------------- */
+.contact-section {
+  position: relative;
+  /* Updated dark fallback color so white text is crystal clear */
+  background-color: #0f172a;
+  
+  /* Fixed relative image path */
+  background-image: 
+    linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.85)), 
+    url("../images/images/contact-bg.jpg");
+    
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.contact-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+.contact-section .section-tag {
+  color: #2869b8;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.contact-section .section-header h2 {
+  color: #160404;
+}
+
+.contact-section .section-header p {
+  color: rgba(43, 9, 9, 0.85);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 45px;
+  align-items: stretch;
+}
+
+/* --------------------------------------------------------------------------
+   5. CONTACT INFO PANEL (GLASSMORPHISM & TEXT VISIBILITY)
+   -------------------------------------------------------------------------- */
+.contact-info {
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-lg);
+  padding: 45px 35px;
+  color: #0e0b0b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-info h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+  color: #000000;
+}
+
+.contact-info > p {
+  line-height: 1.65;
+  margin-bottom: 35px;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-item i {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #a14949;
+  color: var(--primary-color);
+  border-radius: 50%;
+  font-size: 20px;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.contact-item:hover i {
+  transform: scale(1.08);
+}
+
+.contact-item h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #000000;
+}
+
+.contact-item p, 
+.contact-item p a {
+  color: rgba(0, 0, 0, 0.85);
+  text-decoration: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: var(--transition);
+}
+
+.contact-item p a:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   6. CONTACT FORM
+   -------------------------------------------------------------------------- */
+.contact-form {
+  background: var(--bg-white);
+  padding: 45px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.contact-form h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 25px;
+  letter-spacing: -0.01em;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 16px;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.input-with-icon input {
+  padding-left: 45px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #2e4f79;
+  background: #e7e9eb;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  transition: var(--transition);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--bg-white);
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.12);
+}
+
+.input-with-icon input:focus + i,
+.form-group:focus-within .input-with-icon i {
+  color: var(--primary-color);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.submit-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* --------------------------------------------------------------------------
+   7. MAP SECTION
+   -------------------------------------------------------------------------- */
+.map-section {
+  padding: 0 0 90px 0;
+  background: var(--bg-light);
+}
+
+.map-wrapper {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.map-wrapper iframe {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   8. RESPONSIVE DESIGN
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+
+  .contact-section {
+    background-attachment: scroll;
+  }
+
+  .contact-info {
+    padding: 35px 25px;
+  }
+
+  .contact-form {
+    padding: 35px 25px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding: 60px 0;
+  }
+
+  .contact-hero {
+    min-height: 35vh;
+  }
+
+  .contact-hero-content {
+    padding: 40px 15px 20px;
+  }
+
+  .contact-info {
+    padding: 30px 20px;
+  }
+
+  .contact-item i {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    font-size: 18px;
+  }
+
+  .contact-form {
+    padding: 25px 20px;
+  }
+
+  .submit-btn {
+    padding: 14px;
+  }
+}
+
+

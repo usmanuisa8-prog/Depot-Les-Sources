@@ -1,0 +1,1041 @@
+{% extends "base.html" %}
+
+{% block title %}Create Purchase Order | Dépôt Les Sources{% endblock %}
+
+{% block content %}
+
+<div class="po-create-page">
+
+    <!-- PAGE HEADER -->
+    <section class="po-create-header">
+
+        <div>
+            <span class="page-eyebrow">
+                APPROVISIONNEMENT
+            </span>
+
+            <h1>
+                Create Purchase Order
+            </h1>
+
+            <p>
+                Create a draft supplier order and define its delivery expectations.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('admin_purchase_orders') }}"
+            class="secondary-action"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Purchase Orders
+        </a>
+
+    </section>
+
+
+    <!-- FORM CARD -->
+    <section class="po-form-card">
+
+        <div class="po-form-header">
+
+            <div class="form-title-icon">
+                <i class="bi bi-file-earmark-plus"></i>
+            </div>
+
+            <div>
+                <h2>
+                    Purchase Order Details
+                </h2>
+
+                <p>
+                    Complete the information below to create a draft order.
+                </p>
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('create_purchase_order') }}"
+        >
+
+            <!-- SUPPLIER -->
+            <div class="form-section">
+
+                <div class="section-heading">
+                    <span class="section-number">01</span>
+
+                    <div>
+                        <h3>Supplier</h3>
+                        <p>Select the supplier for this purchase order.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <label for="supplierId">
+                        Supplier
+                        <span class="required">*</span>
+                    </label>
+
+                    <select
+                        id="supplierId"
+                        name="supplierId"
+                        required
+                    >
+
+                        <option value="">
+                            Select supplier
+                        </option>
+
+                        {% for supplier in suppliers %}
+
+                        <option value="{{ supplier['supplierId'] }}">
+                            {{ supplier['supplierName'] }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- RECEIVING DEPOT -->
+            <div class="form-section">
+
+                <div class="section-heading">
+                    <span class="section-number">01</span>
+
+                    <div>
+                        <h3>Receiving Depot</h3>
+                        <p>Select where the purchased stock will be received.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <label for="depotId">
+                        Receiving Depot
+                        <span class="required">*</span>
+                    </label>
+
+                    <select
+                        id="depotId"
+                        name="depotId"
+                        required
+                    >
+
+                        <option value="">
+                            Select receiving depot
+                        </option>
+
+                        {% for depot in depots %}
+
+                        <option value="{{ depot['depotId'] }}">
+                            {{ depot['depotName'] }}
+                            {% if depot['depotCode'] %}
+                                ? {{ depot['depotCode'] }}
+                            {% endif %}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <small>
+                        All quantities received for this purchase order will be added to this depot's stock.
+                    </small>
+
+                    {% if not depots %}
+                    <div class="depot-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span>
+                            No active depot is currently available. Create or activate a depot before creating a purchase order.
+                        </span>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- DATES -->
+            <div class="form-section">
+
+                <div class="section-heading">
+                    <span class="section-number">02</span>
+
+                    <div>
+                        <h3>Order Schedule</h3>
+                        <p>Set the order date and expected delivery date.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="orderDate">
+                            Order Date
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="input-with-icon">
+
+                            <i class="bi bi-calendar3"></i>
+
+                            <input
+                                type="date"
+                                id="orderDate"
+                                name="orderDate"
+                                value="{{ current_date }}"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="expectedDate">
+                            Expected Delivery Date
+                        </label>
+
+                        <div class="input-with-icon">
+
+                            <i class="bi bi-calendar-check"></i>
+
+                            <input
+                                type="date"
+                                id="expectedDate"
+                                name="expectedDate"
+                            >
+
+                        </div>
+
+                        <small>
+                            Optional. Set this if the supplier has provided an expected delivery date.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- NOTES -->
+            <div class="form-section">
+
+                <div class="section-heading">
+                    <span class="section-number">03</span>
+
+                    <div>
+                        <h3>Notes</h3>
+                        <p>Add any additional information for this order.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <label for="notes">
+                        Order Notes
+                    </label>
+
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        rows="5"
+                        placeholder="Optional notes about this purchase order..."
+                    ></textarea>
+
+                    <small>
+                        These notes can help document special instructions or supplier requirements.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- FORM ACTIONS -->
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('admin_purchase_orders') }}"
+                    class="cancel-action"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="create-action"
+                >
+                    <i class="bi bi-check-lg"></i>
+                    Create Draft Purchase Order
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- INFORMATION -->
+    <div class="workflow-note">
+
+        <div class="workflow-icon">
+            <i class="bi bi-info-circle"></i>
+        </div>
+
+        <div>
+            <strong>What happens next?</strong>
+
+            <p>
+                The purchase order will be created as a draft.
+                You can then open it to add supplier articles,
+                quantities and manage the receiving process.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+/* =========================================================
+   PURCHASE ORDER CREATE PAGE
+   ========================================================= */
+
+.po-create-page {
+
+    max-width: 1050px;
+
+    margin: 0 auto;
+
+    padding: 38px 28px 60px;
+
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.po-create-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-end;
+
+    gap: 25px;
+
+    margin-bottom: 28px;
+
+}
+
+
+.page-eyebrow {
+
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    color: #777;
+
+}
+
+
+.po-create-header h1 {
+
+    margin: 0 0 7px;
+
+    font-size: 32px;
+
+    line-height: 1.15;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+.po-create-header p {
+
+    margin: 0;
+
+    color: #777;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   SECONDARY ACTION
+   ========================================================= */
+
+.secondary-action {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #333;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: all .15s ease;
+
+}
+
+
+.secondary-action:hover {
+
+    background: #f5f5f5;
+
+    border-color: #ccc;
+
+    color: #111;
+
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.po-form-card {
+
+    background: #fff;
+
+    border: 1px solid #e8e8e8;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 18px rgba(0,0,0,.05);
+
+    overflow: hidden;
+
+}
+
+
+/* =========================================================
+   FORM HEADER
+   ========================================================= */
+
+.po-form-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 22px 24px;
+
+    border-bottom: 1px solid #ededed;
+
+}
+
+
+.form-title-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #f3f3f3;
+
+    color: #333;
+
+    font-size: 18px;
+
+}
+
+
+.po-form-header h2 {
+
+    margin: 0 0 4px;
+
+    font-size: 18px;
+
+}
+
+
+.po-form-header p {
+
+    margin: 0;
+
+    color: #888;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   FORM SECTIONS
+   ========================================================= */
+
+.form-section {
+
+    padding: 25px 24px;
+
+    border-bottom: 1px solid #ededed;
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.section-number {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 30px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    border-radius: 7px;
+
+    background: #f3f3f3;
+
+    color: #555;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+
+.section-heading h3 {
+
+    margin: 1px 0 4px;
+
+    font-size: 15px;
+
+}
+
+
+.section-heading p {
+
+    margin: 0;
+
+    color: #888;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.form-group label {
+
+    margin-bottom: 7px;
+
+    color: #333;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.required {
+
+    color: #777;
+
+}
+
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+
+    width: 100%;
+
+    border: 1px solid #dcdcdc;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #222;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+
+}
+
+
+.form-group input,
+.form-group select {
+
+    height: 42px;
+
+    padding: 0 11px;
+
+}
+
+
+.form-group textarea {
+
+    min-height: 115px;
+
+    padding: 11px;
+
+    resize: vertical;
+
+}
+
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+
+    outline: none;
+
+    border-color: #999;
+
+    box-shadow: 0 0 0 3px rgba(0,0,0,.04);
+
+}
+
+
+.form-group small {
+
+    margin-top: 6px;
+
+    color: #999;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   DEPOT WARNING
+   ========================================================= */
+
+.depot-warning {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 9px;
+
+    margin-top: 10px;
+
+    padding: 11px 12px;
+
+    border: 1px solid #ead9a8;
+
+    border-radius: 8px;
+
+    background: #fffaf0;
+
+    color: #725b18;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+}
+
+.depot-warning i {
+
+    flex-shrink: 0;
+
+    margin-top: 1px;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   INPUT ICON
+   ========================================================= */
+
+.input-with-icon {
+
+    position: relative;
+
+}
+
+
+.input-with-icon i {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 12px;
+
+    transform: translateY(-50%);
+
+    color: #888;
+
+    font-size: 14px;
+
+    pointer-events: none;
+
+}
+
+
+.input-with-icon input {
+
+    padding-left: 36px;
+
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.form-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 20px 24px;
+
+    background: #fafafa;
+
+}
+
+
+.cancel-action {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 16px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #444;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.cancel-action:hover {
+
+    background: #f3f3f3;
+
+    color: #222;
+
+}
+
+
+.create-action {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 10px 17px;
+
+    border: 1px solid #222;
+
+    border-radius: 8px;
+
+    background: #222;
+
+    color: #fff;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: all .15s ease;
+
+}
+
+
+.create-action:hover {
+
+    background: #111;
+
+    border-color: #111;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 5px 14px rgba(0,0,0,.12);
+
+}
+
+
+/* =========================================================
+   WORKFLOW NOTE
+   ========================================================= */
+
+.workflow-note {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-top: 18px;
+
+    padding: 16px 18px;
+
+    border: 1px solid #e5e5e5;
+
+    border-radius: 10px;
+
+    background: #fafafa;
+
+}
+
+
+.workflow-icon {
+
+    width: 32px;
+
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 7px;
+
+    background: #f0f0f0;
+
+    color: #555;
+
+}
+
+
+.workflow-note strong {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 12px;
+
+}
+
+
+.workflow-note p {
+
+    margin: 0;
+
+    color: #777;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .po-create-page {
+
+        padding: 25px 15px 45px;
+
+    }
+
+
+    .po-create-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .po-create-header h1 {
+
+        font-size: 27px;
+
+    }
+
+
+    .form-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .form-section {
+
+        padding: 22px 18px;
+
+    }
+
+
+    .po-form-header {
+
+        padding: 20px 18px;
+
+    }
+
+
+    .form-actions {
+
+        padding: 18px;
+
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+
+    }
+
+
+    .cancel-action,
+    .create-action {
+
+        width: 100%;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}

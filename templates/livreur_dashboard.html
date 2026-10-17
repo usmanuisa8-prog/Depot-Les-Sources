@@ -1,0 +1,1853 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Livreur Dashboard - Dépôt Les Sources
+{% endblock %}
+
+{% block content %}
+
+<div class="livreur-page">
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <div class="livreur-topbar">
+
+        <div class="livreur-brand">
+
+            <div class="brand-icon">
+                DS
+            </div>
+
+            <div>
+                <h1>Delivery Dashboard</h1>
+
+                <p>
+                    Welcome back,
+                    <strong>
+                        {{ livreur["userName"] }}
+                        {{ livreur["userSurname"] or "" }}
+                    </strong>
+                </p>
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-button"
+        >
+            Logout
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         KPI CARDS
+    ====================================================== -->
+
+    <section class="kpi-grid">
+
+        <div class="kpi-card">
+
+            <div class="kpi-icon">
+                #
+            </div>
+
+            <div>
+                <span>Total Orders</span>
+                <strong>
+                    {{ statistics["total_orders"] or 0 }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <div class="kpi-icon pending-icon">
+                !
+            </div>
+
+            <div>
+                <span>Pending</span>
+                <strong>
+                    {{ statistics["pending_orders"] or 0 }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <div class="kpi-icon preparation-icon">
+                P
+            </div>
+
+            <div>
+                <span>Preparation</span>
+                <strong>
+                    {{ statistics["preparation_orders"] or 0 }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card active-kpi">
+
+            <div class="kpi-icon delivery-icon">
+                D
+            </div>
+
+            <div>
+                <span>In Delivery</span>
+                <strong>
+                    {{ statistics["delivery_orders"] or 0 }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <div class="kpi-icon completed-icon">
+                ✓
+            </div>
+
+            <div>
+                <span>Delivered</span>
+                <strong>
+                    {{ statistics["completed_orders"] or 0 }}
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ORDERS SECTION
+    ====================================================== -->
+
+    <section class="delivery-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-eyebrow">
+                    DELIVERY OPERATIONS
+                </span>
+
+                <h2>
+                    My Assigned Orders
+                </h2>
+
+                <p>
+                    Manage and complete your assigned deliveries.
+                </p>
+
+            </div>
+
+            <div class="order-count">
+                {{ orders|length }}
+                <span>orders</span>
+            </div>
+
+        </div>
+
+
+        {% if orders %}
+
+        <div class="delivery-list">
+
+            {% for order in orders %}
+
+            <article class="delivery-card">
+
+                <!-- =================================================
+                     CARD HEADER
+                ================================================== -->
+
+                <div class="delivery-card-header">
+
+                    <div class="order-identity">
+
+                        <span class="order-label">
+                            ORDER
+                        </span>
+
+                        <strong class="order-number">
+                            {{ order["cmdNum"] }}
+                        </strong>
+
+                        <span class="order-date">
+                            {{ order["cmdDate"] }}
+                        </span>
+
+                    </div>
+
+
+                    <span
+                        class="
+                            status-badge
+                            status-{{ order['cmdStatut'] }}
+                        "
+                    >
+                        {% if order["cmdStatut"] == "en_attente" %}
+                            Pending
+                        {% elif order["cmdStatut"] == "en_preparation" %}
+                            In Preparation
+                        {% elif order["cmdStatut"] == "en_livraison" %}
+                            In Delivery
+                        {% elif order["cmdStatut"] == "livree" %}
+                            Delivered
+                        {% elif order["cmdStatut"] == "annulee" %}
+                            Cancelled
+                        {% else %}
+                            {{ order["cmdStatut"]|replace("_", " ")|title }}
+                        {% endif %}
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     MAIN INFORMATION
+                ================================================== -->
+
+                <div class="delivery-main">
+
+                    <!-- CUSTOMER -->
+
+                    <div class="info-block">
+
+                        <span class="info-label">
+                            CUSTOMER
+                        </span>
+
+                        <strong class="customer-name">
+                            {{ order["customerName"] }}
+                            {{ order["customerSurname"] or "" }}
+                        </strong>
+
+                        {% if order["customerPhone"] %}
+
+                        <a
+                            href="tel:{{ order['customerPhone'] }}"
+                            class="phone-link"
+                        >
+                            {{ order["customerPhone"] }}
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- DESTINATION -->
+
+                    <div class="info-block destination-block">
+
+                        <span class="info-label">
+                            DELIVERY DESTINATION
+                        </span>
+
+                        {% if order["zoneName"] %}
+
+                        <strong class="zone-name">
+                            {{ order["zoneName"] }}
+                        </strong>
+
+                        {% if order["estimatedMinutes"] %}
+
+                        <span class="eta">
+                            Estimated
+                            ~{{ order["estimatedMinutes"] }}
+                            min
+                        </span>
+
+                        {% endif %}
+
+                        {% endif %}
+
+                        <span class="address">
+                            {{ order["cmdLivAddress"] }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="info-block total-block">
+
+                        <span class="info-label">
+                            ORDER TOTAL
+                        </span>
+
+                        <strong class="order-total">
+                            {{
+                                "{:,.0f}".format(
+                                    order["cmdTotal"]
+                                )
+                            }}
+                            <small>XAF</small>
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PROGRESS
+                ================================================== -->
+
+                <div class="delivery-progress">
+
+                    <div class="progress-step completed-step">
+
+                        <span class="progress-dot">
+                            {% if order["cmdStatut"] in [
+                                "en_preparation",
+                                "en_livraison",
+                                "livree"
+                            ] %}
+                                ✓
+                            {% else %}
+                                1
+                            {% endif %}
+                        </span>
+
+                        <span>
+                            Order
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress-line
+                        {% if order['cmdStatut'] in [
+                            'en_livraison',
+                            'livree'
+                        ] %}
+                            progress-active
+                        {% endif %}
+                    "></div>
+
+
+                    <div class="
+                        progress-step
+                        {% if order['cmdStatut'] in [
+                            'en_livraison',
+                            'livree'
+                        ] %}
+                            completed-step
+                        {% endif %}
+                    ">
+
+                        <span class="progress-dot">
+
+                            {% if order["cmdStatut"] in [
+                                "en_livraison",
+                                "livree"
+                            ] %}
+                                ✓
+                            {% else %}
+                                2
+                            {% endif %}
+
+                        </span>
+
+                        <span>
+                            In Delivery
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress-line
+                        {% if order['cmdStatut'] == 'livree' %}
+                            progress-active
+                        {% endif %}
+                    "></div>
+
+
+                    <div class="
+                        progress-step
+                        {% if order['cmdStatut'] == 'livree' %}
+                            completed-step
+                        {% endif %}
+                    ">
+
+                        <span class="progress-dot">
+
+                            {% if order["cmdStatut"] == "livree" %}
+                                ✓
+                            {% else %}
+                                3
+                            {% endif %}
+
+                        </span>
+
+                        <span>
+                            Delivered
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     FOOTER
+                ================================================== -->
+
+                <div class="delivery-card-footer">
+
+                    <div class="timing-summary">
+
+                        <div>
+                            <span>Preparation</span>
+
+                            <strong>
+                                {% if order["preparation_duration"] %}
+                                    {{ order["preparation_duration"] }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </strong>
+                        </div>
+
+
+                        <div>
+                            <span>Delivery</span>
+
+                            <strong>
+                                {% if order["delivery_duration"] %}
+                                    {{ order["delivery_duration"] }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </strong>
+                        </div>
+
+
+                        <div>
+                            <span>Total time</span>
+
+                            <strong>
+                                {% if order["total_duration"] %}
+                                    {{ order["total_duration"] }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="delivery-action">
+
+                        {% if (
+                            order["cmdLivreurConfirmed"] == 0
+                            and order["cmdStatut"] in ["en_attente", "en_preparation"]
+                        ) %}
+
+                        <div class="assignment-pending-state">
+
+                            <div class="assignment-pending-icon">
+                                !
+                            </div>
+
+                            <div class="assignment-pending-content">
+                                <strong>Nouvelle livraison assign?e</strong>
+                                <small>Confirmation requise avant le d?part</small>
+                            </div>
+
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'livreur_confirm_order',
+                                order_id=order['cmdId']
+                            ) }}"
+                            onsubmit="
+                                return confirm(
+                                    'Confirmer que vous acceptez cette livraison ?'
+                                );
+                            "
+                        >
+
+                            <button
+                                type="submit"
+                                class="confirm-delivery-button"
+                            >
+                                <span>?</span>
+                                Confirmer la livraison
+                            </button>
+
+                        </form>
+
+                        {% elif order["cmdStatut"] == "en_livraison" and order["cmdLivreurConfirmed"] == 1 %}
+
+                        <div class="delivery-progress-state">
+                            <strong>Livraison en cours</strong>
+                            <small>Vous ?tes actuellement en route</small>
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'livreur_update_order_status',
+                                order_id=order['cmdId']
+                            ) }}"
+                            onsubmit="
+                                return confirm(
+                                    'Confirmer que cette commande a ?t? livr?e ?'
+                                );
+                            "
+                        >
+
+                            <input
+                                type="hidden"
+                                name="status"
+                                value="livree"
+                            >
+
+                            <button
+                                type="submit"
+                                class="deliver-button"
+                            >
+                                <span>?</span>
+                                Marquer comme livr?e
+                            </button>
+
+                        </form>
+
+                        {% elif order["cmdStatut"] == "livree" %}
+
+                        <div class="delivered-state">
+
+                            <span class="delivered-check">
+                                ?
+                            </span>
+
+                            <div>
+                                <strong>Livr?e</strong>
+                                <small>
+                                    Livraison termin?e avec succ?s
+                                </small>
+                            </div>
+
+                        </div>
+
+                        {% else %}
+
+                        <span class="waiting-state">
+                            En attente de l??tape de livraison
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <!-- =================================================
+             EMPTY STATE
+        ================================================== -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                No orders assigned
+            </h3>
+
+            <p>
+                Orders assigned to you will appear here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<style>
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.livreur-page {
+
+    max-width: 1500px;
+
+    margin: 0 auto;
+
+    padding: 110px 24px 60px;
+
+    color: #172033;
+
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.livreur-topbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 32px;
+
+}
+
+
+.livreur-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.brand-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #172033;
+
+    color: white;
+
+    font-weight: 800;
+
+    font-size: 15px;
+
+}
+
+
+.livreur-brand h1 {
+
+    margin: 0 0 5px;
+
+    font-size: 27px;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+.livreur-brand p {
+
+    margin: 0;
+
+    color: #737b8c;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.logout-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 18px;
+
+    border: 1px solid #dfe3ea;
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: #303746;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+
+}
+
+
+.logout-button:hover {
+
+    background: #f6f7f9;
+
+}
+
+
+/* =========================================================
+   KPI GRID
+========================================================= */
+
+.kpi-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.kpi-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    min-height: 92px;
+
+    padding: 18px;
+
+    background: white;
+
+    border: 1px solid #e8ebf0;
+
+    border-radius: 13px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,0.035);
+
+}
+
+
+.active-kpi {
+
+    border-color: #b8d8ff;
+
+}
+
+
+.kpi-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex: 0 0 43px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eef1f5;
+
+    color: #354052;
+
+    font-weight: 800;
+
+}
+
+
+.pending-icon {
+
+    background: #fff4d8;
+
+    color: #8a6500;
+
+}
+
+
+.preparation-icon {
+
+    background: #e7efff;
+
+    color: #315fa8;
+
+}
+
+
+.delivery-icon {
+
+    background: #e2f3f7;
+
+    color: #176c78;
+
+}
+
+
+.completed-icon {
+
+    background: #e3f4eb;
+
+    color: #197044;
+
+}
+
+
+.kpi-card span {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #7a8291;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.kpi-card strong {
+
+    display: block;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.delivery-section {
+
+    background: #f7f8fa;
+
+    border: 1px solid #e8ebf0;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-end;
+
+    margin-bottom: 22px;
+
+}
+
+
+.section-eyebrow {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #7d8492;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+}
+
+
+.section-heading h2 {
+
+    margin: 0 0 5px;
+
+    font-size: 22px;
+
+}
+
+
+.section-heading p {
+
+    margin: 0;
+
+    color: #7b8391;
+
+    font-size: 14px;
+
+}
+
+
+.order-count {
+
+    min-width: 70px;
+
+    padding: 9px 14px;
+
+    text-align: center;
+
+    border-radius: 9px;
+
+    background: white;
+
+    border: 1px solid #e1e5eb;
+
+    font-weight: 800;
+
+}
+
+
+.order-count span {
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    color: #7c8491;
+
+}
+
+
+/* =========================================================
+   DELIVERY LIST
+========================================================= */
+
+.delivery-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+}
+
+
+/* =========================================================
+   DELIVERY CARD
+========================================================= */
+
+.delivery-card {
+
+    background: white;
+
+    border: 1px solid #e3e7ed;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,0.035);
+
+}
+
+
+.delivery-card-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #edf0f3;
+
+}
+
+
+.order-identity {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+}
+
+
+.order-label {
+
+    color: #9199a7;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+}
+
+
+.order-number {
+
+    color: #182033;
+
+    font-size: 16px;
+
+}
+
+
+.order-date {
+
+    padding-left: 10px;
+
+    border-left: 1px solid #dfe3e8;
+
+    color: #8a919e;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+.status-en_attente {
+
+    background: #fff4d6;
+
+    color: #806000;
+
+}
+
+
+.status-en_preparation {
+
+    background: #e7efff;
+
+    color: #315b9d;
+
+}
+
+
+.status-en_livraison {
+
+    background: #e1f3f6;
+
+    color: #176774;
+
+}
+
+
+.status-livree {
+
+    background: #e1f3e9;
+
+    color: #196c42;
+
+}
+
+
+.status-annulee {
+
+    background: #fae5e7;
+
+    color: #a1323c;
+
+}
+
+
+/* =========================================================
+   MAIN INFORMATION
+========================================================= */
+
+.delivery-main {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1.5fr
+        auto;
+
+    gap: 24px;
+
+    padding: 20px;
+
+}
+
+
+.info-block {
+
+    min-width: 0;
+
+}
+
+
+.info-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #9299a6;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .8px;
+
+}
+
+
+.customer-name,
+.zone-name {
+
+    display: block;
+
+    color: #20293a;
+
+    font-size: 14px;
+
+}
+
+
+.phone-link {
+
+    display: inline-block;
+
+    margin-top: 6px;
+
+    color: #3b6fa8;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+}
+
+
+.phone-link:hover {
+
+    text-decoration: underline;
+
+}
+
+
+.destination-block {
+
+    padding-left: 24px;
+
+    border-left: 1px solid #edf0f3;
+
+}
+
+
+.eta {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #23805a;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+.address {
+
+    display: block;
+
+    margin-top: 7px;
+
+    max-width: 420px;
+
+    color: #6f7785;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+}
+
+
+.total-block {
+
+    min-width: 150px;
+
+    padding-left: 24px;
+
+    border-left: 1px solid #edf0f3;
+
+}
+
+
+.order-total {
+
+    display: block;
+
+    color: #172033;
+
+    font-size: 19px;
+
+}
+
+
+.order-total small {
+
+    font-size: 11px;
+
+    color: #747d8c;
+
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.delivery-progress {
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 20px 20px;
+
+}
+
+
+.progress-step {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #a0a7b3;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+.progress-dot {
+
+    width: 24px;
+
+    height: 24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #edf0f3;
+
+    color: #8b939f;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+}
+
+
+.completed-step {
+
+    color: #3b4657;
+
+}
+
+
+.completed-step .progress-dot {
+
+    background: #dfeee6;
+
+    color: #27734c;
+
+}
+
+
+.progress-line {
+
+    flex: 1;
+
+    height: 2px;
+
+    margin: 0 10px;
+
+    background: #e5e8ec;
+
+}
+
+
+.progress-active {
+
+    background: #8bbfa4;
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.delivery-card-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 15px 20px;
+
+    background: #fafbfc;
+
+    border-top: 1px solid #edf0f3;
+
+}
+
+
+.timing-summary {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 28px;
+
+}
+
+
+.timing-summary div {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+}
+
+
+.timing-summary span {
+
+    color: #9299a5;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+}
+
+
+.timing-summary strong {
+
+    color: #4b5565;
+
+    font-size: 12px;
+
+}
+
+
+.delivery-action {
+
+    flex-shrink: 0;
+
+}
+
+
+/* =========================================================
+   DELIVER BUTTON
+========================================================= */
+
+.deliver-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 165px;
+
+    padding: 11px 17px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: #197348;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+}
+
+
+.deliver-button:hover {
+
+    background: #145e3b;
+
+    transform: translateY(-1px);
+
+}
+
+
+.deliver-button:active {
+
+    transform: translateY(0);
+
+}
+
+
+/* =========================================================
+   DELIVERED
+========================================================= */
+
+.delivered-state {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+}
+
+
+.delivered-check {
+
+    width: 30px;
+
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e1f3e9;
+
+    color: #197348;
+
+    font-weight: 800;
+
+}
+
+
+.delivered-state strong,
+.delivered-state small {
+
+    display: block;
+
+}
+
+
+.delivered-state strong {
+
+    color: #197348;
+
+    font-size: 13px;
+
+}
+
+
+.delivered-state small {
+
+    margin-top: 2px;
+
+    color: #89919e;
+
+    font-size: 10px;
+
+}
+
+
+.waiting-state {
+
+    color: #9299a5;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+
+    padding: 75px 20px;
+
+    text-align: center;
+
+    background: white;
+
+    border: 1px dashed #dce1e7;
+
+    border-radius: 13px;
+
+}
+
+
+.empty-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #e7f3ec;
+
+    color: #23734b;
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+}
+
+
+.empty-state h3 {
+
+    margin: 0 0 7px;
+
+    font-size: 17px;
+
+}
+
+
+.empty-state p {
+
+    margin: 0;
+
+    color: #858d9a;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .kpi-grid {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+    }
+
+    .delivery-main {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+    .destination-block,
+    .total-block {
+
+        padding-left: 0;
+
+        border-left: 0;
+
+    }
+
+    .total-block {
+
+        padding-top: 5px;
+
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    .livreur-page {
+
+        padding: 20px 14px 40px;
+
+    }
+
+    .livreur-topbar {
+
+        align-items: flex-start;
+
+    }
+
+    .livreur-brand h1 {
+
+        font-size: 21px;
+
+    }
+
+    .kpi-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+    .delivery-section {
+
+        padding: 15px;
+
+    }
+
+    .section-heading {
+
+        align-items: flex-start;
+
+    }
+
+    .delivery-main {
+
+        grid-template-columns: 1fr;
+
+        gap: 17px;
+
+    }
+
+    .delivery-progress {
+
+        overflow-x: auto;
+
+    }
+
+    .progress-line {
+
+        min-width: 35px;
+
+    }
+
+    .delivery-card-footer {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+    .timing-summary {
+
+        width: 100%;
+
+        justify-content: space-between;
+
+        gap: 10px;
+
+    }
+
+    .delivery-action {
+
+        width: 100%;
+
+    }
+
+    .delivery-action form {
+
+        width: 100%;
+
+    }
+
+    .deliver-button {
+
+        width: 100%;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .livreur-topbar {
+
+        gap: 15px;
+
+        flex-direction: column;
+
+    }
+
+    .logout-button {
+
+        width: 100%;
+
+    }
+
+    .kpi-grid {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+    .kpi-card {
+
+        min-height: 80px;
+
+        padding: 13px;
+
+    }
+
+    .kpi-icon {
+
+        width: 35px;
+
+        height: 35px;
+
+        flex-basis: 35px;
+
+    }
+
+    .kpi-card strong {
+
+        font-size: 21px;
+
+    }
+
+    .delivery-card-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+
+    }
+
+    .timing-summary {
+
+        flex-wrap: wrap;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}

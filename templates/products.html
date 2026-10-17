@@ -1,0 +1,160 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Produits - Dépôt Les Sources{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+{% endblock %}
+
+{% block modal_content %}
+    <div class="modal quantity-pop-up hidden" data-articleId="">
+        <h3>Quantité</h3>
+        <input type="number" name="quantity" id="quantity_input" placeholder="Entrer la quantité" class="qpu-value" min="1" value="1">
+        <div class="qpu-actions">
+            <button class="qpu-btn submit-quantity">Valider</button>
+            <button class="qpu-btn reset-quantity">Annuler</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="categories-nav">
+        <a href="{{ url_for('products', selectedCategory='tout') }}" class="category {{ 'selected-category' if selectedCategory == 'tout' }}" data-categoryId="0">
+            <p>Tous</p>
+        </a>
+        {% for category in categories %}
+            <a href="{{ url_for('products', selectedCategory=category.categorySlug if category.categorySlug is defined else category['categorySlug']) }}" class="category {{ 'selected-category' if selectedCategory == (category.categorySlug if category.categorySlug is defined else category['categorySlug']) }}" data-categoryId="{{ category.categoryId if category.categoryId is defined else category['categoryId'] }}">
+                <p>{{ category.categoryName if category.categoryName is defined else category['categoryName'] }}</p>
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if newProducts and newProducts|length > 0 %}
+        <section class="section">
+            <div class="conteneur-titre-s">
+                <div>
+                    <h2 class="titre-section">Découvrez nos nouveaux produits</h2>
+                    <p class="sous-titre-section">Une gamme de produits diversifiée pour tous les goûts et désirs</p>
+                </div>
+            </div>
+            <div class="new-products">
+                {% for newProduct in newProducts %}
+                    {% set img_file = newProduct.productMainImage if newProduct.productMainImage is defined else newProduct['productMainImage'] %}
+                    {% set prod_name = newProduct.productName if newProduct.productName is defined else newProduct['productName'] %}
+                    {% set prod_desc = newProduct.productDescription if newProduct.productDescription is defined else newProduct['productDescription'] %}
+                    
+                    <div class="new-product" style="--bg-img: url('{{ url_for('static', filename='images/products/' + (img_file or 'default.jpg')) }}');">
+                        <h1 class="new-product-title">{{ prod_name }}</h1>
+                        <p>{{ prod_desc }}</p>
+                        <a href="#" class="discover-new-product">Découvrir</a>
+                    </div>
+                {% endfor %}
+                <div class="previous">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="icon"><path fill="currentColor" d="M201.4 297.4C188.9 309.9 188.9 330.2 201.4 342.7L361.4 502.7C373.9 515.2 394.2 515.2 406.7 502.7C419.2 490.2 419.2 469.9 406.7 457.4L269.3 320L406.6 182.6C419.1 170.1 419.1 149.8 406.6 137.3C394.1 124.8 373.8 124.8 361.3 137.3L201.3 297.3z"/></svg>
+                </div>
+                <div class="next">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="icon"><path fill="currentColor" d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z"/></svg>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {% if onSaleProducts and onSaleProducts|length > 0 %}
+        <section class="section">
+            <div class="conteneur-titre-s">
+                <div>
+                    <h2 class="titre-section">Offres Spéciales</h2>
+                    <p class="sous-titre-section">Profitez des meilleurs prix sur vos boissons du quotidien</p>
+                </div>
+            </div>
+            <div class="grille-produits">
+                {% for onSaleProduct in onSaleProducts %}
+                    {% set category_name = onSaleProduct.categoryName if onSaleProduct.categoryName is defined else onSaleProduct['categoryName'] %}
+                    {% set sale_perc = onSaleProduct.articleOnSalePerc if onSaleProduct.articleOnSalePerc is defined else onSaleProduct['articleOnSalePerc'] %}
+                    {% set art_img = onSaleProduct.articleImage if onSaleProduct.articleImage is defined else onSaleProduct['articleImage'] %}
+                    {% set prod_name = onSaleProduct.productName if onSaleProduct.productName is defined else onSaleProduct['productName'] %}
+                    {% set art_pkg = onSaleProduct.articlePackage if onSaleProduct.articlePackage is defined else onSaleProduct['articlePackage'] %}
+                    {% set end_price = onSaleProduct.articleEndPrice if onSaleProduct.articleEndPrice is defined else onSaleProduct['articleEndPrice'] %}
+                    {% set art_price = onSaleProduct.articlePrice if onSaleProduct.articlePrice is defined else onSaleProduct['articlePrice'] %}
+                    {% set art_id = onSaleProduct.articleId if onSaleProduct.articleId is defined else onSaleProduct['articleId'] %}
+
+                    <article class="carte-produit">
+                        <div class="carte-bandeau blue">
+                            <p class="carte-etiquette">{{ category_name }}</p>
+                            <div class="carte-coeur">&#9825;</div>
+                            <div class="carte-visuel">
+                                <div class="cercle-reduction">
+                                    <span class="pourcentage">- {{ sale_perc }}%</span>
+                                    <span class="mot">Solde</span>
+                                </div>
+                                <img src="{{ url_for('static', filename='images/products/' + (art_img or 'default.jpg')) }}" alt="{{ prod_name }}" class="carte-image">
+                            </div>
+                        </div>
+                        <div class="carte-corps">
+                            <h3 class="carte-titre">{{ prod_name }}</h3>
+                            <p class="carte-format">{{ art_pkg }}</p>
+                            <div class="carte-etoiles">
+                                &#9733;&#9733;&#9733;<span>&#9733;&#9733;</span>
+                            </div>
+                            <div class="carte-prix-ligne">
+                                <p class="carte-prix">{{ end_price }} F CFA</p>
+                                <span class="carte-prix-ancien">{{ art_price }} F</span>
+                            </div>
+                        </div>
+                        <button class="carte-bouton add-to-cart" data-productid="{{ art_id }}">Ajouter au panier</button>
+                    </article>
+                {% endfor %}
+            </div>     
+        </section>
+    {% endif %}
+
+    {% if topProducts and topProducts|length > 0 %}
+        <section class="section top-products">
+            <div class="conteneur-titre-s">
+                <div>
+                    <h2 class="titre-section">Nos Top Produits</h2>
+                    <p class="sous-titre-section">Les meilleurs choix pour vous</p>
+                </div>
+            </div>
+            <div class="grille-produits">
+                {% for topProduct in topProducts %}
+                    {% set art_img = topProduct.articleImage if topProduct.articleImage is defined else topProduct['articleImage'] %}
+                    {% set art_name = topProduct.articleName if topProduct.articleName is defined else topProduct['articleName'] %}
+                    {% set art_vol = topProduct.articleVolume if topProduct.articleVolume is defined else topProduct['articleVolume'] %}
+                    {% set art_price = topProduct.articlePrice if topProduct.articlePrice is defined else topProduct['articlePrice'] %}
+                    {% set art_id = topProduct.articleId if topProduct.articleId is defined else topProduct['articleId'] %}
+
+                    <article class="top-product">
+                        <div class="epingler">
+                            <p>#{{ loop.index }}</p>
+                        </div>
+                        <div class="image-container">
+                            <img src="{{ url_for('static', filename='images/products/' + (art_img or 'default.jpg')) }}" alt="{{ art_name }}" class="image">
+                        </div>
+                        <div class="produit-infos">
+                            <div class="produit-description">
+                                <h1>{{ art_name }}</h1>
+                                <p>{{ art_vol }}</p>
+                                <div class="carte-etoiles">
+                                    &#9733;&#9733;&#9733;&#9733;&#9733;
+                                </div>
+                                <div class="prix">
+                                    <h2>{{ art_price }} FCFA</h2>
+                                </div>
+                            </div>
+                            <div class="produit-actions">
+                                <button class="produit-action add-to-cart" data-productid="{{ art_id }}">Ajouter au panier</button>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/products.js') }}"></script>
+{% endblock %}

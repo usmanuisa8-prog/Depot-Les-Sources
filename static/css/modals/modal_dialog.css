@@ -1,0 +1,388 @@
+.dialog-modal{
+    display: flex;
+    align-items: center;
+    width: 600px;
+    gap: 1.5rem;
+}
+.dm-header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dm-icon-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .2rem;
+}
+.dm-icon-container svg{
+    width: 5rem;
+    height: 5rem;
+    color: var(--primary);
+}
+.dm-icon-container svg.red{
+    color: var(--red)
+}
+.dm-icon-container svg.orange{
+    color: var(--orange)
+}
+.dm-content{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: .5rem;
+}
+.dm-content p{
+    text-align: center;
+}
+.dm-footer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+}
+.dm-action{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .9rem 1rem;
+    background: var(--primary);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border-radius: .7rem;
+    color: var(--text-light);
+    border: none;
+    min-width: 8rem;
+    font-size: 1rem;
+}
+.dm-action:hover{
+    transform: scale(1.1);
+}
+.dm-action.no{
+    background: var(--light-gray-btn);
+}
+
+
+/* CHECKOUT DIALOG
+   ---------------------------------------------------------
+   Professional checkout redesign
+   --------------------------------------------------------- */
+
+.dialog-modal:has(.checkout-field) {
+    width: min(560px, 94vw);
+    max-width: 560px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--bg-light);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Checkout header */
+.dialog-modal:has(.checkout-field) .dm-header {
+    width: 100%;
+    padding: 1.6rem 1.8rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(
+        135deg,
+        var(--bg-light) 0%,
+        var(--bg-primary) 100%
+    );
+}
+
+.dialog-modal:has(.checkout-field) .dm-header h1,
+.dialog-modal:has(.checkout-field) .dm-header h2,
+.dialog-modal:has(.checkout-field) .dm-header h3 {
+    margin: 0;
+    color: var(--dark-blue);
+    font-family: var(--title-font);
+    font-size: 1.55rem;
+    font-weight: 700;
+    text-align: left;
+}
+
+/* Subtitle */
+.dialog-modal:has(.checkout-field) .dm-header::after {
+    content: "Review your information before confirming your order.";
+    display: block;
+    margin-top: .4rem;
+    color: var(--text-gray);
+    font-family: var(--text-font);
+    font-size: .85rem;
+    font-weight: 400;
+}
+
+/* Close button */
+.dialog-modal:has(.checkout-field) .modal-close {
+    top: 1.35rem;
+    right: 1.35rem;
+    z-index: 5;
+}
+
+.dialog-modal:has(.checkout-field) .modal-close svg {
+    width: 18px;
+    height: 18px;
+    color: var(--text-gray);
+    transition: var(--transition);
+}
+
+.dialog-modal:has(.checkout-field) .modal-close:hover svg {
+    color: var(--red);
+    transform: rotate(90deg);
+}
+
+/* Content */
+.dialog-modal:has(.checkout-field) .dm-content {
+    width: 100%;
+    display: block;
+    padding: 1.5rem 1.8rem;
+    text-align: left;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Checkout form */
+.checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    width: 100%;
+}
+
+/* Form fields */
+.checkout-field {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: 100%;
+    margin-bottom: 1.15rem;
+}
+
+.checkout-field label {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-family: var(--text-font);
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: left;
+}
+
+.checkout-field label::before {
+    content: "";
+    width: 3px;
+    height: 15px;
+    border-radius: 10px;
+    background: var(--primary);
+}
+
+/* Inputs / selects */
+.checkout-field input,
+.checkout-field textarea,
+.checkout-field select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: .85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--text-primary);
+    font-size: .95rem;
+    font-family: var(--text-font);
+    outline: none;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .025);
+}
+
+.checkout-field select {
+    min-height: 48px;
+    cursor: pointer;
+}
+
+.checkout-field textarea {
+    min-height: 92px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.checkout-field input::placeholder,
+.checkout-field textarea::placeholder {
+    color: #9aa4ad;
+}
+
+.checkout-field input:hover,
+.checkout-field textarea:hover,
+.checkout-field select:hover {
+    border-color: #b8c9d5;
+}
+
+.checkout-field input:focus,
+.checkout-field textarea:focus,
+.checkout-field select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(18, 89, 184, .10);
+}
+
+/* Order summary */
+.checkout-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    margin-top: .35rem;
+    padding: 1.15rem 1.2rem;
+    box-sizing: border-box;
+    border-radius: 16px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+}
+
+.checkout-summary > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .45rem 0;
+}
+
+.checkout-summary > div span {
+    color: var(--text-gray);
+    font-size: .9rem;
+}
+
+.checkout-summary strong {
+    color: var(--text-primary);
+    font-size: .9rem;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* Grand total */
+.checkout-summary .checkout-grand-total {
+    margin-top: .55rem;
+    padding-top: .9rem;
+    border-top: 1px solid var(--border);
+}
+
+.checkout-summary .checkout-grand-total span {
+    color: var(--dark-blue);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.checkout-summary .checkout-grand-total strong {
+    color: var(--primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Estimated delivery time */
+#checkout-estimated-time {
+    display: block;
+    margin-top: .65rem;
+    padding-top: .65rem;
+    border-top: 1px dashed var(--border);
+    color: var(--text-gray);
+    text-align: center;
+    font-size: .82rem;
+    font-style: normal;
+}
+
+/* Confirmation button */
+.dialog-modal:has(.checkout-field) #confirm-checkout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 50px;
+    margin-top: 1.25rem;
+    padding: .85rem 1.25rem;
+    border: none;
+    border-radius: 13px;
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        #0d4b9d
+    );
+    color: var(--text-light);
+    box-shadow: 0 8px 20px rgba(18, 89, 184, .20);
+    font-family: var(--text-font);
+    font-size: .98rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.dialog-modal:has(.checkout-field) #confirm-checkout::before {
+    content: "?";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: .55rem;
+    font-size: 1rem;
+}
+
+.dialog-modal:has(.checkout-field) #confirm-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(18, 89, 184, .28);
+}
+
+.dialog-modal:has(.checkout-field) #confirm-checkout:active {
+    transform: translateY(0);
+}
+
+.dialog-modal:has(.checkout-field) #confirm-checkout:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Footer is not used for checkout */
+.dialog-modal:has(.checkout-field) .dm-footer {
+    display: none;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    .dialog-modal:has(.checkout-field) {
+        width: 94vw;
+        max-width: 94vw;
+        max-height: 94vh;
+        border-radius: 20px;
+    }
+
+    .dialog-modal:has(.checkout-field) .dm-header {
+        padding: 1.25rem 1.2rem 1rem;
+    }
+
+    .dialog-modal:has(.checkout-field) .dm-header h1,
+    .dialog-modal:has(.checkout-field) .dm-header h2,
+    .dialog-modal:has(.checkout-field) .dm-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .dialog-modal:has(.checkout-field) .dm-content {
+        padding: 1.15rem 1.2rem;
+    }
+
+    .checkout-field {
+        margin-bottom: .95rem;
+    }
+
+    .checkout-summary {
+        padding: 1rem;
+    }
+
+    .checkout-summary .checkout-grand-total strong {
+        font-size: 1.15rem;
+    }
+}
